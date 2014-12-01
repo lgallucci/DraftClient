@@ -30,7 +30,7 @@ namespace DraftClient
             this.Hide();
             if (this.Owner != null)
             {
-                e.Cancel = true;            
+                e.Cancel = true;
                 this.Owner.Show();
             }
         }
@@ -41,7 +41,8 @@ namespace DraftClient
             try
             {
                 LoadPlayers(settings.PlayerFile);
-            }catch (IOException)
+            }
+            catch (IOException)
             {
                 MessageBox.Show("Couldn't find or read the players file.  Please enter a valid file location in the box.");
                 return false;
