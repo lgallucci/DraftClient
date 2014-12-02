@@ -14,15 +14,16 @@ namespace ClientServer
     {
         private readonly string leagueName;
         private readonly int numberOfTeams;
-        private Dictionary<int, TcpClient> connections;
-
+        private Dictionary<int, ClientConnections> connections;
         private static TcpListener _listener;
+
+        public bool IsRunning { get; set; }
 
         public Server(string leagueName, int numberOfTeams)
         {
             this.leagueName = leagueName;
             this.numberOfTeams = numberOfTeams;
-            connections = new Dictionary<int, TcpClient>();
+            connections = new Dictionary<int, ClientConnections>();
         }
 
         //SetupServer
@@ -30,8 +31,7 @@ namespace ClientServer
         //ListenForMessages
 
         //ControlDraft
-
-
+        
         public void StartServer()
         {
             var Client = new UdpClient();
@@ -43,7 +43,9 @@ namespace ClientServer
             _listener.Start();
             WaitForClientConnect();
 
-            while (true)
+            IsRunning = true;
+
+            while (IsRunning)
             {
                 Client.EnableBroadcast = true;
                 Client.Send(RequestData, RequestData.Length, new IPEndPoint(IPAddress.Broadcast, 8888));
@@ -56,6 +58,7 @@ namespace ClientServer
             var obj = new object();
             _listener.BeginAcceptTcpClient(OnClientConnect, obj);
         }
+
         private void OnClientConnect(IAsyncResult asyn)
         {
             try
@@ -74,57 +77,4 @@ namespace ClientServer
         }
 
     }
-
-    public class HandleClientRequest
-    {
-        TcpClient _clientSocket;
-        NetworkStream _networkStream = null;
-        public HandleClientRequest(TcpClient clientConnected)
-        {
-            this._clientSocket = clientConnected;
-        }
-        public void StartClient()
-        {
-            _networkStream = _clientSocket.GetStream();
-            WaitForRequest();
-        }
-
-        public void WaitForRequest()
-        {
-            byte[] buffer = new byte[_clientSocket.ReceiveBufferSize];
-
-            _networkStream.BeginRead(buffer, 0, buffer.Length, ReadCallback, buffer);
-        }
-
-        private void ReadCallback(IAsyncResult result)
-        {
-            NetworkStream networkStream = _clientSocket.GetStream();
-            try
-            {
-                int read = networkStream.EndRead(result);
-                if (read == 0)
-                {
-                    _networkStream.Close();
-                    _clientSocket.Close();
-                    return;
-                }
-
-                byte[] buffer = result.AsyncState as byte[];
-                string data = Encoding.Default.GetString(buffer, 0, read);
-
-                //do the job with the data here
-                //send the data back to client.
-                Byte[] sendBytes = Encoding.ASCII.GetBytes("Processed " + data);
-                networkStream.Write(sendBytes, 0, sendBytes.Length);
-                networkStream.Flush();
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-
-            this.WaitForRequest();
-        }
-    }
-
 }

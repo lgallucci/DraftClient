@@ -1,6 +1,5 @@
 ﻿namespace ClientServer
 {
-    using System.Data;
     using System.Net;
     using System.Net.Sockets;
     using System;
@@ -12,16 +11,18 @@
 
         //Send Messages on Draft Picks
 
+        public bool IsRunning { get; set; }
+
         public Client()
         {
-
+            IsRunning = true;
         }
 
-        public void DoWork()
+        public void ListenForServers()
         {
             var Client = new UdpClient(8888);
 
-            while (true)
+            while (IsRunning)
             {
                 var ServerEp = new IPEndPoint(IPAddress.Any, 0);
                 var ServerBroadcastData = Client.Receive(ref ServerEp);
