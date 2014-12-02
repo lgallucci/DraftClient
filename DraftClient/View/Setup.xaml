@@ -3,65 +3,91 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      mc:Ignorable="d" 
-      Width="500" Height="450"	Title="Setup Draft" Background="AntiqueWhite"
-        DataContext="DraftClient.ViewModel.DraftSettings" Closing="Window_Closing">
+      mc:Ignorable="d" Title="Setup Draft"
+      DataContext="DraftClient.ViewModel.DraftSettings" Closing="Window_Closing" ResizeMode="NoResize" Height="400" Width="700">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
 
+                <!-- Dark Theme -->
+                <ResourceDictionary Source="../Themes/Metro/Dark/MetroDark.MSControls.Core.Implicit.xaml" />
+                <ResourceDictionary Source="../Themes/Metro/Dark/MetroDark.MSControls.Toolkit.Implicit.xaml" />
 
-    <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center">
-        <WrapPanel Margin="15">
-            <TextBlock FontFamily="Franklin Gothic Medium" FontSize="20" Width="200">League Name</TextBlock>
-            <TextBox x:Name="LeagueName" Width="237" FontSize="14" TextAlignment="Center" Text="{Binding LeagueName}"/>
-        </WrapPanel>
-        <WrapPanel Margin="15">
-            <TextBlock FontFamily="Franklin Gothic Medium" FontSize="20" Width="200"><Run Text="Number Of Teams"/></TextBlock>
-            <TextBox x:Name="NumberOfRounds" Width="35" FontSize="14" Text="{Binding NumberOfTeams}" TextAlignment="Center"/>
-        </WrapPanel>
-        <WrapPanel Margin="15">
-            <TextBlock FontFamily="Franklin Gothic Medium" FontSize="20" Width="200">Bench Players</TextBlock>
-            <TextBox x:Name="BenchPlayers" Width="35" FontSize="14" Text="{Binding BenchPlayers}" TextAlignment="Center"/>
-        </WrapPanel>
-        <WrapPanel Margin="15">
-            <WrapPanel Width="150" Margin="0 5 0 5">
-                <TextBlock FontFamily="Franklin Gothic Medium" FontSize="20" Width="100" VerticalAlignment="Center"><Run Text="QB"/></TextBlock>
-                <TextBox x:Name="QBCount" Width="35" FontSize="14" Text="{Binding Quarterbacks}" TextAlignment="Center"/>
-            </WrapPanel>
-            <WrapPanel Width="150" Margin="0 5 0 5">
-                <TextBlock FontFamily="Franklin Gothic Medium" FontSize="20" Width="100" VerticalAlignment="Center"><Run Text="WR"/></TextBlock>
-                <TextBox x:Name="WRCount" Width="35" FontSize="14" Text="{Binding WideRecievers}" TextAlignment="Center"/>
-            </WrapPanel>
-            <WrapPanel Width="150" Margin="0 5 0 5">
-                <TextBlock FontFamily="Franklin Gothic Medium" FontSize="20" Width="100" VerticalAlignment="Center"><Run Text="RB"/></TextBlock>
-                <TextBox x:Name="RBCount" Width="35" FontSize="14" Text="{Binding RunningBacks}" TextAlignment="Center"/>
-            </WrapPanel>
-            <WrapPanel Width="150" Margin="0 5 0 5">
-                <TextBlock FontFamily="Franklin Gothic Medium" FontSize="20" Width="100" VerticalAlignment="Center"><Run Text="WR/RB/TE"/></TextBlock>
-                <TextBox x:Name="WRRBTECount" Width="35" FontSize="14" Text="{Binding FlexWithTightEnd}" TextAlignment="Center"/>
-            </WrapPanel>
-            <WrapPanel Width="150" Margin="0 5 0 5">
-                <TextBlock FontFamily="Franklin Gothic Medium" FontSize="20" Width="100" VerticalAlignment="Center"><Run Text="WR/RB"/></TextBlock>
-                <TextBox x:Name="WRRBCount" Width="35" FontSize="14" Text="{Binding FlexWithoutTightEnd}" TextAlignment="Center"/>
-            </WrapPanel>
-            <WrapPanel Width="150" Margin="0 5 0 5">
-                <TextBlock FontFamily="Franklin Gothic Medium" FontSize="20" Width="100" VerticalAlignment="Center"><Run Text="TE"/></TextBlock>
-                <TextBox x:Name="TECount" Width="35" FontSize="14" Text="{Binding TightEnds}" TextAlignment="Center"/>
-            </WrapPanel>
-            <WrapPanel Width="150" Margin="0 5 0 5">
-                <TextBlock FontFamily="Franklin Gothic Medium" FontSize="20" Width="100" VerticalAlignment="Center"><Run Text="K"/></TextBlock>
-                <TextBox x:Name="KCount" Width="35" FontSize="14" Text="{Binding Kickers}" TextAlignment="Center"/>
-            </WrapPanel>
-            <WrapPanel Width="150" Margin="0 5 0 5">
-                <TextBlock FontFamily="Franklin Gothic Medium" FontSize="20" Width="100" VerticalAlignment="Center"><Run Text="DEF"/></TextBlock>
-                <TextBox x:Name="DEFCount" Width="35" FontSize="14" Text="{Binding Defenses}" TextAlignment="Center"/>
-            </WrapPanel>
-        </WrapPanel>
-        <WrapPanel Margin="15">
-            <TextBlock FontFamily="Franklin Gothic Medium" FontSize="20" Width="200">Player File</TextBlock>
-            <TextBox x:Name="PlayerFile" Width="237" FontSize="14" TextAlignment="Center" Text="{Binding PlayerFile}"/>
-        </WrapPanel>
-        <Button Content="Start Draft" HorizontalAlignment="Right" Margin="2" Width="90" Height="25" Click="Button_Click"/>
-        <Button Content="Continue Draft" Name="ContinueButton" HorizontalAlignment="Right" Margin="2" Width="90" Height="25" Click="Continue_Click" Visibility="Collapsed"/>
+            </ResourceDictionary.MergedDictionaries>
 
-    </StackPanel>
+            <!-- Dark Theme -->
+            <SolidColorBrush x:Key="BackgroundKey" Color="#FF181818" />
 
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid>
+        <ScrollViewer>
+            <Grid Background="{StaticResource BackgroundKey}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="2*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <WrapPanel Margin="15" Grid.Column="0" Grid.Row="0">
+                    <TextBlock  Width="200">League Name</TextBlock>
+                    <TextBox x:Name="LeagueName" Width="237" FontSize="14" TextAlignment="Center" Text="{Binding LeagueName}"/>
+                </WrapPanel>
+                <WrapPanel Margin="15" Grid.Column="0" Grid.Row="1">
+                    <TextBlock  Width="200"><Run Text="Number Of Teams"/></TextBlock>
+                    <TextBox x:Name="NumberOfRounds" Width="35" FontSize="14" Text="{Binding NumberOfTeams}" TextAlignment="Center"/>
+                </WrapPanel>
+                <WrapPanel Margin="15" Grid.Column="0" Grid.Row="2">
+                    <TextBlock  Width="200">Bench Players</TextBlock>
+                    <TextBox x:Name="BenchPlayers" Width="35" FontSize="14" Text="{Binding BenchPlayers}" TextAlignment="Center"/>
+                </WrapPanel>
+                <WrapPanel Margin="15" Grid.Column="0" Grid.Row="3">
+                    <WrapPanel Width="150" Margin="0 5 0 5">
+                        <TextBlock  Width="90" VerticalAlignment="Center"><Run Text="QB"/></TextBlock>
+                        <TextBox x:Name="QBCount" Width="35" FontSize="14" Text="{Binding Quarterbacks}" TextAlignment="Center"/>
+                    </WrapPanel>
+                    <WrapPanel Width="150" Margin="0 5 0 5">
+                        <TextBlock  Width="90" VerticalAlignment="Center"><Run Text="WR"/></TextBlock>
+                        <TextBox x:Name="WRCount" Width="35" FontSize="14" Text="{Binding WideRecievers}" TextAlignment="Center"/>
+                    </WrapPanel>
+                    <WrapPanel Width="150" Margin="0 5 0 5">
+                        <TextBlock  Width="90" VerticalAlignment="Center"><Run Text="RB"/></TextBlock>
+                        <TextBox x:Name="RBCount" Width="35" FontSize="14" Text="{Binding RunningBacks}" TextAlignment="Center"/>
+                    </WrapPanel>
+                    <WrapPanel Width="150" Margin="0 5 0 5">
+                        <TextBlock  Width="90
+                                       " VerticalAlignment="Center"><Run Text="WR/RB/TE"/></TextBlock>
+                        <TextBox x:Name="WRRBTECount" Width="35" FontSize="14" Text="{Binding FlexWithTightEnd}" TextAlignment="Center"/>
+                    </WrapPanel>
+                    <WrapPanel Width="150" Margin="0 5 0 5">
+                        <TextBlock  Width="90" VerticalAlignment="Center"><Run Text="WR/RB"/></TextBlock>
+                        <TextBox x:Name="WRRBCount" Width="35" FontSize="14" Text="{Binding FlexWithoutTightEnd}" TextAlignment="Center"/>
+                    </WrapPanel>
+                    <WrapPanel Width="150" Margin="0 5 0 5">
+                        <TextBlock  Width="90" VerticalAlignment="Center"><Run Text="TE"/></TextBlock>
+                        <TextBox x:Name="TECount" Width="35" FontSize="14" Text="{Binding TightEnds}" TextAlignment="Center"/>
+                    </WrapPanel>
+                    <WrapPanel Width="150" Margin="0 5 0 5">
+                        <TextBlock  Width="90" VerticalAlignment="Center"><Run Text="K"/></TextBlock>
+                        <TextBox x:Name="KCount" Width="35" FontSize="14" Text="{Binding Kickers}" TextAlignment="Center"/>
+                    </WrapPanel>
+                    <WrapPanel Width="150" Margin="0 5 0 5">
+                        <TextBlock  Width="90" VerticalAlignment="Center"><Run Text="DEF"/></TextBlock>
+                        <TextBox x:Name="DEFCount" Width="35" FontSize="14" Text="{Binding Defenses}" TextAlignment="Center"/>
+                    </WrapPanel>
+                </WrapPanel>
+                <WrapPanel Margin="15" Grid.Column="0" Grid.Row="4">
+                    <TextBlock  Width="200">Player File</TextBlock>
+                    <TextBox x:Name="PlayerFile" Width="237" FontSize="14" TextAlignment="Center" Text="{Binding PlayerFile}"/>
+                </WrapPanel>
+                <Button Grid.Column="0" Grid.Row="4" Content="Start Draft" HorizontalAlignment="Right" Margin="15" Width="150" Height="30" Click="Button_Click"/>
+                <Button Grid.Column="0" Grid.Row="4" Content="Continue Draft" Name="ContinueButton" HorizontalAlignment="Right" Margin="15" Width="150" Height="30" Click="Continue_Click" Visibility="Collapsed"/>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
 </Window>

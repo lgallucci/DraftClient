@@ -17,6 +17,4 @@ namespace DraftClient.Providers
             return filteredPlayers;
         }
     }
-
-
 }

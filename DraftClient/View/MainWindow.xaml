@@ -3,17 +3,32 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="DraftClient.MainWindow"
         xmlns:local="clr-namespace:DraftClient.View"
-        Title="Fantasy Football Draft Tool" Width="1725" Height="950" Closing="OnClosing" ResizeMode="NoResize" Background="AntiqueWhite">
-    <Grid Name="MainGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        Title="Fantasy Football Draft Tool" Width="1725" Height="950" Closing="OnClosing" ResizeMode="NoResize">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+
+                <!-- Dark Theme -->
+                <ResourceDictionary Source="../Themes/Metro/Dark/MetroDark.MSControls.Core.Implicit.xaml" />
+                <ResourceDictionary Source="../Themes/Metro/Dark/MetroDark.MSControls.Toolkit.Implicit.xaml" />
+
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Dark Theme -->
+            <SolidColorBrush x:Key="BackgroundKey" Color="#FF181818" />
+
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Background="{StaticResource BackgroundKey}" Name="MainGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="400" />
-            <ColumnDefinition Width="1300" />
+            <ColumnDefinition Width="4*" MaxWidth="1300" />
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0">
             <local:PlayerView></local:PlayerView>
         </Grid>
         <Grid Grid.Column="1" Name="PicksGrid">
-            
         </Grid>
-    </Grid>    
+    </Grid>
 </Window>

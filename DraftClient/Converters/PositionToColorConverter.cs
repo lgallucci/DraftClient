@@ -15,19 +15,19 @@ namespace DraftClient.Converters
             switch ((PlayerPosition)value)
             {
                 case PlayerPosition.QB:
-                    return "Thistle";
+                    return "SlateBlue";
                 case PlayerPosition.RB:
-                    return "Aquamarine";
+                    return "DarkBlue";
                 case PlayerPosition.WR:
-                    return "IndianRed";
+                    return "DarkRed";
                 case PlayerPosition.TE:
-                    return "PaleGoldenrod";
+                    return "DarkGoldenrod";
                 case PlayerPosition.K:
-                    return "Pink";
+                    return "MediumOrchid";
                 case PlayerPosition.DEF:
-                    return "LightGreen";
+                    return "DarkOliveGreen";
             }
-            return "AntiqueWhite";
+            return "";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
