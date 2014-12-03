@@ -25,7 +25,7 @@
                 UdpClient client = new UdpClient();
 
                 client.ExclusiveAddressUse = false;
-                IPEndPoint localEp = new IPEndPoint(IPAddress.Any, 8888);
+                IPEndPoint localEp = new IPEndPoint(IPAddress.Any, 11000);
 
                 client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
                 client.ExclusiveAddressUse = false;

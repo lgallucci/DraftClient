@@ -8,10 +8,10 @@
     using System.Text;
     using System.Threading.Tasks;
 
-    public class DraftSettings : BindableBase
+    public class DraftSettings : ValidatableBase
     {
-        private string _leagueName = "Birches League";
-        private int _numberOfTeams = 12;
+        private string _leagueName = "";
+        private int _numberOfTeams;
         private int _quarterbacks = 1;
         private int _wideRecievers = 2;
         private int _runningBacks = 2;
@@ -134,6 +134,12 @@
             {
                 SetProperty(ref this._servers, value);
             }
+        }
+
+        public override bool Validate()
+        {
+            return this._leagueName.Length > 0
+                   && this._numberOfTeams > 0;
         }
     }
 }

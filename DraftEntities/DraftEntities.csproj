@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Draft.cs" />
+    <Compile Include="DraftServer.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="PlayerPosition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

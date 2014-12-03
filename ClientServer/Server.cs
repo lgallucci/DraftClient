@@ -11,16 +11,7 @@
     using System.Xml.Serialization;
     using System.IO;
     using System.Threading.Tasks;
-
-    [Serializable]
-    public class DraftServer
-    {
-        public string FantasyDraft { get; set; }
-        public int ConnectedPlayers { get; set; }
-        public int MaxPlayers { get; set; }
-        public string ipAddress { get; set; }
-        public int ipPort { get; set; }
-    }
+    using DraftEntities;
 
     public class Server
     {
@@ -37,7 +28,7 @@
             this.leagueName = leagueName;
             this.numberOfTeams = numberOfTeams;
             connections = new Dictionary<int, ClientConnections>();
-            _port = 8888;
+            _port = 11000;
         }
 
         //ListenForMessages
@@ -46,18 +37,21 @@
 
         public void StartServer()
         {
+            var udpclient = new UdpClient();
+            IsRunning = true;
+            byte[] RequestData;
+            var xmlSerializer = new XmlSerializer(typeof(DraftServer));
+            var ipAddress = GetFirstIPAddress();
+
             Task.Run(() =>
             {
-                var udpclient = new UdpClient();
-                IsRunning = true;
-                byte[] RequestData;
-                var xmlSerializer = new XmlSerializer(typeof(DraftServer));
-                var ipAddress = GetFirstIPAddress();
-
                 _listener = new TcpListener(new IPEndPoint(IPAddress.Parse(ipAddress), _port));
                 _listener.Start();
                 WaitForClientConnect();
-
+            });
+             
+            Task.Run(() =>
+            {
                 IPAddress multicastaddress = IPAddress.Parse("239.0.0.222");
                 udpclient.JoinMulticastGroup(multicastaddress);
                 IPEndPoint remoteep = new IPEndPoint(multicastaddress, _port);

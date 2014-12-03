@@ -77,6 +77,7 @@
     <Compile Include="ViewModel\DraftSettings.cs" />
     <Compile Include="ViewModel\PlayerList.cs" />
     <Compile Include="ViewModel\PlayerPresentation.cs" />
+    <Compile Include="ViewModel\ValidatableBase.cs" />
     <Compile Include="View\PlayerView.xaml.cs">
       <DependentUpon>PlayerView.xaml</DependentUpon>
     </Compile>

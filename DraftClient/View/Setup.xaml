@@ -85,7 +85,7 @@
                     <TextBlock  Width="200">Player File</TextBlock>
                     <TextBox x:Name="PlayerFile" Width="237" FontSize="14" TextAlignment="Center" Text="{Binding PlayerFile}"/>
                 </WrapPanel>
-                <Button Grid.Column="0" Grid.Row="4" Content="Start Draft" HorizontalAlignment="Right" Margin="15" Width="150" Height="30" Click="StartDraft_Click"/>
+                <Button Grid.Column="0" Grid.Row="4" Content="Start Draft" HorizontalAlignment="Right" Margin="15" Width="150" Height="30" Click="StartDraft_Click" IsEnabled="{Binding IsValid}"/>
                 <Button Grid.Column="0" Grid.Row="4" Content="Continue Draft" Name="ContinueButton" HorizontalAlignment="Right" Margin="15" Width="150" Height="30" Click="ContinueDraft_Click" Visibility="Collapsed"/>
             </Grid>
         </ScrollViewer>

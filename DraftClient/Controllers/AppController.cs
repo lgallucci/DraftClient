@@ -12,7 +12,7 @@
 
     public class AppController
     {
-        public void SubscribeToMessages(ObservableCollection<DraftClient.ViewModel.DraftServer> Servers)
+        public void SubscribeToMessages(ObservableCollection<ViewModel.DraftServer> Servers)
         {
             Client _client = new Client();
 
@@ -20,18 +20,18 @@
 
             _client.ListenForServers((o) =>
             {
-                DraftClient.ViewModel.DraftServer server = new XmlSerializer(typeof(DraftClient.ViewModel.DraftServer)).Deserialize(new MemoryStream(o)) as DraftClient.ViewModel.DraftServer;
+                var server = new XmlSerializer(typeof(ViewModel.DraftServer)).Deserialize(new MemoryStream(o)) as DraftClient.ViewModel.DraftServer;
                 var matchedServer = Servers.FirstOrDefault(s => s.ipAddress == server.ipAddress && s.ipPort == server.ipPort);
 
                 if (matchedServer != default(ViewModel.DraftServer))
                 {
-                    dispatch.Invoke(() => matchedServer.Timeout = DateTime.Now.AddSeconds(10));
+                    dispatch.Invoke(() => matchedServer.Timeout = DateTime.Now.AddSeconds(7));
                 }
                 else
                 {
                     dispatch.Invoke(() =>
                     {
-                        server.Timeout = DateTime.Now.AddSeconds(10);
+                        server.Timeout = DateTime.Now.AddSeconds(7);
                         Servers.Add(server);
                     });
                 }
