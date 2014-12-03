@@ -1,11 +1,7 @@
 ﻿namespace DraftClient.ViewModel
 {
     using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+    using System.Net;
 
     public class DraftServer : BindableBase
     {
@@ -48,16 +44,42 @@ using System.Threading.Tasks;
             }
         }
 
-        private IPEndPoint _tcpAddress;
-        public IPEndPoint tcpAddress
+        private string _ipAddress;
+        public string ipAddress
         {
             get
             {
-                return _tcpAddress;
+                return _ipAddress;
             }
             set
             {
-                SetProperty(ref this._tcpAddress, value);
+                SetProperty(ref this._ipAddress, value);
+            }
+        }
+
+        private int _ipPort;
+        public int ipPort
+        {
+            get
+            {
+                return _ipPort;
+            }
+            set
+            {
+                SetProperty(ref this._ipPort, value);
+            }
+        }
+
+        private DateTime _timeout;
+        public DateTime Timeout
+        {
+            get
+            {
+                return _timeout;
+            }
+            set
+            {
+                SetProperty(ref this._timeout, value);
             }
         }
     }

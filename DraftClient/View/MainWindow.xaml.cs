@@ -1,4 +1,6 @@
-﻿using DraftClient.View;
+﻿using ClientServer;
+using DraftClient.Controllers;
+using DraftClient.View;
 using DraftClient.ViewModel;
 using DraftEntities;
 using FileReader;
@@ -19,10 +21,12 @@ namespace DraftClient
     public partial class MainWindow : Window
     {
         public static PlayerList playerList = new PlayerList();
+        private readonly AppController _appController;
 
-        public MainWindow()
+        public MainWindow(AppController appController)
         {
             InitializeComponent();
+            _appController = appController;
         }
 
         private void OnClosing(object sender, CancelEventArgs e)
@@ -37,6 +41,8 @@ namespace DraftClient
 
         public bool SetupDraft(DraftSettings settings)
         {
+            var server = new Server(settings.LeagueName, settings.NumberOfTeams);
+            server.StartServer();
             SetupGrid(settings);
             try
             {

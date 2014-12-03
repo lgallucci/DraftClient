@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Linq;
     using System.Text;
@@ -21,6 +22,7 @@
         private int _defenses = 1;
         private int _benchPlayers = 4;
         private string _playerFile = @"C:\FantasyPlayerRankings.csv";
+        private ObservableCollection<DraftServer> _servers;
 
         public string LeagueName
         {
@@ -116,6 +118,21 @@
             set
             {
                 SetProperty(ref this._playerFile, value);
+            }
+        }
+        public ObservableCollection<DraftServer> Servers
+        {
+            get
+            {
+                if (this._servers == null)
+                {
+                    this._servers = new ObservableCollection<DraftServer>();
+                }
+                return this._servers;
+            }
+            set
+            {
+                SetProperty(ref this._servers, value);
             }
         }
     }

@@ -1,9 +1,9 @@
 ﻿namespace ClientServer
 {
+    using System;
     using System.Net;
     using System.Net.Sockets;
-    using System;
-    using System.Text;
+    using System.Threading.Tasks;
 
     public class Client
     {
@@ -18,18 +18,30 @@
             IsRunning = true;
         }
 
-        public void ListenForServers()
-        {
-            var Client = new UdpClient(8888);
-
-            while (IsRunning)
+        public void ListenForServers(Action<byte[]> ServerPingCallback)
+        {            
+            Task.Run(() =>
             {
-                var ServerEp = new IPEndPoint(IPAddress.Any, 0);
-                var ServerBroadcastData = Client.Receive(ref ServerEp);
-                var ServerBroadcast = Encoding.ASCII.GetString(ServerBroadcastData);
+                UdpClient client = new UdpClient();
 
-                Console.WriteLine("Recived {0} from {1}:{2}", ServerBroadcast, ServerEp.Address, ServerEp.Port);
-            }
+                client.ExclusiveAddressUse = false;
+                IPEndPoint localEp = new IPEndPoint(IPAddress.Any, 8888);
+
+                client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                client.ExclusiveAddressUse = false;
+
+                client.Client.Bind(localEp);
+
+                IPAddress multicastaddress = IPAddress.Parse("239.0.0.222");
+                client.JoinMulticastGroup(multicastaddress);
+                
+                while (true)
+                {
+                    var ServerBroadcastData = client.Receive(ref localEp);
+
+                    ServerPingCallback(ServerBroadcastData);
+                }
+            });
         }
     }
 }

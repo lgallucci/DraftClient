@@ -50,7 +50,7 @@
                 }
                 networkStream.Flush();
             }
-            catch (Exception ex)
+            catch
             {
                 throw;
             }

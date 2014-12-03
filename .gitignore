@@ -154,3 +154,5 @@ $RECYCLE.BIN/
 
 # Mac desktop service store files
 .DS_Store
+
+/packages/WPFToolkit.3.5.50211.1

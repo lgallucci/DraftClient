@@ -22,8 +22,8 @@
     </Window.Resources>
 
     <Grid>
-        <ScrollViewer Name="ServerSetup_Viewer">
-            <Grid Background="{StaticResource BackgroundKey}" Visibility="Collapsed">
+        <ScrollViewer Name="ServerSetup_Viewer" Visibility="Collapsed">
+            <Grid Background="{StaticResource BackgroundKey}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
@@ -105,11 +105,24 @@
                 <StackPanel Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center">
                     <TextBlock FontSize="14">Open Drafts:</TextBlock>
                     <ListBox Width="600" Height="200" Name="ServerListBox" SelectionChanged="ServerBox_SelectionChanged">
-                        <ListBoxItem FontSize="18">...</ListBoxItem>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <WrapPanel Width="580">
+                                    <TextBlock Width="550" Text="{Binding FantasyDraft}" />
+                                    <WrapPanel HorizontalAlignment="Right">
+                                        <TextBlock Text="{Binding ConnectedPlayers}"/>
+                                        <TextBlock Text="/" />
+                                        <TextBlock Text="{Binding MaxPlayers}" />
+                                    </WrapPanel>
+                                </WrapPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
                     </ListBox>
                 </StackPanel>
                 <WrapPanel Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right">
-                    <Button FontSize="18" Margin="0 20 45 0" IsEnabled="False" Name="JoinDraftButton">Join Draft</Button>
+                    <TextBlock FontSize="18" Margin="0 20 5 0">Draft Name:</TextBlock>
+                    <TextBox FontSize="18" Margin="0 20 45 0" Name="DraftName" Width="200" TextChanged="DraftName_TextChanged"></TextBox>
+                    <Button FontSize="18" Margin="0 20 45 0" IsEnabled="False" Name="JoinDraftButton" Click="JoinDraft_Click">Join Draft</Button>
                 </WrapPanel>
             </Grid>
         </ScrollViewer>

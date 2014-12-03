@@ -67,6 +67,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controllers\AppController.cs" />
     <Compile Include="Converters\EnumConverter.cs" />
     <Compile Include="Converters\PositionToColorConverter.cs" />
     <Compile Include="Converters\StringLengthToVisibilityConverter.cs" />
@@ -167,6 +168,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ClientServer\ClientServer.csproj">
+      <Project>{c76d12d3-58a2-4ef5-a2f1-436e7e12efbc}</Project>
+      <Name>ClientServer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DraftEntities\DraftEntities.csproj">
       <Project>{65184f9c-4e20-4e4a-8f1c-0f61c4f1d5c9}</Project>
       <Name>DraftEntities</Name>
@@ -176,9 +181,7 @@
       <Name>FileReader</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
