@@ -1,11 +1,11 @@
-﻿using DraftEntities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace DraftClient.ViewModel
+﻿namespace DraftClient.ViewModel
 {
+    using DraftEntities;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+
     public class PlayerPresentation : BindableBase
     {
         private int _adp;

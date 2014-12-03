@@ -49,7 +49,7 @@
 <!--Theme Error colors -->		
     <Color x:Key="Color_028">#FFD0284C</Color>
     <Color x:Key="Color_029">#FFF55E7F</Color>
-	  <Color x:Key="Color_030">#FFFFCAD5</Color>
+	<Color x:Key="Color_030">#FFFFCAD5</Color>
 	
 <!--Colors for Chart Series-->		
     <Color x:Key="Color_035">#FF006481</Color>

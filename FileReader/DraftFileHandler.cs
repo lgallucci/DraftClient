@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DraftEntities;
-
-namespace FileReader
+﻿namespace FileReader
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using DraftEntities;
+
     public static class DraftFileHandler
     {
         public static List<Player> ReadFile(string fileName)

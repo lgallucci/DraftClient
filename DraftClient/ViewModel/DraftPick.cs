@@ -1,13 +1,13 @@
-﻿using DraftEntities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DraftClient.ViewModel
+﻿namespace DraftClient.ViewModel
 {
+    using DraftEntities;
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+
     public class DraftPick : BindableBase
     {
         private string _name;

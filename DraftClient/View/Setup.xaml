@@ -22,13 +22,13 @@
     </Window.Resources>
 
     <Grid>
-        <ScrollViewer>
-            <Grid Background="{StaticResource BackgroundKey}">
+        <ScrollViewer Name="ServerSetup_Viewer">
+            <Grid Background="{StaticResource BackgroundKey}" Visibility="Collapsed">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="2*" />
@@ -85,8 +85,32 @@
                     <TextBlock  Width="200">Player File</TextBlock>
                     <TextBox x:Name="PlayerFile" Width="237" FontSize="14" TextAlignment="Center" Text="{Binding PlayerFile}"/>
                 </WrapPanel>
-                <Button Grid.Column="0" Grid.Row="4" Content="Start Draft" HorizontalAlignment="Right" Margin="15" Width="150" Height="30" Click="Button_Click"/>
-                <Button Grid.Column="0" Grid.Row="4" Content="Continue Draft" Name="ContinueButton" HorizontalAlignment="Right" Margin="15" Width="150" Height="30" Click="Continue_Click" Visibility="Collapsed"/>
+                <Button Grid.Column="0" Grid.Row="4" Content="Start Draft" HorizontalAlignment="Right" Margin="15" Width="150" Height="30" Click="StartDraft_Click"/>
+                <Button Grid.Column="0" Grid.Row="4" Content="Continue Draft" Name="ContinueButton" HorizontalAlignment="Right" Margin="15" Width="150" Height="30" Click="ContinueDraft_Click" Visibility="Collapsed"/>
+            </Grid>
+        </ScrollViewer>
+        <ScrollViewer Name="Startup_Viewer" Visibility="Visible">
+            <Grid Background="{StaticResource BackgroundKey}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="3*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <WrapPanel Grid.Row="0" Grid.Column="0">
+                    <Button FontSize="18" Margin="45 25 0 0" Click="CreateDraft_Click">Create Draft</Button>
+                </WrapPanel>
+                <StackPanel Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center">
+                    <TextBlock FontSize="14">Open Drafts:</TextBlock>
+                    <ListBox Width="600" Height="200" Name="ServerListBox" SelectionChanged="ServerBox_SelectionChanged">
+                        <ListBoxItem FontSize="18">...</ListBoxItem>
+                    </ListBox>
+                </StackPanel>
+                <WrapPanel Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right">
+                    <Button FontSize="18" Margin="0 20 45 0" IsEnabled="False" Name="JoinDraftButton">Join Draft</Button>
+                </WrapPanel>
             </Grid>
         </ScrollViewer>
     </Grid>

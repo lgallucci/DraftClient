@@ -40,9 +40,9 @@ namespace ClientServer
         public void StartServer()
         {
             var Client = new UdpClient();
-            var RequestData = Encoding.ASCII.GetBytes(string.Format("Fantasy Draft Server: {0}, {1}/{2}", leagueName, connections.Count, numberOfTeams));
+            var RequestData = Encoding.ASCII.GetBytes(string.Format("Server: {0}, {1}/{2}", leagueName, connections.Count, numberOfTeams));
 
-            IPAddress localIPAddress = IPAddress.Parse("10.3.145.112");
+            IPAddress localIPAddress = IPAddress.Parse("127.0.0.1");
             var ipLocal = new IPEndPoint(localIPAddress, 8888);
             _listener = new TcpListener(ipLocal);
             _listener.Start();
