@@ -10,38 +10,64 @@
         //Listen for Draft Messages
 
         //Send Messages on Draft Picks
-
-        public bool IsRunning { get; set; }
+        public Task ServerListener;
+        private UdpClient _client;
+        protected bool IsRunning;
 
         public Client()
         {
             IsRunning = true;
         }
 
-        public void ListenForServers(Action<byte[]> ServerPingCallback)
-        {            
-            Task.Run(() =>
+        public void ListenForServers(Action<byte[]> serverPingCallback)
+        {
+            ServerListener = Task.Run(() =>
             {
-                UdpClient client = new UdpClient();
+                _client = new UdpClient();
 
-                client.ExclusiveAddressUse = false;
+                _client.ExclusiveAddressUse = false;
                 IPEndPoint localEp = new IPEndPoint(IPAddress.Any, 11000);
 
-                client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-                client.ExclusiveAddressUse = false;
+                _client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                _client.ExclusiveAddressUse = false;
 
-                client.Client.Bind(localEp);
+                _client.Client.Bind(localEp);
 
                 IPAddress multicastaddress = IPAddress.Parse("239.0.0.222");
-                client.JoinMulticastGroup(multicastaddress);
-                
-                while (true)
-                {
-                    var ServerBroadcastData = client.Receive(ref localEp);
+                _client.JoinMulticastGroup(multicastaddress);
 
-                    ServerPingCallback(ServerBroadcastData);
+                while (IsRunning)
+                {
+                    var serverBroadcastData = _client.Receive(ref localEp);
+
+                    serverPingCallback(serverBroadcastData);
                 }
             });
+        }
+
+        public void ConnectToDraftServer(string ipAdress, string port)
+        {
+
+        }
+
+        public void ReceiveDraftServerMessage()
+        {
+
+        }
+
+        public void Dispose()
+        {
+            IsRunning = false;
+            if (_client != null)
+            {
+                _client.Close();
+                _client = null;
+            }
+
+            if (ServerListener != null)
+            {                
+                ServerListener.Dispose();
+            }
         }
     }
 }

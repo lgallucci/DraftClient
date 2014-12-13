@@ -9,6 +9,8 @@ namespace DraftClient.View
     /// </summary>
     public partial class FantasyTeam : UserControl
     {
+        public int TeamNumber { get; set; }
+
         public FantasyTeam()
         {
             InitializeComponent();

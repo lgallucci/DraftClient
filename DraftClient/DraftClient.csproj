@@ -67,12 +67,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Controllers\AppController.cs" />
+    <Compile Include="Controllers\SetupController.cs" />
+    <Compile Include="Controllers\DraftController.cs" />
     <Compile Include="Converters\EnumConverter.cs" />
     <Compile Include="Converters\PositionToColorConverter.cs" />
     <Compile Include="Converters\StringLengthToVisibilityConverter.cs" />
     <Compile Include="Providers\PlayerListProvider.cs" />
+    <Compile Include="Themes\Metro\Dark\MetroSpinny.xaml.cs">
+      <DependentUpon>MetroSpinny.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModel\BindableBase.cs" />
+    <Compile Include="ViewModel\Draft.cs" />
     <Compile Include="ViewModel\DraftServer.cs" />
     <Compile Include="ViewModel\DraftSettings.cs" />
     <Compile Include="ViewModel\PlayerList.cs" />
@@ -91,6 +96,10 @@
     <Page Include="Themes\Metro\Dark\MetroDark.MSControls.Toolkit.Implicit.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Metro\Dark\MetroSpinny.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\Metro\Dark\Styles.Shared.xaml">
       <Generator>MSBuild:Compile</Generator>

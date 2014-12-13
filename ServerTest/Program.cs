@@ -8,7 +8,7 @@
         static void Main(string[] args)
         {
             var server = new Server("Test Fantasy League", 12);
-            Console.WriteLine(server.GetFirstIPAddress());
+            Console.WriteLine(server.GetFirstIpAddress());
             server.StartServer();
         }
     }

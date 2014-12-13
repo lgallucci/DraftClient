@@ -1,9 +1,14 @@
 ﻿namespace DraftClient.View
 {
+    using ClientServer;
     using DraftClient.Controllers;
     using DraftClient.ViewModel;
     using System.Windows;
     using System.Windows.Controls;
+    using System.Windows.Threading;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using System.Linq;
 
     /// <summary>
     /// Interaction logic for Setup.xaml
@@ -11,31 +16,45 @@
     public partial class Setup : Window
     {
         MainWindow draftWindow;
-        AppController _appController;
+        SetupController _setupController;
         DraftSettings _draftSettings;
+        DraftController _draftController;
+        Client _client;
 
         public Setup()
         {
             InitializeComponent();
 
+            _client = new Client();
             _draftSettings = new DraftSettings();
-            _appController = new AppController();
+            _setupController = new SetupController();
+
+            _setupController.SubscribeToMessages(_draftSettings.Servers, _client);
 
             this.DataContext = _draftSettings;
-
-            _appController.SubscribeToMessages(_draftSettings.Servers);
-            ServerListBox.ItemsSource = _draftSettings.Servers;
         }
 
         private void StartDraft_Click(object sender, RoutedEventArgs e)
         {
-            draftWindow = new MainWindow(_appController);
+            LoadingIndicatorCreate.Visibility = Visibility.Visible;
+
+            _client = new Server(_draftSettings.LeagueName, _draftSettings.NumberOfTeams);
+            ((Server)_client).StartServer();
+
+            _draftController = new DraftController(_client)
+            {
+                IsServer = true
+            };
+
+            draftWindow = new MainWindow(_draftController);
             if (draftWindow.SetupDraft(this.DataContext as DraftSettings))
             {
                 draftWindow.Owner = this;
                 this.Hide();
                 draftWindow.Show();
-                ContinueButton.Visibility = System.Windows.Visibility.Visible;
+                StartButton.Visibility = Visibility.Collapsed;
+                ContinueButton.Visibility = Visibility.Visible;
+                LoadingIndicatorCreate.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -47,20 +66,32 @@
 
         private void CreateDraft_Click(object sender, RoutedEventArgs e)
         {
-            Startup_Viewer.Visibility = System.Windows.Visibility.Collapsed;
-            ServerSetup_Viewer.Visibility = System.Windows.Visibility.Visible;
+            Startup_Viewer.Visibility = Visibility.Collapsed;
+            ServerSetup_Viewer.Visibility = Visibility.Visible;
+            LoadingIndicatorCreate.Visibility = Visibility.Collapsed;
         }
 
         private void CancelDraft_Click(object sender, RoutedEventArgs e)
         {
-            Startup_Viewer.Visibility = System.Windows.Visibility.Visible;
-            ServerSetup_Viewer.Visibility = System.Windows.Visibility.Collapsed;
+            _draftSettings.Servers.Remove(_draftSettings.Servers.FirstOrDefault(s => s.FantasyDraft == _draftSettings.LeagueName));
+            if (_client is Server)
+            {
+                ((Server)_client).StopServer();
+            }
+
+            Startup_Viewer.Visibility = Visibility.Visible;
+            ServerSetup_Viewer.Visibility = Visibility.Collapsed;
+
+            StartButton.Visibility = Visibility.Visible;
+            ContinueButton.Visibility = Visibility.Collapsed;
         }
 
         private void JoinDraft_Click(object sender, RoutedEventArgs e)
         {
+            LoadingIndicatorJoin.Visibility = Visibility.Visible;
             DraftServer lbi = ServerListBox.SelectedItem as DraftServer;
-            MessageBox.Show(string.Format("{0} {1}/{2} {3}:{4}", lbi.FantasyDraft, lbi.ConnectedPlayers, lbi.MaxPlayers, lbi.ipAddress, lbi.ipPort));
+            MessageBox.Show(string.Format("{0} {1}/{2} {3}:{4}", lbi.FantasyDraft, lbi.ConnectedPlayers, lbi.MaxPlayers, lbi.IpAddress, lbi.IpPort));
+            LoadingIndicatorJoin.Visibility = Visibility.Collapsed;
         }
 
         private void ServerBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -77,7 +108,7 @@
         {
             Application.Current.Shutdown();
         }
-        
+
         private void SetDraftButtonEnabled()
         {
             var lbi = ServerListBox.SelectedItem;

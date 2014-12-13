@@ -7,13 +7,14 @@
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using View;
     using WpfControls;
 
     class PlayerListProvider : ISuggestionProvider
     {
         public IEnumerable GetSuggestions(string filter)
         {
-            List<PlayerPresentation> filteredPlayers = MainWindow.playerList.Players.Where(p => p.IsPicked == false && p.Name.ToLower().Contains(filter.ToLower())).OrderBy(p => p.Name).ToList();
+            List<PlayerPresentation> filteredPlayers = MainWindow.PlayerList.Players.Where(p => p.IsPicked == false && p.Name.ToLower().Contains(filter.ToLower())).OrderBy(p => p.Name).ToList();
             return filteredPlayers;
         }
     }

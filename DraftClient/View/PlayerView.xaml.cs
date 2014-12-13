@@ -16,7 +16,7 @@ namespace DraftClient.View
 
         private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
-            this.DataContext = MainWindow.playerList;
+            this.DataContext = MainWindow.PlayerList;
             this.cbQB.Checked += cbPosition_Changed; this.cbQB.Unchecked += cbPosition_Changed;
             this.cbWR.Checked += cbPosition_Changed; this.cbWR.Unchecked += cbPosition_Changed;
             this.cbRB.Checked += cbPosition_Changed; this.cbRB.Unchecked += cbPosition_Changed;

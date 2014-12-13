@@ -12,6 +12,9 @@ namespace DraftClient.View
     /// </summary>
     public partial class FantasyRound : UserControl
     {
+        public int Round { get; set; }
+        public int Team { get; set; }
+
         public FantasyRound()
         {
             InitializeComponent();

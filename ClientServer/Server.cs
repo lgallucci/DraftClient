@@ -2,46 +2,39 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
     using System.Net;
     using System.Net.NetworkInformation;
     using System.Net.Sockets;
-    using System.Text;
     using System.Threading;
-    using System.Linq;
-    using System.Xml.Serialization;
-    using System.IO;
     using System.Threading.Tasks;
+    using System.Xml.Serialization;
     using DraftEntities;
 
-    public class Server
+    public class Server : Client
     {
-        private readonly string leagueName;
-        private readonly int numberOfTeams;
-        private Dictionary<int, ClientConnections> connections;
+        private readonly string _leagueName;
+        private readonly int _numberOfTeams;
+        private readonly Dictionary<int, ClientConnections> _connections;
         private static TcpListener _listener;
-        private int _port;
-
-        public bool IsRunning { get; set; }
+        private readonly int _port;
 
         public Server(string leagueName, int numberOfTeams)
         {
-            this.leagueName = leagueName;
-            this.numberOfTeams = numberOfTeams;
-            connections = new Dictionary<int, ClientConnections>();
+            _leagueName = leagueName;
+            _numberOfTeams = numberOfTeams;
+            _connections = new Dictionary<int, ClientConnections>();
             _port = 11000;
         }
-
-        //ListenForMessages
-
-        //ControlDraft
 
         public void StartServer()
         {
             var udpclient = new UdpClient();
             IsRunning = true;
-            byte[] RequestData;
+            byte[] requestData;
             var xmlSerializer = new XmlSerializer(typeof(DraftServer));
-            var ipAddress = GetFirstIPAddress();
+            var ipAddress = GetFirstIpAddress();
 
             Task.Run(() =>
             {
@@ -60,9 +53,9 @@
                 {
                     var draftServer = new DraftServer()
                     {
-                        FantasyDraft = leagueName,
-                        ConnectedPlayers = connections.Count((x) => x.Value.TcpClient.Connected),
-                        MaxPlayers = numberOfTeams,
+                        FantasyDraft = _leagueName,
+                        ConnectedPlayers = _connections.Count((x) => x.Value.TcpClient.Connected),
+                        MaxPlayers = _numberOfTeams,
                         ipAddress = ipAddress,
                         ipPort = _port
                     };
@@ -70,15 +63,22 @@
                     using (var memoryStream = new MemoryStream())
                     {
                         xmlSerializer.Serialize(memoryStream, draftServer);
-                        RequestData = memoryStream.ToArray();
+                        requestData = memoryStream.ToArray();
                     }
 
                     udpclient.EnableBroadcast = true;
-                    udpclient.Send(RequestData, RequestData.Length, remoteep);
+                    udpclient.Send(requestData, requestData.Length, remoteep);
                     Thread.Sleep(5000);
                 }
             });
         }
+
+        public void StopServer()
+        {
+            IsRunning = false;
+        }
+
+        //ListenForMessages
 
         private void WaitForClientConnect()
         {
@@ -88,17 +88,10 @@
 
         private void OnClientConnect(IAsyncResult asyn)
         {
-            try
-            {
-                TcpClient clientSocket = default(TcpClient);
-                clientSocket = _listener.EndAcceptTcpClient(asyn);
-                var clientReq = new HandleClientRequest(clientSocket);
-                clientReq.StartClient();
-            }
-            catch
-            {
-                throw;
-            }
+            TcpClient clientSocket = default(TcpClient);
+            clientSocket = _listener.EndAcceptTcpClient(asyn);
+            var clientReq = new HandleClientRequest(clientSocket);
+            clientReq.StartClient();
 
             WaitForClientConnect();
         }
@@ -106,20 +99,18 @@
         /// <summary> 
         /// This utility function displays all the IP (v4, not v6) addresses of the local computer. 
         /// </summary> 
-        public string GetFirstIPAddress()
+        public string GetFirstIpAddress()
         {
-            StringBuilder sb = new StringBuilder();
-
             // Get a list of all network interfaces (usually one per network card, dialup, and VPN connection) 
-            NetworkInterface[] networkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
+            var networkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
 
-            foreach (NetworkInterface network in networkInterfaces)
+            foreach (var network in networkInterfaces)
             {
                 // Read the IP configuration for each network 
                 IPInterfaceProperties properties = network.GetIPProperties();
 
                 // Each network interface may have multiple IP addresses 
-                foreach (IPAddressInformation address in properties.UnicastAddresses)
+                foreach (var address in properties.UnicastAddresses)
                 {
                     // We're only interested in IPv4 addresses for now 
                     if (address.Address.AddressFamily != AddressFamily.InterNetwork)

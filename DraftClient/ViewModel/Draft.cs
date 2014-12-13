@@ -8,8 +8,8 @@
 
     public class Draft
     {
-        public long pickEndTime { get; set; }
-        public long pickPauseTime { get; set; }
+        public long PickEndTime { get; set; }
+        public long PickPauseTime { get; set; }
         public int Round { get; set; }
         public int MaxRound { get; set; }
         public int Team { get; set; }
@@ -20,8 +20,8 @@
         {
             MaxRound = rounds;
             MaxTeam = teams;
-            pickEndTime = (DateTime.Now + new TimeSpan(0, 0, 180)).Ticks;
-            pickPauseTime = -1;
+            PickEndTime = (DateTime.Now + new TimeSpan(0, 0, 180)).Ticks;
+            PickPauseTime = -1;
         }
 
         public void StartDraft()
@@ -29,19 +29,19 @@
             Round = 1;
             Team = 1;
             Drafting = true;
-            pickEndTime = (DateTime.Now + new TimeSpan(0, 0, 180)).Ticks;
-            pickPauseTime = -1;
+            PickEndTime = (DateTime.Now + new TimeSpan(0, 0, 180)).Ticks;
+            PickPauseTime = -1;
         }
 
         public void PauseDraft()
         {
-            pickPauseTime = DateTime.Now.Ticks;
+            PickPauseTime = DateTime.Now.Ticks;
         }
 
         public void ResumeDraft()
         {
-            pickPauseTime = -1;
-            pickEndTime = (pickEndTime - pickPauseTime) + DateTime.Now.Ticks;
+            PickPauseTime = -1;
+            PickEndTime = (PickEndTime - PickPauseTime) + DateTime.Now.Ticks;
         }
 
         public void NextPick()
@@ -61,8 +61,8 @@
 
         private void EndDraft()
         {
-            pickEndTime = -1;
-            pickPauseTime = -1;
+            PickEndTime = -1;
+            PickPauseTime = -1;
             Drafting = false;
         }
     }

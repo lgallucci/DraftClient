@@ -39,7 +39,7 @@
             }
 
             storage = value;
-            this.OnPropertyChanged(propertyName);
+            if (propertyName != null) this.OnPropertyChanged(propertyName);
             return true;
         }
 

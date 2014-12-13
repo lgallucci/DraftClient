@@ -33,7 +33,7 @@
         <DataGrid Grid.Row="1" Name="dataGrid1" ItemsSource="{Binding Source={StaticResource cvsPlayers}}" AutoGenerateColumns="False" 
                   IsReadOnly="True" HorizontalScrollBarVisibility="Hidden" >
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ADP" FontSize="12" Binding="{Binding ADP}" Width="*" />
+                <DataGridTextColumn Header="AverageDraftPosition" FontSize="12" Binding="{Binding AverageDraftPosition}" Width="*" />
                 <DataGridTextColumn Header="Player Name" FontSize="12" Binding="{Binding Name}" Width="2*" />
                 <DataGridTextColumn Header="Position" FontSize="12" Binding="{Binding Position, Converter={StaticResource EnumConverter}}" Width="*" />
                 <DataGridTextColumn Header="Team" FontSize="12" Binding="{Binding Team}" Width="*" />

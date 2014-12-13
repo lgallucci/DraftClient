@@ -32,7 +32,7 @@
                             <TextBlock Text="{Binding Path=Position, StringFormat=' {0}'}" FontSize="10" />
                         </WrapPanel>
                         <WrapPanel>
-                            <TextBlock Text="{Binding Path=ADP, StringFormat='ADP: {0} -'}" FontSize="10" />
+                            <TextBlock Text="{Binding Path=AverageDraftPosition, StringFormat='AverageDraftPosition: {0} -'}" FontSize="10" />
                             <TextBlock Text="{Binding Path=ByeWeek, StringFormat=' Bye: {0}'}" FontSize="10" />
                         </WrapPanel>
                     </StackPanel>
@@ -74,8 +74,8 @@
             </wpf:AutoCompleteTextBox>
             <DockPanel Visibility="{Binding Path=Name, Converter={StaticResource StringLengthToVisibilityConverter}}" HorizontalAlignment="Stretch" VerticalAlignment="Center">
                 <StackPanel DockPanel.Dock="Left">
-                    <TextBlock Text="ADP" FontSize="10" Margin="2" Foreground="{StaticResource Brush03}" />
-                    <TextBlock Text="{Binding Path=DraftedPlayer.ADP}" FontSize="20" Foreground="{StaticResource Brush03}" />
+                    <TextBlock Text="AverageDraftPosition" FontSize="10" Margin="2" Foreground="{StaticResource Brush03}" />
+                    <TextBlock Text="{Binding Path=DraftedPlayer.AverageDraftPosition}" FontSize="20" Foreground="{StaticResource Brush03}" />
                 </StackPanel>
                 <StackPanel DockPanel.Dock="Right" Margin="2">
                     <TextBlock Text="Bye" FontSize="10" Foreground="{StaticResource Brush03}" />

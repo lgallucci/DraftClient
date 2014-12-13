@@ -10,18 +10,16 @@
     using System.Windows.Threading;
     using System.Xml.Serialization;
 
-    public class AppController
+    public class SetupController
     {
-        public void SubscribeToMessages(ObservableCollection<ViewModel.DraftServer> Servers)
+        public void SubscribeToMessages(ObservableCollection<ViewModel.DraftServer> Servers, Client client)
         {
-            Client _client = new Client();
-
             Dispatcher dispatch = Dispatcher.CurrentDispatcher;
 
-            _client.ListenForServers((o) =>
+            client.ListenForServers((o) =>
             {
                 var server = new XmlSerializer(typeof(ViewModel.DraftServer)).Deserialize(new MemoryStream(o)) as DraftClient.ViewModel.DraftServer;
-                var matchedServer = Servers.FirstOrDefault(s => s.ipAddress == server.ipAddress && s.ipPort == server.ipPort);
+                var matchedServer = Servers.FirstOrDefault(s => s.IpAddress == server.IpAddress && s.IpPort == server.IpPort);
 
                 if (matchedServer != default(ViewModel.DraftServer))
                 {

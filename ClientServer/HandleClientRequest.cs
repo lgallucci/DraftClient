@@ -7,7 +7,7 @@
     public class HandleClientRequest
     {
         readonly TcpClient _clientSocket;
-        NetworkStream _networkStream = null;
+        NetworkStream _networkStream;
         public HandleClientRequest(TcpClient clientConnected)
         {
             this._clientSocket = clientConnected;
@@ -28,34 +28,27 @@
         private void ReadCallback(IAsyncResult result)
         {
             NetworkStream networkStream = _clientSocket.GetStream();
-            try
+            int read = networkStream.EndRead(result);
+            if (read == 0)
             {
-                int read = networkStream.EndRead(result);
-                if (read == 0)
-                {
-                    _networkStream.Close();
-                    _clientSocket.Close();
-                    return;
-                }
-
-                var buffer = result.AsyncState as byte[];
-                if (buffer != null)
-                {
-                    string data = Encoding.Default.GetString(buffer, 0, read);
-
-                    //do the job with the data here
-                    //send the data back to client.
-                    Byte[] sendBytes = Encoding.ASCII.GetBytes("Processed " + data);
-                    networkStream.Write(sendBytes, 0, sendBytes.Length);
-                }
-                networkStream.Flush();
-            }
-            catch
-            {
-                throw;
+                _networkStream.Close();
+                _clientSocket.Close();
+                return;
             }
 
-            this.WaitForRequest();
+            var buffer = result.AsyncState as byte[];
+            if (buffer != null)
+            {
+                string data = Encoding.Default.GetString(buffer, 0, read);
+
+                //do the job with the data here
+                //send the data back to client.
+                Byte[] sendBytes = Encoding.ASCII.GetBytes("Processed " + data);
+                networkStream.Write(sendBytes, 0, sendBytes.Length);
+            }
+            networkStream.Flush();
+
+            WaitForRequest();
         }
     }
 }

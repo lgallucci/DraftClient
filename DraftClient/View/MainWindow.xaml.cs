@@ -1,32 +1,30 @@
-﻿using ClientServer;
-using DraftClient.Controllers;
-using DraftClient.View;
-using DraftClient.ViewModel;
-using DraftEntities;
-using FileReader;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-
-namespace DraftClient
+﻿namespace DraftClient.View
 {
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.ComponentModel;
+    using System.IO;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using System.Windows;
+    using System.Windows.Controls;
+    using Controllers;
+    using DraftEntities;
+    using FileReader;
+    using ViewModel;
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
-        public static PlayerList playerList = new PlayerList();
-        private readonly AppController _appController;
+        public static PlayerList PlayerList = new PlayerList();
+        readonly DraftController _draftController;
 
-        public MainWindow(AppController appController)
+        public MainWindow(DraftController draftController)
         {
             InitializeComponent();
-            _appController = appController;
+            _draftController = draftController;
         }
 
         private void OnClosing(object sender, CancelEventArgs e)
@@ -39,20 +37,33 @@ namespace DraftClient
             }
         }
 
+        public bool JoinDraft()
+        {
+            _draftController.OnPickMade += PickMade;
+
+            return true;
+        }
+
+        public void PickMade(PickEventArgs e)
+        {
+            PlayerPresentation pick = PlayerList.Players.FirstOrDefault(p => p.AverageDraftPosition == e.AverageDraftPosition);
+
+        }
+
         public bool SetupDraft(DraftSettings settings)
         {
-            var server = new Server(settings.LeagueName, settings.NumberOfTeams);
-            server.StartServer();
-            SetupGrid(settings);
             try
             {
-                LoadPlayers(settings.PlayerFile);
+                LoAverageDraftPositionlayers(settings.PlayerFile);
+                SetupGrid(settings);
+                _draftController.IsServer = true;
             }
             catch (IOException)
             {
                 MessageBox.Show("Couldn't find or read the players file.  Please enter a valid file location in the box.");
                 return false;
             }
+
             return true;
         }
 
@@ -85,8 +96,7 @@ namespace DraftClient
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     Text = "Round " + i,
-                    FontFamily = new System.Windows.Media.FontFamily("Franklin Gothic Medium"),
-                    FontSize = 16
+                    Name = "Round" + i
                 };
                 this.PicksGrid.Children.Add(roundBlock);
                 Grid.SetColumn(roundBlock, 0);
@@ -98,7 +108,8 @@ namespace DraftClient
                 var teamBlock = new FantasyTeam()
                 {
                     VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalAlignment = HorizontalAlignment.Center
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    TeamNumber = i
                 };
                 teamBlock.SetText("Team " + i);
                 this.PicksGrid.Children.Add(teamBlock);
@@ -114,34 +125,35 @@ namespace DraftClient
                     this.PicksGrid.Children.Add(newRound);
                     Grid.SetRow(newRound, i);
                     Grid.SetColumn(newRound, j);
+                    newRound.Round = i;
+                    newRound.Team = j;
                 }
             }
         }
 
-        private void LoadPlayers(string playerFile)
+        private async void LoAverageDraftPositionlayers(string playerFile)
         {
             List<Player> players = DraftFileHandler.ReadFile(playerFile);
-            var presentationPlayers = new List<PlayerPresentation>();
 
-            foreach (Player player in players)
+            PlayerList.Players = await Task.Run(() =>
             {
-                presentationPlayers.Add(new PlayerPresentation
+                var presentationPlayers = new List<PlayerPresentation>();
+
+                foreach (Player player in players)
                 {
-                    ADP = player.ADP,
-                    Name = player.Name,
-                    Position = player.Position,
-                    Team = player.Team,
-                    ByeWeek = player.ByeWeek,
-                    YahooADP = player.YahooADP,
-                    ESPNADP = player.ESPNADP,
-                    CBSADP = player.CBSADP,
-                    ProjectedPoints = player.ProjectedPoints,
-                    IsPicked = false
-                });
-            }
-
-            playerList.Players = new ObservableCollection<PlayerPresentation>(presentationPlayers);
+                    presentationPlayers.Add(new PlayerPresentation
+                    {
+                        AverageDraftPosition = player.AverageDraftPosition,
+                        Name = player.Name,
+                        Position = player.Position,
+                        Team = player.Team,
+                        ByeWeek = player.ByeWeek,
+                        ProjectedPoints = player.ProjectedPoints,
+                        IsPicked = false
+                    });
+                }
+                return new ObservableCollection<PlayerPresentation>(presentationPlayers);
+            });
         }
-
     }
 }

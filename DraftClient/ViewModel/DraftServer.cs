@@ -45,7 +45,7 @@
         }
 
         private string _ipAddress;
-        public string ipAddress
+        public string IpAddress
         {
             get
             {
@@ -58,7 +58,7 @@
         }
 
         private int _ipPort;
-        public int ipPort
+        public int IpPort
         {
             get
             {

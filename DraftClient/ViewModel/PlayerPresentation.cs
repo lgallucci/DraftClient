@@ -8,23 +8,20 @@
 
     public class PlayerPresentation : BindableBase
     {
-        private int _adp;
+        private int _averageDraftPosition;
         private string _name;
         private PlayerPosition _position;
         private string _team;
         private int _byeWeek;
-        private int _yahooADP;
-        private int _eSPNADP;
-        private int _cBSADP;
         private decimal _projectedPoints;
         private bool _isPicked;
 
-        public int ADP
+        public int AverageDraftPosition
         {
-            get { return this._adp; }
+            get { return this._averageDraftPosition; }
             set
             {
-                SetProperty(ref this._adp, value);
+                SetProperty(ref this._averageDraftPosition, value);
             }
         }
         public string Name
@@ -57,30 +54,6 @@
             set
             {
                 SetProperty(ref this._byeWeek, value);
-            }
-        }
-        public int YahooADP
-        {
-            get { return this._yahooADP; }
-            set
-            {
-                SetProperty(ref this._yahooADP, value);
-            }
-        }
-        public int ESPNADP
-        {
-            get { return this._eSPNADP; }
-            set
-            {
-                SetProperty(ref this._eSPNADP, value);
-            }
-        }
-        public int CBSADP
-        {
-            get { return this._cBSADP; }
-            set
-            {
-                SetProperty(ref this._cBSADP, value);
             }
         }
         public decimal ProjectedPoints
