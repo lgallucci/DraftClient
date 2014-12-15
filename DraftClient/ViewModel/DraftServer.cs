@@ -1,7 +1,6 @@
 ﻿namespace DraftClient.ViewModel
 {
     using System;
-    using System.Net;
 
     public class DraftServer : BindableBase
     {

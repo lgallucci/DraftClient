@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace DraftClient.View
+namespace DraftEntities.View
 {
     /// <summary>
     /// Interaction logic for FantasyTeam.xaml

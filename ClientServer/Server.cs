@@ -1,22 +1,22 @@
 ﻿namespace ClientServer
 {
     using System;
-    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.IO;
     using System.Linq;
     using System.Net;
     using System.Net.NetworkInformation;
     using System.Net.Sockets;
+    using System.Runtime.Serialization.Formatters.Binary;
     using System.Threading;
     using System.Threading.Tasks;
-    using System.Xml.Serialization;
     using DraftEntities;
 
     public class Server : Client
     {
         private readonly string _leagueName;
         private readonly int _numberOfTeams;
-        private readonly Dictionary<int, ClientConnections> _connections;
+        public readonly Collection<SocketClient> Connections;
         private static TcpListener _listener;
         private readonly int _port;
 
@@ -24,7 +24,7 @@
         {
             _leagueName = leagueName;
             _numberOfTeams = numberOfTeams;
-            _connections = new Dictionary<int, ClientConnections>();
+            Connections = new Collection<SocketClient>();
             _port = 11000;
         }
 
@@ -32,8 +32,7 @@
         {
             var udpclient = new UdpClient();
             IsRunning = true;
-            byte[] requestData;
-            var xmlSerializer = new XmlSerializer(typeof(DraftServer));
+            var formatter = new BinaryFormatter();
             var ipAddress = GetFirstIpAddress();
 
             Task.Run(() =>
@@ -42,27 +41,28 @@
                 _listener.Start();
                 WaitForClientConnect();
             });
-             
+
             Task.Run(() =>
             {
                 IPAddress multicastaddress = IPAddress.Parse("239.0.0.222");
                 udpclient.JoinMulticastGroup(multicastaddress);
-                IPEndPoint remoteep = new IPEndPoint(multicastaddress, _port);
+                var remoteep = new IPEndPoint(multicastaddress, _port);
 
                 while (IsRunning)
                 {
                     var draftServer = new DraftServer()
                     {
                         FantasyDraft = _leagueName,
-                        ConnectedPlayers = _connections.Count((x) => x.Value.TcpClient.Connected),
+                        ConnectedPlayers = Connections.Count((x) => x.LoggedIn),
                         MaxPlayers = _numberOfTeams,
                         IpAddress = ipAddress,
                         IpPort = _port
                     };
 
+                    byte[] requestData;
                     using (var memoryStream = new MemoryStream())
                     {
-                        xmlSerializer.Serialize(memoryStream, draftServer);
+                        formatter.Serialize(memoryStream, new NetworkMessage { MessageType = NetworkMessageType.BroadcastMessage, MessageContent = draftServer });
                         requestData = memoryStream.ToArray();
                     }
 
@@ -76,9 +76,11 @@
         public void StopServer()
         {
             IsRunning = false;
+            foreach (var connection in Connections)
+            {
+                connection.SendMessage(new NetworkMessage());
+            }
         }
-
-        //ListenForMessages
 
         private void WaitForClientConnect()
         {
@@ -90,7 +92,7 @@
         {
             TcpClient clientSocket = default(TcpClient);
             clientSocket = _listener.EndAcceptTcpClient(asyn);
-            var clientReq = new HandleClientRequest(clientSocket);
+            var clientReq = new SocketClient(clientSocket);
             clientReq.StartClient();
 
             WaitForClientConnect();

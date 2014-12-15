@@ -1,5 +1,6 @@
 ﻿namespace ServerTest
 {
+    using System.Threading;
     using ClientServer;
     using System;
 
@@ -8,8 +9,16 @@
         static void Main(string[] args)
         {
             var server = new Server("Test Fantasy League", 12);
-            Console.WriteLine(server.GetFirstIpAddress());
+            
             server.StartServer();
+
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine(server.GetFirstIpAddress());
+                Console.WriteLine("Users Connected: " + server.Connections.Count);
+                Thread.Sleep(2000);
+            }
         }
     }
 }

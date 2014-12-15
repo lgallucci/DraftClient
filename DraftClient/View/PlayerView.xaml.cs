@@ -1,9 +1,10 @@
-﻿using DraftClient.ViewModel;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace DraftClient.View
+namespace DraftEntities.View
 {
+    using DraftClient.ViewModel;
+
     /// <summary>
     /// Interaction logic for PlayerView.xaml
     /// </summary>

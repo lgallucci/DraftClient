@@ -40,8 +40,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client.cs" />
-    <Compile Include="ClientConnections.cs" />
-    <Compile Include="HandleClientRequest.cs" />
+    <Compile Include="NetworkMessage.cs" />
+    <Compile Include="ServerDelegates.cs" />
+    <Compile Include="SocketClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server.cs" />
   </ItemGroup>

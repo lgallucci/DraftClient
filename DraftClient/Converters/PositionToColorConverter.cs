@@ -1,4 +1,4 @@
-﻿namespace DraftClient.Converters
+﻿namespace DraftEntities.Converters
 {
     using DraftEntities;
     using System;

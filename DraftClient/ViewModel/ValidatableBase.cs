@@ -1,7 +1,6 @@
 ﻿namespace DraftClient.ViewModel
 {
     using System;
-    using System.IO.Packaging;
     using System.Runtime.CompilerServices;
 
     public abstract class ValidatableBase : BindableBase

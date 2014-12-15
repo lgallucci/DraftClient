@@ -1,27 +1,29 @@
 ﻿namespace DraftClient.Controllers
 {
-    using ClientServer;
     using System;
     using System.Collections.ObjectModel;
-    using System.IO;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Threading;
-    using System.Xml.Serialization;
+    using ClientServer;
+    using DraftClient.ViewModel;
+    using Omu.ValueInjecter;
 
     public class SetupController
     {
-        public void SubscribeToMessages(ObservableCollection<ViewModel.DraftServer> servers, Client client)
+        public void SubscribeToMessages(ObservableCollection<DraftServer> servers, Client client)
         {
             Dispatcher dispatch = Dispatcher.CurrentDispatcher;
 
             client.ListenForServers((o) =>
             {
-                var server = new XmlSerializer(typeof(ViewModel.DraftServer)).Deserialize(new MemoryStream(o)) as ViewModel.DraftServer;
-                var matchedServer = servers.FirstOrDefault(s => server != null && (s.IpAddress == server.IpAddress && s.IpPort == server.IpPort));
+                var server = new DraftServer();
 
-                if (matchedServer != default(ViewModel.DraftServer))
+                server.InjectFrom(o);
+                var matchedServer = servers.FirstOrDefault(s => s.IpAddress == server.IpAddress && s.IpPort == server.IpPort);
+
+                if (matchedServer != default(DraftServer))
                 {
                     dispatch.Invoke(() => matchedServer.Timeout = DateTime.Now.AddSeconds(7));
                 }
@@ -29,11 +31,8 @@
                 {
                     dispatch.Invoke(() =>
                     {
-                        if (server != null)
-                        {
-                            server.Timeout = DateTime.Now.AddSeconds(7);
-                            servers.Add(server);
-                        }
+                        server.Timeout = DateTime.Now.AddSeconds(7);
+                        servers.Add(server);
                     });
                 }
             });

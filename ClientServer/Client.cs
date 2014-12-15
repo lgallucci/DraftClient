@@ -1,9 +1,12 @@
 ﻿namespace ClientServer
 {
     using System;
+    using System.IO;
     using System.Net;
     using System.Net.Sockets;
+    using System.Runtime.Serialization.Formatters.Binary;
     using System.Threading.Tasks;
+    using DraftEntities;
 
     public class Client
     {
@@ -19,7 +22,7 @@
             IsRunning = true;
         }
 
-        public void ListenForServers(Action<byte[]> serverPingCallback)
+        public void ListenForServers(Action<DraftServer> serverPingCallback)
         {
             ServerListener = Task.Run(() =>
             {
@@ -40,7 +43,13 @@
                 {
                     var serverBroadcastData = _client.Receive(ref localEp);
 
-                    serverPingCallback(serverBroadcastData);
+                    var formatter = new BinaryFormatter();
+                    var networkMessage = (NetworkMessage)formatter.Deserialize(new MemoryStream(serverBroadcastData));
+
+                    if (networkMessage.MessageType == NetworkMessageType.BroadcastMessage && networkMessage.MessageContent is DraftServer)
+                    {
+                        serverPingCallback(networkMessage.MessageContent as DraftServer);
+                    }
                 }
             });
         }

@@ -1,7 +1,7 @@
-﻿namespace DraftClient.View
+﻿namespace DraftEntities.View
 {
     using System.Windows;
-    using ViewModel;
+    using DraftClient.ViewModel;
 
     /// <summary>
     /// Interaction logic for FantasyRound.xaml

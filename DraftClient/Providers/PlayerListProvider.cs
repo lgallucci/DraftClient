@@ -1,4 +1,4 @@
-﻿namespace DraftClient.Providers
+﻿namespace DraftEntities.Providers
 {
     using DraftClient.ViewModel;
     using System;

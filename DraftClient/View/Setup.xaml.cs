@@ -1,12 +1,12 @@
-﻿namespace DraftClient.View
+﻿namespace DraftEntities.View
 {
     using System.ComponentModel;
     using System.Linq;
     using System.Windows;
     using System.Windows.Controls;
     using ClientServer;
-    using Controllers;
-    using ViewModel;
+    using DraftClient.Controllers;
+    using DraftClient.ViewModel;
 
     /// <summary>
     /// Interaction logic for Setup.xaml

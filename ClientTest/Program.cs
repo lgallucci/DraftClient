@@ -1,9 +1,14 @@
 ﻿namespace ClientTest
 {
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using System.Net;
+    using System.Net.Sockets;
+    using System.Threading;
     using ClientServer;
     using System;
     using System.IO;
-    using System.Net;
     using System.Xml.Serialization;
     using DraftEntities;
 
@@ -11,13 +16,59 @@
     {
         static void Main(string[] args)
         {
-            var client = new Client();
-            client.ListenForServers((o) =>
-            {
-                DraftServer server = new XmlSerializer(typeof(DraftServer)).Deserialize(new MemoryStream(o)) as DraftServer;
+            var servers = new Collection<DraftServer>();
 
-                Console.WriteLine("Recived {0} {1}/{2} from {3}:{4}", server.FantasyDraft, server.ConnectedPlayers, server.MaxPlayers, server.IpAddress, server.IpPort);
+            var client = new Client();
+            client.ListenForServers((server) =>
+            {
+                if (server != null)
+                {
+                    var match = servers.FirstOrDefault(s => s.IpPort == server.IpPort && s.IpAddress == server.IpAddress);
+                    if (match != null)
+                    {
+                        servers[servers.IndexOf(match)] = server;
+                    }
+                    else
+                    {
+                        servers.Add(server);
+                    }
+                }
+
             });
+
+            while (true)
+            {
+                Console.Clear();
+                foreach (var server in servers)
+                {
+                    Console.WriteLine("Server: {0} {1}/{2} from {3}:{4}", server.FantasyDraft, server.ConnectedPlayers, server.MaxPlayers, server.IpAddress, server.IpPort);
+                }
+
+                try
+                {
+                    Console.WriteLine("Please enter your name within the next 5 seconds.");
+                    string key = Reader.ReadLine(5000);
+                    int result = 0;
+                    if (Int32.TryParse(key, out result))
+                    {
+                        if (result < servers.Count)
+                        {
+                            var tcpClient = new TcpClient();
+                            tcpClient.Connect(new IPEndPoint(IPAddress.Parse(servers[result].IpAddress), servers[result].IpPort));
+
+                            while (true)
+                            {
+                                
+                            }
+                        }
+                    }
+                }
+                catch (TimeoutException)
+                {
+                    Console.WriteLine("Sorry, you waited too long.");
+                }
+            }
+            
         }
     }
 }
