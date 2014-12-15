@@ -23,7 +23,7 @@
     </Window.Resources>
 
     <Grid>
-        <ScrollViewer Name="ServerSetup_Viewer" Visibility="Visible">
+        <ScrollViewer Name="ServerSetup_Viewer" Visibility="Collapsed">
             <Grid Background="{StaticResource BackgroundKey}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
@@ -93,11 +93,8 @@
                 </WrapPanel>
             </Grid>
         </ScrollViewer>
-        <ScrollViewer Name="Startup_Viewer" Visibility="Collapsed">
+        <ScrollViewer Name="Startup_Viewer" Visibility="Visible">
             <Grid Background="{StaticResource BackgroundKey}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="3*" />

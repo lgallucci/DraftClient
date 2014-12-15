@@ -12,14 +12,14 @@
 
     public class SetupController
     {
-        public void SubscribeToMessages(ObservableCollection<ViewModel.DraftServer> Servers, Client client)
+        public void SubscribeToMessages(ObservableCollection<ViewModel.DraftServer> servers, Client client)
         {
             Dispatcher dispatch = Dispatcher.CurrentDispatcher;
 
             client.ListenForServers((o) =>
             {
-                var server = new XmlSerializer(typeof(ViewModel.DraftServer)).Deserialize(new MemoryStream(o)) as DraftClient.ViewModel.DraftServer;
-                var matchedServer = Servers.FirstOrDefault(s => s.IpAddress == server.IpAddress && s.IpPort == server.IpPort);
+                var server = new XmlSerializer(typeof(ViewModel.DraftServer)).Deserialize(new MemoryStream(o)) as ViewModel.DraftServer;
+                var matchedServer = servers.FirstOrDefault(s => server != null && (s.IpAddress == server.IpAddress && s.IpPort == server.IpPort));
 
                 if (matchedServer != default(ViewModel.DraftServer))
                 {
@@ -29,8 +29,11 @@
                 {
                     dispatch.Invoke(() =>
                     {
-                        server.Timeout = DateTime.Now.AddSeconds(7);
-                        Servers.Add(server);
+                        if (server != null)
+                        {
+                            server.Timeout = DateTime.Now.AddSeconds(7);
+                            servers.Add(server);
+                        }
                     });
                 }
             });
@@ -39,10 +42,10 @@
             {
                 while (true)
                 {
-                    var itemsToRemove = Servers.Where(s => s.Timeout < DateTime.Now).ToList();
+                    var itemsToRemove = servers.Where(s => s.Timeout < DateTime.Now).ToList();
                     foreach (var item in itemsToRemove)
                     {
-                        dispatch.Invoke(() => Servers.Remove(item));
+                        dispatch.Invoke(() => servers.Remove(item));
                     }
                     Thread.Sleep(1000);
                 }

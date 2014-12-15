@@ -1,24 +1,22 @@
 ﻿namespace DraftClient.View
 {
-    using ClientServer;
-    using DraftClient.Controllers;
-    using DraftClient.ViewModel;
+    using System.ComponentModel;
+    using System.Linq;
     using System.Windows;
     using System.Windows.Controls;
-    using System.Windows.Threading;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using System.Linq;
+    using ClientServer;
+    using Controllers;
+    using ViewModel;
 
     /// <summary>
     /// Interaction logic for Setup.xaml
     /// </summary>
-    public partial class Setup : Window
+    public partial class Setup
     {
-        MainWindow draftWindow;
-        SetupController _setupController;
-        DraftSettings _draftSettings;
+        MainWindow _draftWindow;
+        readonly DraftSettings _draftSettings;
         DraftController _draftController;
+        private SetupController _setupController;
         Client _client;
 
         public Setup()
@@ -31,7 +29,7 @@
 
             _setupController.SubscribeToMessages(_draftSettings.Servers, _client);
 
-            this.DataContext = _draftSettings;
+            DataContext = _draftSettings;
         }
 
         private void StartDraft_Click(object sender, RoutedEventArgs e)
@@ -46,12 +44,12 @@
                 IsServer = true
             };
 
-            draftWindow = new MainWindow(_draftController);
-            if (draftWindow.SetupDraft(this.DataContext as DraftSettings))
+            _draftWindow = new MainWindow(_draftController);
+            if (_draftWindow.SetupDraft(DataContext as DraftSettings))
             {
-                draftWindow.Owner = this;
-                this.Hide();
-                draftWindow.Show();
+                _draftWindow.Owner = this;
+                Hide();
+                _draftWindow.Show();
                 StartButton.Visibility = Visibility.Collapsed;
                 ContinueButton.Visibility = Visibility.Visible;
                 LoadingIndicatorCreate.Visibility = Visibility.Collapsed;
@@ -60,8 +58,8 @@
 
         private void ContinueDraft_Click(object sender, RoutedEventArgs e)
         {
-            this.Hide();
-            draftWindow.Show();
+            Hide();
+            _draftWindow.Show();
         }
 
         private void CreateDraft_Click(object sender, RoutedEventArgs e)
@@ -94,7 +92,7 @@
             LoadingIndicatorJoin.Visibility = Visibility.Collapsed;
         }
 
-        private void ServerBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void ServerBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             SetDraftButtonEnabled();
         }
@@ -104,7 +102,7 @@
             SetDraftButtonEnabled();
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Window_Closing(object sender, CancelEventArgs e)
         {
             Application.Current.Shutdown();
         }

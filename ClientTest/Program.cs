@@ -16,7 +16,7 @@
             {
                 DraftServer server = new XmlSerializer(typeof(DraftServer)).Deserialize(new MemoryStream(o)) as DraftServer;
 
-                Console.WriteLine("Recived {0} {1}/{2} from {3}:{4}", server.FantasyDraft, server.ConnectedPlayers, server.MaxPlayers, server.ipAddress, server.ipPort);
+                Console.WriteLine("Recived {0} {1}/{2} from {3}:{4}", server.FantasyDraft, server.ConnectedPlayers, server.MaxPlayers, server.IpAddress, server.IpPort);
             });
         }
     }

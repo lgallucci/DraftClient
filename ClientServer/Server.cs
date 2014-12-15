@@ -56,8 +56,8 @@
                         FantasyDraft = _leagueName,
                         ConnectedPlayers = _connections.Count((x) => x.Value.TcpClient.Connected),
                         MaxPlayers = _numberOfTeams,
-                        ipAddress = ipAddress,
-                        ipPort = _port
+                        IpAddress = ipAddress,
+                        IpPort = _port
                     };
 
                     using (var memoryStream = new MemoryStream())

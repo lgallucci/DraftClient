@@ -7,7 +7,7 @@ namespace DraftClient.View
     /// <summary>
     /// Interaction logic for FantasyTeam.xaml
     /// </summary>
-    public partial class FantasyTeam : UserControl
+    public partial class FantasyTeam
     {
         public int TeamNumber { get; set; }
 
