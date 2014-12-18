@@ -6,26 +6,24 @@
     using System.Runtime.Serialization.Formatters.Binary;
     using System.Threading;
     using System.Threading.Tasks;
-    using DraftEntities;
+
+    public delegate void HandleMessage(object sender, NetworkMessage e);
+    public delegate void ClientDisconnect(object sender, EventArgs e);
 
     public class SocketClient
     {
         private readonly TcpClient _clientSocket;
         private NetworkStream _networkStream;
-
-        public SocketClient(TcpClient clientConnected)
+        
+        public SocketClient(TcpClient client)
         {
-            this._clientSocket = clientConnected;
+            this._clientSocket = client;
         }
 
         public bool Connected
         {
             get { return _clientSocket.Connected; }
         }
-
-        public bool LoggedIn { get; set; }
-
-        private string _clientName;
 
         public void StartClient()
         {
@@ -48,7 +46,7 @@
                             var formatter = new BinaryFormatter();
                             var networkMessage = (NetworkMessage) formatter.Deserialize(new MemoryStream(message));
 
-                            HandleMessage(networkMessage);
+                            ClientMessage(this, networkMessage);
                         }
                         catch (Exception)
                         {
@@ -57,7 +55,7 @@
                     }
                     Thread.Sleep(50); // i dont want to read all the time
                 }
-                CleanUp();
+                Close();
             });
         }
 
@@ -79,77 +77,38 @@
             });
 
         }
-
-        private void HandleMessage(NetworkMessage networkMessage)
-        {
-            if (networkMessage.MessageType == NetworkMessageType.LoginMessage)
-            {
-                if (networkMessage.MessageContent is String)
-                {
-                    OnClientLogin(this, new ClientLoginEventArgs
-                    {
-                        ClientName = networkMessage.MessageContent as String
-                    });
-                    _clientName = networkMessage.MessageContent as String;
-                    LoggedIn = true;
-                }
-            }
-            else if (networkMessage.MessageType == NetworkMessageType.LogoutMessage)
-            {
-                if (networkMessage.MessageContent is String)
-                {
-                    OnClientLogout(this, new ClientLogoutEventArgs
-                    {
-                        ClientName = networkMessage.MessageContent as String
-                    });
-                    CleanUp();
-                }
-            }
-            else if (networkMessage.MessageType == NetworkMessageType.PickMessage)
-            {
-                if (networkMessage.MessageContent is Player)
-                {
-                    OnClientPick(this, new ClientPickEventArgs
-                    {
-                        Pick = networkMessage.MessageContent as Player
-                    });
-                }
-            }
-        }
-
+        
         public async void SendMessage(NetworkMessage message)
         {
-            await Task.Run(() =>
-            {
-                using (var memoryStream = new MemoryStream())
+                await Task.Run(() =>
                 {
-                    var formatter = new BinaryFormatter();
-                    formatter.Serialize(memoryStream, message);
-                    byte[] output = memoryStream.ToArray();
-
-                    try
+                    using (var memoryStream = new MemoryStream())
                     {
-                        _networkStream.Write(output, 0, output.Length);
-                    }
-                    catch (IOException)
-                    {
-                        OnClientLogout(this, new ClientLogoutEventArgs());
-                        this.CleanUp();
-                    }
+                        var formatter = new BinaryFormatter();
+                        formatter.Serialize(memoryStream, message);
+                        byte[] output = memoryStream.ToArray();
 
-                }
-            });
+                        try
+                        {
+                            _networkStream.Write(output, 0, output.Length);
+                        }
+                        catch (IOException)
+                        {
+                            ClientDisconnect(this, new EventArgs());
+                            this.Close();
+                        }
+                    }
+                });
+
         }
 
-        private void CleanUp()
+        public void Close()
         {
-            LoggedIn = false;
             _networkStream.Close();
             _clientSocket.Close();
         }
 
-        public event ClientLogin OnClientLogin;
-        public event ClientLogout OnClientLogout;
-        public event ClientPick OnClientPick;
+        public event HandleMessage ClientMessage;
+        public event ClientDisconnect ClientDisconnect;
     }
 }

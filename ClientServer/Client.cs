@@ -14,8 +14,9 @@
 
         //Send Messages on Draft Picks
         public Task ServerListener;
-        private UdpClient _client;
+        private UdpClient _updClient;
         protected bool IsRunning;
+        private SocketClient _client;
 
         public Client()
         {
@@ -26,24 +27,24 @@
         {
             ServerListener = Task.Run(() =>
             {
-                _client = new UdpClient
+                _updClient = new UdpClient
                 {
                     ExclusiveAddressUse = false
                 };
 
                 var localEp = new IPEndPoint(IPAddress.Any, Server.Port);
 
-                _client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-                _client.ExclusiveAddressUse = false;
+                _updClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                _updClient.ExclusiveAddressUse = false;
 
-                _client.Client.Bind(localEp);
+                _updClient.Client.Bind(localEp);
 
                 IPAddress multicastaddress = IPAddress.Parse(Server.MulticastAddress);
-                _client.JoinMulticastGroup(multicastaddress);
+                _updClient.JoinMulticastGroup(multicastaddress);
 
                 while (IsRunning)
                 {
-                    var serverBroadcastData = _client.Receive(ref localEp);
+                    var serverBroadcastData = _updClient.Receive(ref localEp);
 
                     var formatter = new BinaryFormatter();
                     var networkMessage = (NetworkMessage)formatter.Deserialize(new MemoryStream(serverBroadcastData));
@@ -56,8 +57,17 @@
             });
         }
 
-        public void ConnectToDraftServer(string ipAdress, string port)
+        public void ConnectToDraftServer(string ipAddress, int port)
         {
+            var _tcpClient = new TcpClient();
+            _tcpClient.Connect(new IPEndPoint(IPAddress.Parse(ipAddress), port));
+            _client = new SocketClient(_tcpClient);
+
+            _client.ClientMessage += HandleMessage;
+            _client.ClientDisconnect += HandleDisconnect;
+
+            _client.StartClient();
+
 
         }
 
@@ -66,13 +76,55 @@
 
         }
 
-        public void Dispose()
+
+        #region Event Handlers
+
+        private void HandleMessage(object sender, NetworkMessage networkMessage)
+        {
+            if (networkMessage.MessageType == NetworkMessageType.LoginMessage)
+            {
+                if (networkMessage.MessageContent is String)
+                {
+                    //TODO: Handle Login
+                }
+            }
+            else if (networkMessage.MessageType == NetworkMessageType.LogoutMessage)
+            {
+                if (networkMessage.MessageContent is String)
+                {
+                    //TODO: Handle Logout
+                }
+            }
+            else if (networkMessage.MessageType == NetworkMessageType.PickMessage)
+            {
+                if (networkMessage.MessageContent is Player)
+                {
+                    //TODO: Handle Pick
+                }
+            }
+        }
+
+        private void HandleDisconnect(object sender, EventArgs e)
+        {
+            //TODO: Handle disconnect
+        }
+
+        #endregion
+
+        public virtual void Close()
         {
             IsRunning = false;
+            if (_updClient != null)
+            {
+                _updClient.Close();
+                _updClient = null;
+            }
+
             if (_client != null)
             {
+                _client.ClientMessage -= HandleMessage;
+                _client.ClientDisconnect -= HandleDisconnect;
                 _client.Close();
-                _client = null;
             }
 
             if (ServerListener != null)

@@ -13,11 +13,18 @@
     using System.Timers;
     using DraftEntities;
 
+    public class ConnectedClient
+    {
+        public SocketClient Client;
+        public bool LoggedIn;
+        public string ClientName;
+    }
+
     public class Server : Client
     {
         private readonly string _leagueName;
         private readonly int _numberOfTeams;
-        public readonly Collection<SocketClient> Connections;
+        public readonly Collection<ConnectedClient> Connections;
         private static TcpListener _listener;
         private readonly int _port;
         private readonly System.Timers.Timer _timKeepAlive;
@@ -29,7 +36,7 @@
         {
             _leagueName = leagueName;
             _numberOfTeams = numberOfTeams;
-            Connections = new Collection<SocketClient>();
+            Connections = new Collection<ConnectedClient>();
             _timKeepAlive = new System.Timers.Timer();
 
             _port = Server.Port;
@@ -84,15 +91,15 @@
             });
         }
 
-        public void StopServer()
+        public override void Close()
         {
             IsRunning = false;
             foreach (var connection in Connections)
             {
-                connection.SendMessage(new NetworkMessage { MessageType = NetworkMessageType.DraftStopMessage });
-                connection.OnClientLogin -= ClientLoginHandler;
-                connection.OnClientLogout -= ClientLogoutHandler;
-                connection.OnClientPick -= ClientPickHandler;
+                connection.Client.SendMessage(new NetworkMessage { MessageType = NetworkMessageType.DraftStopMessage });
+                connection.Client.ClientMessage -= HandleMessage;
+                connection.Client.ClientDisconnect -= HandleDisconnect;
+                connection.Client.Close();
             }
         }
 
@@ -104,17 +111,18 @@
 
         private void OnClientConnect(IAsyncResult asyn)
         {
-            TcpClient clientSocket = default(TcpClient);
-            clientSocket = _listener.EndAcceptTcpClient(asyn);
-            var clientReq = new SocketClient(clientSocket);
+            TcpClient tcpClient = _listener.EndAcceptTcpClient(asyn);
+            var socketClient = new SocketClient(tcpClient);
 
-            clientReq.OnClientLogin += ClientLoginHandler;
-            clientReq.OnClientLogout += ClientLogoutHandler;
-            clientReq.OnClientPick += ClientPickHandler;
+            socketClient.ClientMessage += HandleMessage;
+            socketClient.ClientDisconnect += HandleDisconnect;
 
-            Connections.Add(clientReq);
+            Connections.Add(new ConnectedClient
+            {
+                Client = socketClient
+            });
 
-            clientReq.StartClient();
+            socketClient.StartClient();
 
             WaitForClientConnect();
         }
@@ -123,7 +131,7 @@
         {
             foreach (var connection in Connections)
             {
-                connection.SendMessage(new NetworkMessage
+                connection.Client.SendMessage(new NetworkMessage
                 {
                     MessageType = NetworkMessageType.KeepAliveMessage
                 });
@@ -132,19 +140,34 @@
 
         #region Event Handlers
 
-        private void ClientLoginHandler(object sender, ClientLoginEventArgs e)
+        private void HandleMessage(object sender, NetworkMessage networkMessage)
         {
-            //throw new NotImplementedException();
+            if (networkMessage.MessageType == NetworkMessageType.LoginMessage)
+            {
+                if (networkMessage.MessageContent is String)
+                {
+                    //TODO: Handle Login
+                }
+            }
+            else if (networkMessage.MessageType == NetworkMessageType.LogoutMessage)
+            {
+                if (networkMessage.MessageContent is String)
+                {
+                    //TODO: Handle Logout
+                }
+            }
+            else if (networkMessage.MessageType == NetworkMessageType.PickMessage)
+            {
+                if (networkMessage.MessageContent is Player)
+                {
+                    //TODO: Handle Pick
+                }
+            }
         }
 
-        private void ClientLogoutHandler(object sender, ClientLogoutEventArgs e)
+        private void HandleDisconnect(object sender, EventArgs e)
         {
-            Connections.Remove((SocketClient) sender);
-        }
-
-        private void ClientPickHandler(object sender, ClientPickEventArgs e)
-        {
-            //throw new NotImplementedException();
+            //TODO: Handle disconnect
         }
 
         #endregion

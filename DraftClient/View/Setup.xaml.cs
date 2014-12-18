@@ -72,10 +72,8 @@
         private void CancelDraft_Click(object sender, RoutedEventArgs e)
         {
             _draftSettings.Servers.Remove(_draftSettings.Servers.FirstOrDefault(s => s.FantasyDraft == _draftSettings.LeagueName));
-            if (_client is Server)
-            {
-                ((Server)_client).StopServer();
-            }
+
+            _client.Close();
 
             Startup_Viewer.Visibility = Visibility.Visible;
             ServerSetup_Viewer.Visibility = Visibility.Collapsed;
