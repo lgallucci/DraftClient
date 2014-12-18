@@ -3,6 +3,7 @@
     using System.Threading;
     using ClientServer;
     using System;
+    using System.Linq;
 
     class Program
     {
@@ -16,7 +17,8 @@
             {
                 Console.Clear();
                 Console.WriteLine(server.GetFirstIpAddress());
-                Console.WriteLine("Users Connected: " + server.Connections.Count);
+                Console.WriteLine("Users Connected: " + server.Connections.Count(c => c.Connected));
+                Console.WriteLine("Users Logged In: " + server.Connections.Count(c => c.LoggedIn));
                 Thread.Sleep(2000);
             }
         }

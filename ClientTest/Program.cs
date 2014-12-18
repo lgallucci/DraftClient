@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Net;
     using System.Net.Sockets;
+    using System.Runtime.Serialization.Formatters.Binary;
     using System.Threading;
     using ClientServer;
     using System;
@@ -48,27 +49,35 @@
                 {
                     Console.WriteLine("Please enter your name within the next 5 seconds.");
                     string key = Reader.ReadLine(5000);
-                    int result = 0;
-                    if (Int32.TryParse(key, out result))
-                    {
-                        if (result < servers.Count)
-                        {
-                            var tcpClient = new TcpClient();
-                            tcpClient.Connect(new IPEndPoint(IPAddress.Parse(servers[result].IpAddress), servers[result].IpPort));
 
-                            while (true)
-                            {
-                                
-                            }
-                        }
+                    var tcpClient = new TcpClient();
+                    tcpClient.Connect(new IPEndPoint(IPAddress.Parse(servers[0].IpAddress), servers[0].IpPort));
+
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        string name = key.PadRight(1000, 'a');
+
+                        var formatter = new BinaryFormatter();
+                        formatter.Serialize(memoryStream, new NetworkMessage
+                        {
+                            MessageType = NetworkMessageType.LoginMessage,
+                            MessageContent = name
+                        });
+                        tcpClient.Client.Send(memoryStream.ToArray());
                     }
+
+                    while (true)
+                    {
+
+                    }
+
                 }
                 catch (TimeoutException)
                 {
                     Console.WriteLine("Sorry, you waited too long.");
                 }
             }
-            
+
         }
     }
 }

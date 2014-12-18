@@ -1,9 +1,9 @@
-﻿<Window x:Class="DraftEntities.View.Setup"
+﻿<Window x:Class="DraftClient.View.Setup"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local = "clr-namespace:DraftEntities.Themes.Metro.Dark"
+      xmlns:local = "clr-namespace:DraftClient.Themes.Metro.Dark"
       mc:Ignorable="d" Title="Setup Draft"
       DataContext="DraftClient.ViewModel.DraftSettings" Closing="Window_Closing" ResizeMode="NoResize" Height="400" Width="700">
     <Window.Resources>

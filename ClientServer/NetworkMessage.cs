@@ -5,6 +5,8 @@
     [Serializable]
     public class NetworkMessage
     {
+        public Guid Id { get; set; }
+
         public string Message { get; set; }
 
         public NetworkMessageType MessageType { get; set; }
@@ -21,6 +23,8 @@
         PickMessage = 3,
         
         DraftStartMessage = 4,
-        DraftStop = 5,
+        DraftStopMessage = 5,
+
+        KeepAliveMessage = 6
     }
 }

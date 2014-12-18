@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace DraftEntities.Themes.Metro.Dark
+namespace DraftClient.Themes.Metro.Dark
 {
     /// <summary>
     /// Interaction logic for MetroSpinny.xaml

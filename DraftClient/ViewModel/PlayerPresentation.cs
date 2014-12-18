@@ -1,5 +1,6 @@
 ﻿namespace DraftClient.ViewModel
 {
+    using DraftClient;
     using DraftEntities;
 
     public class PlayerPresentation : BindableBase

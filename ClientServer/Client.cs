@@ -26,17 +26,19 @@
         {
             ServerListener = Task.Run(() =>
             {
-                _client = new UdpClient();
+                _client = new UdpClient
+                {
+                    ExclusiveAddressUse = false
+                };
 
-                _client.ExclusiveAddressUse = false;
-                IPEndPoint localEp = new IPEndPoint(IPAddress.Any, 11000);
+                var localEp = new IPEndPoint(IPAddress.Any, Server.Port);
 
                 _client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
                 _client.ExclusiveAddressUse = false;
 
                 _client.Client.Bind(localEp);
 
-                IPAddress multicastaddress = IPAddress.Parse("239.0.0.222");
+                IPAddress multicastaddress = IPAddress.Parse(Server.MulticastAddress);
                 _client.JoinMulticastGroup(multicastaddress);
 
                 while (IsRunning)

@@ -1,4 +1,4 @@
-﻿namespace DraftEntities.Converters
+﻿namespace DraftClient.Converters
 {
     using System;
     using System.Collections.Generic;

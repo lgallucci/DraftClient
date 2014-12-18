@@ -10,6 +10,7 @@
     using System.Runtime.Serialization.Formatters.Binary;
     using System.Threading;
     using System.Threading.Tasks;
+    using System.Timers;
     using DraftEntities;
 
     public class Server : Client
@@ -19,13 +20,19 @@
         public readonly Collection<SocketClient> Connections;
         private static TcpListener _listener;
         private readonly int _port;
+        private readonly System.Timers.Timer _timKeepAlive;
+
+        public static int Port = 11000;
+        public static string MulticastAddress = "239.0.0.222";
 
         public Server(string leagueName, int numberOfTeams)
         {
             _leagueName = leagueName;
             _numberOfTeams = numberOfTeams;
             Connections = new Collection<SocketClient>();
-            _port = 11000;
+            _timKeepAlive = new System.Timers.Timer();
+
+            _port = Server.Port;
         }
 
         public void StartServer()
@@ -41,10 +48,14 @@
                 _listener.Start();
                 WaitForClientConnect();
             });
+            
+            _timKeepAlive.Elapsed += KeepSocketsAlive;
+            _timKeepAlive.Interval = 2000;
+            _timKeepAlive.Enabled = true;
 
             Task.Run(() =>
             {
-                IPAddress multicastaddress = IPAddress.Parse("239.0.0.222");
+                IPAddress multicastaddress = IPAddress.Parse(Server.MulticastAddress);
                 udpclient.JoinMulticastGroup(multicastaddress);
                 var remoteep = new IPEndPoint(multicastaddress, _port);
 
@@ -78,7 +89,10 @@
             IsRunning = false;
             foreach (var connection in Connections)
             {
-                connection.SendMessage(new NetworkMessage());
+                connection.SendMessage(new NetworkMessage { MessageType = NetworkMessageType.DraftStopMessage });
+                connection.OnClientLogin -= ClientLoginHandler;
+                connection.OnClientLogout -= ClientLogoutHandler;
+                connection.OnClientPick -= ClientPickHandler;
             }
         }
 
@@ -93,11 +107,49 @@
             TcpClient clientSocket = default(TcpClient);
             clientSocket = _listener.EndAcceptTcpClient(asyn);
             var clientReq = new SocketClient(clientSocket);
+
+            clientReq.OnClientLogin += ClientLoginHandler;
+            clientReq.OnClientLogout += ClientLogoutHandler;
+            clientReq.OnClientPick += ClientPickHandler;
+
+            Connections.Add(clientReq);
+
             clientReq.StartClient();
 
             WaitForClientConnect();
         }
 
+        private void KeepSocketsAlive(object sender, ElapsedEventArgs e)
+        {
+            foreach (var connection in Connections)
+            {
+                connection.SendMessage(new NetworkMessage
+                {
+                    MessageType = NetworkMessageType.KeepAliveMessage
+                });
+            }
+        }
+
+        #region Event Handlers
+
+        private void ClientLoginHandler(object sender, ClientLoginEventArgs e)
+        {
+            //throw new NotImplementedException();
+        }
+
+        private void ClientLogoutHandler(object sender, ClientLogoutEventArgs e)
+        {
+            Connections.Remove((SocketClient) sender);
+        }
+
+        private void ClientPickHandler(object sender, ClientPickEventArgs e)
+        {
+            //throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region Helper Methods
         /// <summary> 
         /// This utility function displays all the IP (v4, not v6) addresses of the local computer. 
         /// </summary> 
@@ -110,6 +162,9 @@
             {
                 // Read the IP configuration for each network 
                 IPInterfaceProperties properties = network.GetIPProperties();
+
+                if (network.OperationalStatus != OperationalStatus.Up)
+                    continue;
 
                 // Each network interface may have multiple IP addresses 
                 foreach (var address in properties.UnicastAddresses)
@@ -127,5 +182,6 @@
             }
             return string.Empty;
         }
+        #endregion
     }
 }

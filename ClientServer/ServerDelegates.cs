@@ -2,7 +2,7 @@
 {
     using System;
     using DraftEntities;
-
+    
     public delegate void ClientLogin(object sender, ClientLoginEventArgs e);
     public delegate void ClientLogout(object sender, ClientLogoutEventArgs e);
     public delegate void ClientPick(object sender, ClientPickEventArgs e);

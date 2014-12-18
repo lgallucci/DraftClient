@@ -1,12 +1,13 @@
-﻿namespace DraftEntities.Converters
+﻿namespace DraftClient.Converters
 {
-    using DraftEntities;
+    using DraftClient;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
     using System.Windows.Data;
+    using DraftEntities;
 
     class PositionToColorConverter : IValueConverter
     {

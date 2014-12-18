@@ -1,4 +1,4 @@
-﻿namespace DraftEntities.View
+﻿namespace DraftClient.View
 {
     using System.Windows;
     using DraftClient.ViewModel;
@@ -10,6 +10,7 @@
     {
         public int Round { get; set; }
         public int Team { get; set; }
+        public DraftPick Pick { get; set; }
 
         public FantasyRound()
         {
@@ -18,7 +19,8 @@
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            this.DataContext = new DraftPick();
+            this.DataContext = Pick;
         }
+
     }
 }

@@ -24,6 +24,11 @@
             }
         }
 
+        public bool CanEdit
+        {
+            get; set;
+        }
+
         private PlayerPresentation _draftedPlayer;
         public PlayerPresentation DraftedPlayer
         {

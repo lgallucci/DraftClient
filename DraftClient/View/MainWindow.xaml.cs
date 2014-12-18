@@ -1,4 +1,4 @@
-﻿namespace DraftEntities.View
+﻿namespace DraftClient.View
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
@@ -10,7 +10,6 @@
     using System.Windows.Controls;
     using DraftClient.Controllers;
     using DraftClient.ViewModel;
-    using DraftEntities;
     using DraftEntities;
     using FileReader;
 
@@ -48,16 +47,17 @@
         public void PickMade(PickEventArgs e)
         {
             PlayerPresentation pick = PlayerList.Players.FirstOrDefault(p => p.AverageDraftPosition == e.AverageDraftPosition);
-
         }
 
         public bool SetupDraft(DraftSettings settings)
         {
             try
             {
-                LoAverageDraftPositionlayers(settings.PlayerFile);
-                SetupGrid(settings);
+                _draftController.CurrentDraft = new Draft(settings.TotalRounds, settings.NumberOfTeams, true);
                 _draftController.IsServer = true;
+
+                LoadPlayers(settings.PlayerFile);
+                SetupGrid(settings);
             }
             catch (IOException)
             {
@@ -70,9 +70,6 @@
 
         private void SetupGrid(DraftSettings settings)
         {
-            var numberOfRounds = settings.Quarterbacks + settings.WideRecievers + settings.RunningBacks +
-                settings.FlexWithTightEnd + settings.FlexWithoutTightEnd + settings.TightEnds +
-                settings.Kickers + settings.Defenses + settings.BenchPlayers;
 
             for (int i = 0; i < settings.NumberOfTeams + 1; i++)
             {
@@ -82,7 +79,7 @@
                 });
             }
 
-            for (int i = 0; i < numberOfRounds + 1; i++)
+            for (int i = 0; i < settings.TotalRounds + 1; i++)
             {
                 this.PicksGrid.RowDefinitions.Add(new RowDefinition
                 {
@@ -122,17 +119,20 @@
             {
                 for (int j = 1; j < this.PicksGrid.ColumnDefinitions.Count; j++)
                 {
-                    var newRound = new FantasyRound();
+                    var newRound = new FantasyRound
+                    {
+                        Pick = _draftController.CurrentDraft.Picks[i-1,j-1],
+                        Round = i,
+                        Team = j
+                    };
                     this.PicksGrid.Children.Add(newRound);
                     Grid.SetRow(newRound, i);
                     Grid.SetColumn(newRound, j);
-                    newRound.Round = i;
-                    newRound.Team = j;
                 }
             }
         }
 
-        private async void LoAverageDraftPositionlayers(string playerFile)
+        private async void LoadPlayers(string playerFile)
         {
             List<Player> players = DraftFileHandler.ReadFile(playerFile);
 

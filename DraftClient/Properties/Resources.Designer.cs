@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DraftEntities.Properties
+namespace DraftClient.Properties
 {
 
 

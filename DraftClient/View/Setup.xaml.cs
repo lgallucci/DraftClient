@@ -1,4 +1,4 @@
-﻿namespace DraftEntities.View
+﻿namespace DraftClient.View
 {
     using System.ComponentModel;
     using System.Linq;

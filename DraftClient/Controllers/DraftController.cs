@@ -19,7 +19,6 @@
         public DraftController(Client client)
         {
             Client = client;
-
         }
 
         public void OnMove() //RECEIVE PICK FROM SERVER

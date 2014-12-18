@@ -130,6 +130,14 @@
             }
         }
 
+        public int TotalRounds
+        {
+            get
+            {
+                return Quarterbacks + WideRecievers + RunningBacks + FlexWithTightEnd + FlexWithoutTightEnd + TightEnds + Kickers + Defenses + BenchPlayers;
+            }
+        }
+
         public override bool Validate()
         {
             return this._leagueName.Length > 0

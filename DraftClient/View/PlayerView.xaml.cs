@@ -1,9 +1,10 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace DraftEntities.View
+namespace DraftClient.View
 {
     using DraftClient.ViewModel;
+    using DraftEntities;
 
     /// <summary>
     /// Interaction logic for PlayerView.xaml
@@ -34,27 +35,27 @@ namespace DraftEntities.View
             {
                 switch (player.Position)
                 {
-                    case DraftEntities.PlayerPosition.QB:
+                    case PlayerPosition.QB:
                         if (cbQB.IsChecked.Value) { e.Accepted = true; }
                         else { e.Accepted = false; }
                         break;
-                    case DraftEntities.PlayerPosition.WR:
+                    case PlayerPosition.WR:
                         if (cbWR.IsChecked.Value) { e.Accepted = true; }
                         else { e.Accepted = false; }
                         break;
-                    case DraftEntities.PlayerPosition.RB:
+                    case PlayerPosition.RB:
                         if (cbRB.IsChecked.Value) { e.Accepted = true; }
                         else { e.Accepted = false; }
                         break;
-                    case DraftEntities.PlayerPosition.TE:
+                    case PlayerPosition.TE:
                         if (cbTE.IsChecked.Value) { e.Accepted = true; }
                         else { e.Accepted = false; }
                         break;
-                    case DraftEntities.PlayerPosition.K:
+                    case PlayerPosition.K:
                         if (cbK.IsChecked.Value) { e.Accepted = true; }
                         else { e.Accepted = false; }
                         break;
-                    case DraftEntities.PlayerPosition.DEF:
+                    case PlayerPosition.DEF:
                         if (cbDEF.IsChecked.Value) { e.Accepted = true; }
                         else { e.Accepted = false; }
                         break;
