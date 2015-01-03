@@ -14,10 +14,10 @@
     {
         private readonly TcpClient _clientSocket;
         private NetworkStream _networkStream;
-        
+
         public SocketClient(TcpClient client)
         {
-            this._clientSocket = client;
+            _clientSocket = client;
         }
 
         public bool Connected
@@ -44,13 +44,13 @@
                         try
                         {
                             var formatter = new BinaryFormatter();
-                            var networkMessage = (NetworkMessage) formatter.Deserialize(new MemoryStream(message));
+                            var networkMessage = (NetworkMessage)formatter.Deserialize(new MemoryStream(message));
 
-                            ClientMessage(this, networkMessage);
+                            if (ClientMessage != null) ClientMessage(this, networkMessage);
                         }
                         catch (Exception)
                         {
-                            
+
                         }
                     }
                     Thread.Sleep(50); // i dont want to read all the time
@@ -75,31 +75,37 @@
                 }
                 return input;
             });
-
         }
-        
+
         public async void SendMessage(NetworkMessage message)
         {
-                await Task.Run(() =>
+            await Task.Run(() =>
+            {
+                using (var memoryStream = new MemoryStream())
                 {
-                    using (var memoryStream = new MemoryStream())
-                    {
-                        var formatter = new BinaryFormatter();
-                        formatter.Serialize(memoryStream, message);
-                        byte[] output = memoryStream.ToArray();
+                    var formatter = new BinaryFormatter();
+                    formatter.Serialize(memoryStream, message);
+                    byte[] output = memoryStream.ToArray();
 
-                        try
+                    try
+                    {
+                        if (_networkStream.CanWrite)
                         {
                             _networkStream.Write(output, 0, output.Length);
                         }
-                        catch (IOException)
+                        else
                         {
-                            ClientDisconnect(this, new EventArgs());
-                            this.Close();
+                            if (ClientDisconnect != null) ClientDisconnect(this, new EventArgs());
+                            Close();
                         }
                     }
-                });
-
+                    catch (IOException)
+                    {
+                        if (ClientDisconnect != null) ClientDisconnect(this, new EventArgs());
+                        Close();
+                    }
+                }
+            });
         }
 
         public void Close()

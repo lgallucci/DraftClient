@@ -10,9 +10,6 @@
 
     public class Client
     {
-        //Listen for Draft Messages
-
-        //Send Messages on Draft Picks
         public Task ServerListener;
         private UdpClient _updClient;
         protected bool IsRunning;
@@ -57,25 +54,21 @@
             });
         }
 
+        //Listen for Draft Messages
+
+        //Send Messages on Draft Picks
+
         public void ConnectToDraftServer(string ipAddress, int port)
         {
-            var _tcpClient = new TcpClient();
-            _tcpClient.Connect(new IPEndPoint(IPAddress.Parse(ipAddress), port));
-            _client = new SocketClient(_tcpClient);
+            var tcpClient = new TcpClient();
+            tcpClient.Connect(new IPEndPoint(IPAddress.Parse(ipAddress), port));
+            _client = new SocketClient(tcpClient);
 
             _client.ClientMessage += HandleMessage;
             _client.ClientDisconnect += HandleDisconnect;
 
             _client.StartClient();
-
-
         }
-
-        public void ReceiveDraftServerMessage()
-        {
-
-        }
-
 
         #region Event Handlers
 

@@ -24,13 +24,13 @@
     {
         private readonly string _leagueName;
         private readonly int _numberOfTeams;
-        public readonly Collection<ConnectedClient> Connections;
         private static TcpListener _listener;
         private readonly int _port;
         private readonly System.Timers.Timer _timKeepAlive;
 
         public static int Port = 11000;
         public static string MulticastAddress = "239.0.0.222";
+        public readonly Collection<ConnectedClient> Connections;
 
         public Server(string leagueName, int numberOfTeams)
         {
@@ -38,8 +38,7 @@
             _numberOfTeams = numberOfTeams;
             Connections = new Collection<ConnectedClient>();
             _timKeepAlive = new System.Timers.Timer();
-
-            _port = Server.Port;
+            _port = Port;
         }
 
         public void StartServer()
@@ -55,14 +54,14 @@
                 _listener.Start();
                 WaitForClientConnect();
             });
-            
+
             _timKeepAlive.Elapsed += KeepSocketsAlive;
             _timKeepAlive.Interval = 2000;
             _timKeepAlive.Enabled = true;
 
             Task.Run(() =>
             {
-                IPAddress multicastaddress = IPAddress.Parse(Server.MulticastAddress);
+                IPAddress multicastaddress = IPAddress.Parse(MulticastAddress);
                 udpclient.JoinMulticastGroup(multicastaddress);
                 var remoteep = new IPEndPoint(multicastaddress, _port);
 
@@ -71,7 +70,7 @@
                     var draftServer = new DraftServer()
                     {
                         FantasyDraft = _leagueName,
-                        ConnectedPlayers = Connections.Count((x) => x.LoggedIn),
+                        ConnectedPlayers = Connections.Count((x) => x.LoggedIn) + 1,
                         MaxPlayers = _numberOfTeams,
                         IpAddress = ipAddress,
                         IpPort = _port
@@ -146,15 +145,17 @@
             {
                 if (networkMessage.MessageContent is String)
                 {
-                    //TODO: Handle Login
+                    ConnectedClient connection = Connections.FirstOrDefault(c => c.Client == (SocketClient)sender);
+                    if (connection != null)
+                    {
+                        connection.LoggedIn = true;
+                        connection.ClientName = networkMessage.MessageContent.ToString();
+                    }
                 }
             }
             else if (networkMessage.MessageType == NetworkMessageType.LogoutMessage)
             {
-                if (networkMessage.MessageContent is String)
-                {
-                    //TODO: Handle Logout
-                }
+                Logout((SocketClient)sender);
             }
             else if (networkMessage.MessageType == NetworkMessageType.PickMessage)
             {
@@ -167,7 +168,16 @@
 
         private void HandleDisconnect(object sender, EventArgs e)
         {
-            //TODO: Handle disconnect
+            Logout((SocketClient)sender);
+        }
+
+        private void Logout(SocketClient sender)
+        {
+            ConnectedClient connection = Connections.FirstOrDefault(c => c.Client == sender);
+            if (connection != null)
+            {
+                Connections.Remove(connection);
+            }
         }
 
         #endregion

@@ -1,7 +1,7 @@
 ﻿namespace DraftClient.Controllers
 {
     using ClientServer;
-    using DraftClient.ViewModel;
+    using ViewModel;
 
     public delegate void PickEventHandler(PickEventArgs e);
 
