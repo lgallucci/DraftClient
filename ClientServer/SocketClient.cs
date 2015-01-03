@@ -7,14 +7,12 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    public delegate void HandleMessage(object sender, NetworkMessage e);
-    public delegate void ClientDisconnect(object sender, EventArgs e);
 
     public class SocketClient
     {
         private readonly TcpClient _clientSocket;
         private NetworkStream _networkStream;
-
+        
         public SocketClient(TcpClient client)
         {
             _clientSocket = client;
@@ -40,17 +38,20 @@
                     if (_networkStream.CanRead && _networkStream.DataAvailable)
                     {
                         byte[] message = await ReadMessage();
-
+                        NetworkMessage networkMessage = null;
                         try
                         {
                             var formatter = new BinaryFormatter();
-                            var networkMessage = (NetworkMessage)formatter.Deserialize(new MemoryStream(message));
-
-                            if (ClientMessage != null) ClientMessage(this, networkMessage);
+                            networkMessage = (NetworkMessage)formatter.Deserialize(new MemoryStream(message));
                         }
-                        catch (Exception)
+                        catch (Exception e)
                         {
-
+                            SerializeException(this, e);
+                        }
+                            
+                        if (networkMessage != null)
+                        {
+                            ClientMessage(this, networkMessage);
                         }
                     }
                     Thread.Sleep(50); // i dont want to read all the time
@@ -76,19 +77,20 @@
                 return input;
             });
         }
-
+        
         public async void SendMessage(NetworkMessage message)
         {
-            await Task.Run(() =>
-            {
-                using (var memoryStream = new MemoryStream())
+                await Task.Run(() =>
                 {
-                    var formatter = new BinaryFormatter();
-                    formatter.Serialize(memoryStream, message);
-                    byte[] output = memoryStream.ToArray();
-
+                    using (var memoryStream = new MemoryStream())
+                    {
                     try
                     {
+                        var formatter = new BinaryFormatter();
+                        formatter.Serialize(memoryStream, message);
+                        byte[] output = memoryStream.ToArray();
+
+
                         if (_networkStream.CanWrite)
                         {
                             _networkStream.Write(output, 0, output.Length);
@@ -99,13 +101,17 @@
                             Close();
                         }
                     }
-                    catch (IOException)
-                    {
+                        catch (IOException)
+                        {
                         if (ClientDisconnect != null) ClientDisconnect(this, new EventArgs());
                         Close();
+                        }
+                    catch (Exception e)
+                    {
+                        SerializeException(this, e);
                     }
                 }
-            });
+                });
         }
 
         public void Close()
@@ -114,7 +120,13 @@
             _clientSocket.Close();
         }
 
+        public delegate void HandleMessage(object sender, NetworkMessage e);
         public event HandleMessage ClientMessage;
-        public event ClientDisconnect ClientDisconnect;
+
+        public delegate void HandleClientDisconnect(object sender, EventArgs e);
+        public event HandleClientDisconnect ClientDisconnect;
+
+        public delegate void HandleSerializeException(object sender, Exception e);
+        public event HandleSerializeException SerializeException;
     }
 }

@@ -38,6 +38,7 @@
             _numberOfTeams = numberOfTeams;
             Connections = new Collection<ConnectedClient>();
             _timKeepAlive = new System.Timers.Timer();
+
             _port = Port;
         }
 
@@ -54,7 +55,7 @@
                 _listener.Start();
                 WaitForClientConnect();
             });
-
+            
             _timKeepAlive.Elapsed += KeepSocketsAlive;
             _timKeepAlive.Interval = 2000;
             _timKeepAlive.Enabled = true;
@@ -156,7 +157,7 @@
             else if (networkMessage.MessageType == NetworkMessageType.LogoutMessage)
             {
                 Logout((SocketClient)sender);
-            }
+                }
             else if (networkMessage.MessageType == NetworkMessageType.PickMessage)
             {
                 if (networkMessage.MessageContent is Player)
