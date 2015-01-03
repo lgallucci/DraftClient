@@ -12,15 +12,17 @@
 
     public class SetupController
     {
+        public bool IsRunning { get; set; }
+
         public void SubscribeToMessages(ObservableCollection<DraftServer> servers, Client client)
         {
             Dispatcher dispatch = Dispatcher.CurrentDispatcher;
-
-            client.ListenForServers((o) =>
+            
+            client.ListenForServers(o =>
             {
                 var server = new DraftServer();
-
                 server.InjectFrom(o);
+
                 var matchedServer = servers.FirstOrDefault(s => s.IpAddress == server.IpAddress && s.IpPort == server.IpPort);
 
                 if (matchedServer != default(DraftServer))
@@ -39,12 +41,13 @@
 
             Task.Run(() =>
             {
-                while (true)
+                while (IsRunning)
                 {
                     var itemsToRemove = servers.Where(s => s.Timeout < DateTime.Now).ToList();
                     foreach (var item in itemsToRemove)
                     {
-                        dispatch.Invoke(() => servers.Remove(item));
+                        DraftServer item1 = item;
+                        dispatch.Invoke(() => servers.Remove(item1));
                     }
                     Thread.Sleep(1000);
                 }

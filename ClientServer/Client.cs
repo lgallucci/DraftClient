@@ -10,8 +10,6 @@
 
     public class Client
     {
-        //Listen for Draft Messages
-
         //Send Messages on Draft Picks
         public Task ServerListener;
         private UdpClient _updClient;
@@ -23,6 +21,7 @@
             IsRunning = true;
         }
 
+        #region Network Methods
         public void ListenForServers(Action<DraftServer> serverPingCallback)
         {
             ServerListener = Task.Run(() =>
@@ -67,15 +66,8 @@
             _client.ClientDisconnect += HandleDisconnect;
 
             _client.StartClient();
-
-
         }
-
-        public void ReceiveDraftServerMessage()
-        {
-
-        }
-
+        #endregion
 
         #region Event Handlers
 

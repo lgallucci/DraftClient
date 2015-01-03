@@ -16,7 +16,7 @@
         MainWindow _draftWindow;
         readonly DraftSettings _draftSettings;
         DraftController _draftController;
-        private SetupController _setupController;
+        private readonly SetupController _setupController;
         Client _client;
 
         public Setup()
@@ -25,7 +25,10 @@
 
             _client = new Client();
             _draftSettings = new DraftSettings();
-            _setupController = new SetupController();
+            _setupController = new SetupController
+            {
+                IsRunning = true
+            };
 
             _setupController.SubscribeToMessages(_draftSettings.Servers, _client);
 
@@ -85,8 +88,12 @@
         private void JoinDraft_Click(object sender, RoutedEventArgs e)
         {
             LoadingIndicatorJoin.Visibility = Visibility.Visible;
-            DraftServer lbi = ServerListBox.SelectedItem as DraftServer;
-            MessageBox.Show(string.Format("{0} {1}/{2} {3}:{4}", lbi.FantasyDraft, lbi.ConnectedPlayers, lbi.MaxPlayers, lbi.IpAddress, lbi.IpPort));
+            var lbi = ServerListBox.SelectedItem as DraftServer;
+            if (lbi != null)
+            {
+                _client.ConnectToDraftServer(lbi.IpAddress, lbi.IpPort);
+                MessageBox.Show(string.Format("{0} {1}/{2} {3}:{4}", lbi.FantasyDraft, lbi.ConnectedPlayers, lbi.MaxPlayers, lbi.IpAddress, lbi.IpPort));
+            }
             LoadingIndicatorJoin.Visibility = Visibility.Collapsed;
         }
 
@@ -95,20 +102,17 @@
             SetDraftButtonEnabled();
         }
 
-        private void DraftName_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            SetDraftButtonEnabled();
-        }
-
         private void Window_Closing(object sender, CancelEventArgs e)
         {
+            _setupController.IsRunning = false;
+            _draftController = null;
             Application.Current.Shutdown();
         }
 
         private void SetDraftButtonEnabled()
         {
             var lbi = ServerListBox.SelectedItem;
-            if (lbi != null && DraftName.Text.Length > 0)
+            if (lbi != null)
             {
                 JoinDraftButton.IsEnabled = true;
             }

@@ -39,7 +39,7 @@
             Connections = new Collection<ConnectedClient>();
             _timKeepAlive = new System.Timers.Timer();
 
-            _port = Server.Port;
+            _port = Port;
         }
 
         public void StartServer()

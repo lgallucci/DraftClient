@@ -23,7 +23,7 @@
 
         public void OnMove() //RECEIVE PICK FROM SERVER
         {
-
+            OnPickMade(new PickEventArgs() /*{ AverageDraftPosition = }*/);
         }
 
         public void MakeMove() //SEND PICK TO SERVER
