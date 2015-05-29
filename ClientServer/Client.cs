@@ -58,6 +58,10 @@
             });
         }
 
+        //Listen for Draft Messages
+
+        //Send Messages on Draft Picks
+
         public void ConnectToDraftServer(string ipAddress, int port)
         {
             var _tcpClient = new TcpClient();

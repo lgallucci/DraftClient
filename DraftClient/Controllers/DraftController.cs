@@ -4,6 +4,7 @@
     using ClientServer;
     using DraftClient.ViewModel;
     using DraftEntities;
+    using ViewModel;
 
     public class DraftController
     {

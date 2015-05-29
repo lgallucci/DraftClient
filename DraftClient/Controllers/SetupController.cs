@@ -7,7 +7,7 @@
     using System.Threading.Tasks;
     using System.Windows.Threading;
     using ClientServer;
-    using DraftClient.ViewModel;
+    using ViewModel;
     using Omu.ValueInjecter;
 
     public class SetupController

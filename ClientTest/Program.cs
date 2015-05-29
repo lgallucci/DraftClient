@@ -1,16 +1,13 @@
 ﻿namespace ClientTest
 {
-    using System.Collections.Generic;
+    using System;
     using System.Collections.ObjectModel;
+    using System.IO;
     using System.Linq;
     using System.Net;
     using System.Net.Sockets;
     using System.Runtime.Serialization.Formatters.Binary;
-    using System.Threading;
     using ClientServer;
-    using System;
-    using System.IO;
-    using System.Xml.Serialization;
     using DraftEntities;
 
     class Program

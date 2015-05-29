@@ -24,13 +24,13 @@
     {
         private readonly string _leagueName;
         private readonly int _numberOfTeams;
-        public readonly Collection<ConnectedClient> Connections;
         private static TcpListener _listener;
         private readonly int _port;
         private readonly System.Timers.Timer _timKeepAlive;
 
         public static int Port = 11000;
         public static string MulticastAddress = "239.0.0.222";
+        public readonly Collection<ConnectedClient> Connections;
 
         public Server(string leagueName, int numberOfTeams)
         {
@@ -71,7 +71,7 @@
                     var draftServer = new DraftServer
                     {
                         FantasyDraft = _leagueName,
-                        ConnectedPlayers = Connections.Count(x => x.LoggedIn),
+                        ConnectedPlayers = Connections.Count((x) => x.LoggedIn) + 1,
                         MaxPlayers = _numberOfTeams,
                         IpAddress = ipAddress,
                         IpPort = _port
@@ -144,14 +144,19 @@
         {
             if (networkMessage.MessageType == NetworkMessageType.LoginMessage)
             {
-                
+                if (networkMessage.MessageContent is String)
+                {
+                    ConnectedClient connection = Connections.FirstOrDefault(c => c.Client == (SocketClient)sender);
+                    if (connection != null)
+                    {
+                        connection.LoggedIn = true;
+                        connection.ClientName = networkMessage.MessageContent.ToString();
+                }
+                }
             }
             else if (networkMessage.MessageType == NetworkMessageType.LogoutMessage)
             {
-                if (networkMessage.MessageContent is String)
-                {
-                    //TODO: Handle Logout
-                }
+                Logout((SocketClient)sender);
             }
             else if (networkMessage.MessageType == NetworkMessageType.PickMessage)
             {
@@ -160,7 +165,7 @@
                     BroadcastMessage(networkMessage);
                 }
             }
-        }
+                }
 
         private void BroadcastMessage(NetworkMessage networkMessage)
         {
@@ -174,10 +179,17 @@
         {
             Connections.Remove(Connections.FirstOrDefault(c => c.Id == id));
             BroadcastMessage(new NetworkMessage
+        {
+            Logout((SocketClient)sender);
+        }
+
+        private void Logout(SocketClient sender)
+        {
+            ConnectedClient connection = Connections.FirstOrDefault(c => c.Client == sender);
+            if (connection != null)
             {
-                Id = id,
-                MessageType = NetworkMessageType.LogoutMessage
-            });
+                Connections.Remove(connection);
+            }
         }
 
         #endregion

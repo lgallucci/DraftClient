@@ -78,7 +78,6 @@
                 }
                 return input;
             });
-
         }
 
         public async void SendMessage(NetworkMessage message)
@@ -93,11 +92,20 @@
                         formatter.Serialize(memoryStream, message);
                         byte[] output = memoryStream.ToArray();
 
+
+                        if (_networkStream.CanWrite)
+                        {
                         _networkStream.Write(output, 0, output.Length);
+                    }
+                        else
+                        {
+                            if (ClientDisconnect != null) ClientDisconnect(this, new EventArgs());
+                            Close();
+                        }
                     }
                     catch (IOException)
                     {
-                        ClientDisconnect(this, _clientId);
+                        if (ClientDisconnect != null) ClientDisconnect(this, new EventArgs());
                         Close();
                     }
                     catch (Exception e)
