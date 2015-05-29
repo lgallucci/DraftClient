@@ -1,10 +1,8 @@
 ﻿namespace DraftClient.Controllers
 {
-    using System;
     using ClientServer;
     using DraftClient.ViewModel;
     using DraftEntities;
-    using ViewModel;
 
     public class DraftController
     {

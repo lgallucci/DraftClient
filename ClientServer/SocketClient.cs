@@ -12,7 +12,7 @@
     {
         private readonly TcpClient _clientSocket;
         private NetworkStream _networkStream;
-        private Guid _clientId;
+        private readonly Guid _clientId;
 
         public SocketClient(TcpClient client, Guid clientId)
         {
@@ -99,13 +99,13 @@
                     }
                         else
                         {
-                            if (ClientDisconnect != null) ClientDisconnect(this, new EventArgs());
+                            if (ClientDisconnect != null) ClientDisconnect(this, _clientId);
                             Close();
                         }
                     }
                     catch (IOException)
                     {
-                        if (ClientDisconnect != null) ClientDisconnect(this, new EventArgs());
+                        if (ClientDisconnect != null) ClientDisconnect(this, _clientId);
                         Close();
                     }
                     catch (Exception e)

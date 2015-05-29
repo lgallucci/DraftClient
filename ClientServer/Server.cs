@@ -18,6 +18,7 @@
         public SocketClient Client { get; set; }
         public bool LoggedIn { get; set; }
         public Guid Id { get; set; }
+        public string ClientName { get; set; }
     }
 
     public class Server : Client
@@ -55,7 +56,7 @@
                 _listener.Start();
                 WaitForClientConnect();
             });
-            
+
             _timKeepAlive.Elapsed += KeepSocketsAlive;
             _timKeepAlive.Interval = 2000;
             _timKeepAlive.Enabled = true;
@@ -151,7 +152,7 @@
                     {
                         connection.LoggedIn = true;
                         connection.ClientName = networkMessage.MessageContent.ToString();
-                }
+                    }
                 }
             }
             else if (networkMessage.MessageType == NetworkMessageType.LogoutMessage)
@@ -165,7 +166,7 @@
                     BroadcastMessage(networkMessage);
                 }
             }
-                }
+        }
 
         private void BroadcastMessage(NetworkMessage networkMessage)
         {
@@ -179,7 +180,10 @@
         {
             Connections.Remove(Connections.FirstOrDefault(c => c.Id == id));
             BroadcastMessage(new NetworkMessage
-        {
+            {
+                Id = id,
+                MessageType = NetworkMessageType.LogoutMessage
+            });
             Logout((SocketClient)sender);
         }
 

@@ -30,7 +30,8 @@ namespace DraftClient.View
         {
             if (e.Key == Key.Enter)
             {
-                if ((this.MainPanel.Children[0] as TextBox).Text != string.Empty)
+                var textBox = (MainPanel.Children[0] as TextBox);
+                if (textBox != null && textBox.Text != string.Empty)
                 {
                     CreateTextBlock(RemoveElements());
                 }
@@ -39,7 +40,8 @@ namespace DraftClient.View
 
         private void TeamNameEdit_LostFocus(object sender, RoutedEventArgs e)
         {
-            if ((this.MainPanel.Children[0] as TextBox).Text != string.Empty)
+            var textBox = (MainPanel.Children[0] as TextBox);
+            if (textBox != null && textBox.Text != string.Empty)
             {
                 CreateTextBlock(RemoveElements());
             }
@@ -57,7 +59,7 @@ namespace DraftClient.View
             textBox.KeyUp += TeamNameEdit_KeyUp;
             textBox.LostFocus += TeamNameEdit_LostFocus;
 
-            this.MainPanel.Children.Add(textBox);
+            MainPanel.Children.Add(textBox);
 
             textBox.Focus();
             textBox.SelectAll();
@@ -73,25 +75,25 @@ namespace DraftClient.View
                 Text = text
             };
             textBlock.MouseUp += TeamName_MouseUp;
-            this.MainPanel.Children.Add(textBlock);
+            MainPanel.Children.Add(textBlock);
         }
 
         private string RemoveElements()
         {
-            var textBox = this.MainPanel.Children[0] as TextBox;
+            var textBox = MainPanel.Children[0] as TextBox;
             if(textBox != null) 
             {
                 textBox.KeyUp -= TeamNameEdit_KeyUp;
                 textBox.LostFocus -= TeamNameEdit_LostFocus;
-                this.MainPanel.Children.Clear();
+                MainPanel.Children.Clear();
                 return textBox.Text;
             }
             
-            var textBlock = this.MainPanel.Children[0] as TextBlock;
+            var textBlock = MainPanel.Children[0] as TextBlock;
             if (textBlock != null)
             {
                 textBlock.MouseUp -= TeamName_MouseUp;
-                this.MainPanel.Children.Clear();
+                MainPanel.Children.Clear();
                 return textBlock.Text;
             }
 
