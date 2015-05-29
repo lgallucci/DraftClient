@@ -12,10 +12,12 @@
     {
         private readonly TcpClient _clientSocket;
         private NetworkStream _networkStream;
+        private Guid _clientId;
 
-        public SocketClient(TcpClient client)
+        public SocketClient(TcpClient client, Guid clientId)
         {
             _clientSocket = client;
+            _clientId = clientId;
         }
 
         public bool Connected
@@ -95,7 +97,7 @@
                     }
                     catch (IOException)
                     {
-                        ClientDisconnect(this, new EventArgs());
+                        ClientDisconnect(this, _clientId);
                         Close();
                     }
                     catch (Exception e)
@@ -115,7 +117,7 @@
         public delegate void HandleMessage(object sender, NetworkMessage e);
         public event HandleMessage ClientMessage;
 
-        public delegate void HandleClientDisconnect(object sender, EventArgs e);
+        public delegate void HandleClientDisconnect(object sender, Guid id);
         public event HandleClientDisconnect ClientDisconnect;
 
         public delegate void HandleSerializeException(object sender, Exception e);

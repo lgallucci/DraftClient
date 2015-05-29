@@ -7,8 +7,6 @@
     {
         public Guid Id { get; set; }
 
-        public string Message { get; set; }
-
         public NetworkMessageType MessageType { get; set; }
 
         public object MessageContent { get; set; }
@@ -18,13 +16,13 @@
     public enum NetworkMessageType
     {
         BroadcastMessage = 0,
-        LoginMessage = 1,
-        LogoutMessage = 2,
-        PickMessage = 3,
+        KeepAliveMessage = 1,
+        LoginMessage = 2,
+        LogoutMessage = 3,
+        PickMessage = 4,
         
-        DraftStartMessage = 4,
-        DraftStopMessage = 5,
-
-        KeepAliveMessage = 6
+        DraftStartMessage = 5,
+        DraftStopMessage = 6,
+        ChooseTeamMessage = 7
     }
 }

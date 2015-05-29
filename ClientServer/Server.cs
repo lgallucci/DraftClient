@@ -15,9 +15,9 @@
 
     public class ConnectedClient
     {
-        public SocketClient Client;
-        public bool LoggedIn;
-        public string ClientName;
+        public SocketClient Client { get; set; }
+        public bool LoggedIn { get; set; }
+        public Guid Id { get; set; }
     }
 
     public class Server : Client
@@ -62,16 +62,16 @@
 
             Task.Run(() =>
             {
-                IPAddress multicastaddress = IPAddress.Parse(Server.MulticastAddress);
+                IPAddress multicastaddress = IPAddress.Parse(MulticastAddress);
                 udpclient.JoinMulticastGroup(multicastaddress);
                 var remoteep = new IPEndPoint(multicastaddress, _port);
 
                 while (IsRunning)
                 {
-                    var draftServer = new DraftServer()
+                    var draftServer = new DraftServer
                     {
                         FantasyDraft = _leagueName,
-                        ConnectedPlayers = Connections.Count((x) => x.LoggedIn),
+                        ConnectedPlayers = Connections.Count(x => x.LoggedIn),
                         MaxPlayers = _numberOfTeams,
                         IpAddress = ipAddress,
                         IpPort = _port
@@ -112,7 +112,7 @@
         private void OnClientConnect(IAsyncResult asyn)
         {
             TcpClient tcpClient = _listener.EndAcceptTcpClient(asyn);
-            var socketClient = new SocketClient(tcpClient);
+            var socketClient = new SocketClient(tcpClient, _clientId);
 
             socketClient.ClientMessage += HandleMessage;
             socketClient.ClientDisconnect += HandleDisconnect;
@@ -144,10 +144,7 @@
         {
             if (networkMessage.MessageType == NetworkMessageType.LoginMessage)
             {
-                if (networkMessage.MessageContent is String)
-                {
-                    //TODO: Handle Login
-                }
+                
             }
             else if (networkMessage.MessageType == NetworkMessageType.LogoutMessage)
             {
@@ -160,14 +157,27 @@
             {
                 if (networkMessage.MessageContent is Player)
                 {
-                    //TODO: Handle Pick
+                    BroadcastMessage(networkMessage);
                 }
             }
         }
 
-        private void HandleDisconnect(object sender, EventArgs e)
+        private void BroadcastMessage(NetworkMessage networkMessage)
         {
-            //TODO: Handle disconnect
+            foreach (var connection in Connections.Where(c => c.Id != networkMessage.Id))
+            {
+                connection.Client.SendMessage(networkMessage);
+            }
+        }
+
+        private void HandleDisconnect(object sender, Guid id)
+        {
+            Connections.Remove(Connections.FirstOrDefault(c => c.Id == id));
+            BroadcastMessage(new NetworkMessage
+            {
+                Id = id,
+                MessageType = NetworkMessageType.LogoutMessage
+            });
         }
 
         #endregion

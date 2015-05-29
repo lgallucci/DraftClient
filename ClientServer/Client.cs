@@ -1,6 +1,7 @@
 ﻿namespace ClientServer
 {
     using System;
+    using System.Data;
     using System.IO;
     using System.Net;
     using System.Net.Sockets;
@@ -15,10 +16,11 @@
         private UdpClient _updClient;
         protected bool IsRunning;
         private SocketClient _client;
-
+        protected readonly Guid _clientId;
         public Client()
         {
             IsRunning = true;
+            _clientId = Guid.NewGuid();
         }
 
         #region Network Methods
@@ -60,7 +62,7 @@
         {
             var _tcpClient = new TcpClient();
             _tcpClient.Connect(new IPEndPoint(IPAddress.Parse(ipAddress), port));
-            _client = new SocketClient(_tcpClient);
+            _client = new SocketClient(_tcpClient, _clientId);
 
             _client.ClientMessage += HandleMessage;
             _client.ClientDisconnect += HandleDisconnect;
@@ -96,9 +98,19 @@
             }
         }
 
-        private void HandleDisconnect(object sender, EventArgs e)
+        private void HandleDisconnect(object sender, Guid e)
         {
-            //TODO: Handle disconnect
+            
+        }
+
+        public void SendMessage(NetworkMessageType type, object payload)
+        {
+            _client.SendMessage(new NetworkMessage
+            {
+                Id = _clientId,
+                MessageType = type,
+                MessageContent = payload
+            });
         }
 
         #endregion
