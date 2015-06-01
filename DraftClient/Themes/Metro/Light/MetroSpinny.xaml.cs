@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace DraftClient.Themes.Metro.Dark
+namespace DraftClient.Themes.Metro.Light
 {
     /// <summary>
     /// Interaction logic for MetroSpinny.xaml

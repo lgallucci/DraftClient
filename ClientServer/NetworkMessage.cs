@@ -23,6 +23,8 @@
         
         DraftStartMessage = 5,
         DraftStopMessage = 6,
-        ChooseTeamMessage = 7
+        RetrieveTeamsMessage = 7,
+        ChooseTeamMessage = 8
+
     }
 }

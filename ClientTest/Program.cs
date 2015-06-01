@@ -45,27 +45,29 @@
                 try
                 {
                     Console.WriteLine("Please enter your name within the next 5 seconds.");
-                    string key = Reader.ReadLine(5000);
+                    string name = Reader.ReadLine(5000);
 
-                    var tcpClient = new TcpClient();
-                    tcpClient.Connect(new IPEndPoint(IPAddress.Parse(servers[0].IpAddress), servers[0].IpPort));
-
-                    using (var memoryStream = new MemoryStream())
+                    if (!string.IsNullOrWhiteSpace(name))
                     {
-                        string name = key.PadRight(1000, 'a');
+                        var tcpClient = new TcpClient();
+                        tcpClient.Connect(new IPEndPoint(IPAddress.Parse(servers[0].IpAddress), servers[0].IpPort));
 
-                        var formatter = new BinaryFormatter();
-                        formatter.Serialize(memoryStream, new NetworkMessage
+                        using (var memoryStream = new MemoryStream())
                         {
-                            MessageType = NetworkMessageType.LoginMessage,
-                            MessageContent = name
-                        });
-                        tcpClient.Client.Send(memoryStream.ToArray());
-                    }
+                            var formatter = new BinaryFormatter();
+                            formatter.Serialize(memoryStream, new NetworkMessage
+                            {
+                                MessageType = NetworkMessageType.LoginMessage,
+                                MessageContent = name
+                            });
+                            tcpClient.Client.Send(memoryStream.ToArray());
+                            Console.WriteLine("Connected to {0} as {1}", servers[0].FantasyDraft, name);
+                        }
 
-                    while (true)
-                    {
+                        while (true)
+                        {
 
+                        }
                     }
 
                 }

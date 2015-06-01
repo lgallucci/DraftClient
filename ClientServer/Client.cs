@@ -133,11 +133,6 @@
                 _client.ClientDisconnect -= HandleDisconnect;
                 _client.Close();
             }
-
-            if (ServerListener != null)
-            {                
-                ServerListener.Dispose();
-            }
         }
     }
 }

@@ -19,6 +19,7 @@
                 Console.WriteLine(server.GetFirstIpAddress());
                 Console.WriteLine("Users Connected: " + server.Connections.Count(c => c.Client.Connected));
                 Console.WriteLine("Users Logged In: " + server.Connections.Count(c => c.LoggedIn));
+                Console.WriteLine("Users:" + server.Connections.Select(c => c.ClientName).DefaultIfEmpty().Aggregate((a, x) => a + ", " + x));
                 Thread.Sleep(2000);
             }
         }

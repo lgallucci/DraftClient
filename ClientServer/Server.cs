@@ -143,11 +143,11 @@
 
         private void HandleMessage(object sender, NetworkMessage networkMessage)
         {
+            ConnectedClient connection = Connections.FirstOrDefault(c => c.Client == (SocketClient)sender);
             if (networkMessage.MessageType == NetworkMessageType.LoginMessage)
             {
                 if (networkMessage.MessageContent is String)
                 {
-                    ConnectedClient connection = Connections.FirstOrDefault(c => c.Client == (SocketClient)sender);
                     if (connection != null)
                     {
                         connection.LoggedIn = true;
@@ -166,6 +166,19 @@
                     BroadcastMessage(networkMessage);
                 }
             }
+            else if (networkMessage.MessageType == NetworkMessageType.RetrieveTeamsMessage)
+            {
+                //TODO: Get Teams 
+                SendMessage(connection, networkMessage);
+            }
+            else if (networkMessage.MessageType == NetworkMessageType.ChooseTeamMessage)
+            {
+                if (networkMessage.MessageContent is DraftTeam)
+                {
+                    //TODO: Set that person as team
+                    //TODO: Broadcast team chosen message
+                }
+            }
         }
 
         private void BroadcastMessage(NetworkMessage networkMessage)
@@ -174,6 +187,11 @@
             {
                 connection.Client.SendMessage(networkMessage);
             }
+        }
+
+        private void SendMessage(ConnectedClient client, NetworkMessage networkMessage)
+        {
+            client.Client.SendMessage(networkMessage);
         }
 
         private void HandleDisconnect(object sender, Guid id)

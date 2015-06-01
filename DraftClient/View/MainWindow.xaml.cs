@@ -12,13 +12,12 @@
     using DraftClient.ViewModel;
     using DraftEntities;
     using FileReader;
-
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow
     {
-        public static PlayerList PlayerList = new PlayerList();
+        public static ViewModel.PlayerList PlayerList = new ViewModel.PlayerList();
         readonly DraftController _draftController;
 
         public MainWindow(DraftController draftController)
@@ -42,7 +41,7 @@
             return true;
         }
 
-        public bool SetupDraft(DraftSettings settings)
+        public bool SetupDraft(ViewModel.DraftSettings settings)
         {
             try
             {
@@ -61,7 +60,7 @@
             return true;
         }
 
-        private void SetupGrid(DraftSettings settings)
+        private void SetupGrid(ViewModel.DraftSettings settings)
         {
 
             for (int i = 0; i < settings.NumberOfTeams + 1; i++)

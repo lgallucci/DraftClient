@@ -15,17 +15,14 @@
             Client = client;
         }
 
-        public void OnMove() //RECEIVE PICK FROM SERVER
+        public void OnMove() //TODO:RECEIVE PICK FROM SERVER
         {
             //OnPickMade(new PickEventArgs() /*{ AverageDraftPosition = }*/);
         }
 
-        public void MakeMove(Player pick) //SEND PICK TO SERVER
+        public void MakeMove(Player pick) //TODO:SEND PICK TO SERVER
         {
             Client.SendMessage(NetworkMessageType.PickMessage, pick);
         }
-
-        //public delegate void PickEventHandler(PickEventArgs e);
-        //public event PickEventHandler OnPickMade;
     }
 }

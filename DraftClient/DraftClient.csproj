@@ -70,9 +70,6 @@
     <Compile Include="Converters\PositionToColorConverter.cs" />
     <Compile Include="Converters\StringLengthToVisibilityConverter.cs" />
     <Compile Include="Providers\PlayerListProvider.cs" />
-    <Compile Include="Themes\Metro\Dark\MetroSpinny.xaml.cs">
-      <DependentUpon>MetroSpinny.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ViewModel\BindableBase.cs" />
     <Compile Include="ViewModel\Draft.cs" />
     <Compile Include="ViewModel\DraftServer.cs" />
@@ -86,27 +83,27 @@
     <Compile Include="View\Setup.xaml.cs">
       <DependentUpon>Setup.xaml</DependentUpon>
     </Compile>
-    <Page Include="Themes\Metro\Dark\MetroDark.MSControls.Core.Implicit.xaml">
+    <Page Include="Themes\Metro\Light\Metro.MSControls.Core.Implicit.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Themes\Metro\Dark\MetroDark.MSControls.Toolkit.Implicit.xaml">
+    <Page Include="Themes\Metro\Light\Metro.MSControls.Toolkit.Implicit.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Themes\Metro\Dark\MetroSpinny.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Themes\Metro\Dark\Styles.Shared.xaml">
+    <Page Include="Themes\Metro\Light\MetroSpinny.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Themes\Metro\Dark\Styles.WPF.xaml">
+    <Page Include="Themes\Metro\Light\Styles.Shared.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Themes\Metro\Dark\Theme.Colors.xaml">
+    <Page Include="Themes\Metro\Light\Styles.WPF.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Metro\Light\Theme.Colors.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
