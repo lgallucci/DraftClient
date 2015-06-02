@@ -442,13 +442,13 @@
 	<!-- ********************************** CheckBoxStyle **********************************-->
 	<Style x:Key="CheckBoxStyle" TargetType="CheckBox">
 		<Setter Property="Foreground" Value="{StaticResource ForegroundBrush}" />
-		<Setter Property="FontSize" Value="14.667" />
+		<Setter Property="FontSize" Value="12" />
 		<Setter Property="FontFamily" Value="Segoe UI" />
 		<Setter Property="HorizontalContentAlignment" Value="Left" />
 		<Setter Property="VerticalContentAlignment" Value="Center" />
 		<Setter Property="Padding" Value="6,0,0,0" />
-		<Setter Property="MinHeight" Value="30" />
-		<Setter Property="MinWidth" Value="30" />
+		<Setter Property="MinHeight" Value="8" />
+		<Setter Property="MinWidth" Value="8" />
 		<Setter Property="BorderThickness" Value="1" />
 		<Setter Property="Template">
 			<Setter.Value>

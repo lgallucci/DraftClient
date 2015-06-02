@@ -14,11 +14,11 @@
         {
             get
             {
-                return this._players;
+                return _players;
             }
             set
             {
-                SetProperty(ref this._players, value);
+                SetProperty(ref _players, value);
             }
         }
     }

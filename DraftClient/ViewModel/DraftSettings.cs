@@ -1,6 +1,7 @@
 ﻿namespace DraftClient.ViewModel
 {
     using System.Collections.ObjectModel;
+    using DraftEntities;
 
     public class DraftSettings : ValidatableBase
     {
@@ -10,138 +11,139 @@
         private int _wideRecievers = 2;
         private int _runningBacks = 2;
         private int _flexWithTightEnd = 1;
-        private int _flexWithoutTightEnd = 0;
         private int _tightEnds = 1;
         private int _kickers = 1;
         private int _defenses = 1;
         private int _benchPlayers = 4;
         private string _playerFile = @"C:\FantasyPlayerRankings.csv";
         private ObservableCollection<DraftServer> _servers;
+        private ObservableCollection<DraftTeam> _draftTeams;
 
         public string LeagueName
         {
-            get { return this._leagueName; }
+            get { return _leagueName; }
             set
             {
-                SetProperty(ref this._leagueName, value);
+                SetProperty(ref _leagueName, value);
             }
         }
         public int NumberOfTeams
         {
-            get { return this._numberOfTeams; }
+            get { return _numberOfTeams; }
             set
             {
-                SetProperty(ref this._numberOfTeams, value);
+                SetProperty(ref _numberOfTeams, value);
+                DraftTeams.Clear();
+                for(int i = 0; i < _numberOfTeams; i++)
+                {
+                    DraftTeams.Add(new DraftTeam
+                    {
+                        Index = i,
+                        IsConnected = false,
+                        Name = string.Format("Team{0}", i+1)
+                    });
+                }
             }
         }
         public int Quarterbacks
         {
-            get { return this._quarterbacks; }
+            get { return _quarterbacks; }
             set
             {
-                SetProperty(ref this._quarterbacks, value);
+                SetProperty(ref _quarterbacks, value);
             }
         }
         public int WideRecievers
         {
-            get { return this._wideRecievers; }
+            get { return _wideRecievers; }
             set
             {
-                SetProperty(ref this._wideRecievers, value);
+                SetProperty(ref _wideRecievers, value);
             }
         }
         public int RunningBacks
         {
-            get { return this._runningBacks; }
+            get { return _runningBacks; }
             set
             {
-                SetProperty(ref this._runningBacks, value);
+                SetProperty(ref _runningBacks, value);
             }
         }
         public int FlexWithTightEnd
         {
-            get { return this._flexWithTightEnd; }
+            get { return _flexWithTightEnd; }
             set
             {
-                SetProperty(ref this._flexWithTightEnd, value);
-            }
-        }
-        public int FlexWithoutTightEnd
-        {
-            get { return this._flexWithoutTightEnd; }
-            set
-            {
-                SetProperty(ref this._flexWithoutTightEnd, value);
+                SetProperty(ref _flexWithTightEnd, value);
             }
         }
         public int TightEnds
         {
-            get { return this._tightEnds; }
+            get { return _tightEnds; }
             set
             {
-                SetProperty(ref this._tightEnds, value);
+                SetProperty(ref _tightEnds, value);
             }
         }
         public int Kickers
         {
-            get { return this._kickers; }
+            get { return _kickers; }
             set
             {
-                SetProperty(ref this._kickers, value);
+                SetProperty(ref _kickers, value);
             }
         }
         public int Defenses
         {
-            get { return this._defenses; }
+            get { return _defenses; }
             set
             {
-                SetProperty(ref this._defenses, value);
+                SetProperty(ref _defenses, value);
             }
         }
         public int BenchPlayers
         {
-            get { return this._benchPlayers; }
+            get { return _benchPlayers; }
             set
             {
-                SetProperty(ref this._benchPlayers, value);
+                SetProperty(ref _benchPlayers, value);
             }
         }
         public string PlayerFile
         {
-            get { return this._playerFile; }
+            get { return _playerFile; }
             set
             {
-                SetProperty(ref this._playerFile, value);
+                SetProperty(ref _playerFile, value);
             }
         }
         public ObservableCollection<DraftServer> Servers
         {
-            get
-            {
-                if (this._servers == null)
-                {
-                    this._servers = new ObservableCollection<DraftServer>();
-                }
-                return this._servers;
-            }
+            get { return _servers ?? (_servers = new ObservableCollection<DraftServer>()); }
             set
             {
-                SetProperty(ref this._servers, value);
+                SetProperty(ref _servers, value);
             }
         }
-
+        public ObservableCollection<DraftTeam> DraftTeams
+        {
+            get { return _draftTeams ?? (_draftTeams = new ObservableCollection<DraftTeam>()); }
+            set
+            {
+                SetProperty(ref _draftTeams, value);
+            }
+        }
         public int TotalRounds
         {
             get
             {
-                return Quarterbacks + WideRecievers + RunningBacks + FlexWithTightEnd + FlexWithoutTightEnd + TightEnds + Kickers + Defenses + BenchPlayers;
+                return Quarterbacks + WideRecievers + RunningBacks + FlexWithTightEnd + TightEnds + Kickers + Defenses + BenchPlayers;
             }
         }
-
         public override bool Validate()
         {
-            return this._leagueName.Length > 0
-                   && this._numberOfTeams > 0;
+            return _leagueName.Length > 0
+                   && _numberOfTeams > 0;
         }
     }
 }

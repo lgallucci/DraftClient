@@ -15,7 +15,7 @@
             </ResourceDictionary.MergedDictionaries>
 
             <!-- Dark Theme -->
-            <SolidColorBrush x:Key="BackgroundKey" Color="#FF181818" />
+            <SolidColorBrush x:Key="BackgroundKey" Color="{StaticResource Color_009}" />
 
             <Style TargetType="TextBlock">
                 <Setter Property="FontSize" Value="16" />

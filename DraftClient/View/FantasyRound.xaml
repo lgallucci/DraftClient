@@ -18,7 +18,7 @@
             </ResourceDictionary.MergedDictionaries>
 
             <!-- Dark Theme -->
-            <SolidColorBrush x:Key="BackgroundKey" Color="#FF181818" />
+            <SolidColorBrush x:Key="BackgroundKey" Color="{StaticResource Color_009}" />
 
             <c:StringLengthToVisibilityConverter x:Key="StringLengthToVisibilityConverter" />
             <c:PositionToColorConverter x:Key="PositionToColorConverter" />
@@ -48,7 +48,8 @@
                                  Height="20" 
                                  Grid.Column="1" 
                                  DisplayMember="Name"                                 
-                                 ForegroundColor="{StaticResource Brush03}"
+                                 ForegroundColor="{StaticResource Brush01}"
+                                 FontSize="10"
                                  Background="{StaticResource BackgroundKey}"
                                  Text="{Binding Name, Mode=TwoWay}"
                                  SelectedItem="{Binding Path=DraftedPlayer, Mode=TwoWay}"
@@ -57,15 +58,15 @@
                                  IsEnabled="{Binding CanEdit}">
                 <wpf:AutoCompleteTextBox.LoadingContent>
                     <TextBlock Text="Loading..."
-                                Foreground="{StaticResource Brush03}"
+                                Foreground="{StaticResource Brush01}"
                            Margin="5"
-                           FontSize="12"/>
+                           FontSize="10"/>
                 </wpf:AutoCompleteTextBox.LoadingContent>
                 <wpf:AutoCompleteTextBox.Icon>
                     <Border Width="10"
                         Height="10">
                         <TextBlock Text="🔍"                                 
-                               Foreground="{StaticResource Brush03}"
+                               Foreground="{StaticResource Brush01}"
                                FontSize="8"
                                FontFamily="Segoe UI Symbol"
                                HorizontalAlignment="Center"
@@ -75,16 +76,16 @@
             </wpf:AutoCompleteTextBox>
             <DockPanel Visibility="{Binding Path=Name, Converter={StaticResource StringLengthToVisibilityConverter}}" HorizontalAlignment="Stretch" VerticalAlignment="Center">
                 <StackPanel DockPanel.Dock="Left">
-                    <TextBlock Text="AverageDraftPosition" FontSize="10" Margin="2" Foreground="{StaticResource Brush03}" />
-                    <TextBlock Text="{Binding Path=DraftedPlayer.AverageDraftPosition}" FontSize="20" Foreground="{StaticResource Brush03}" />
+                    <TextBlock Text="ADP" FontSize="10" Margin="2" Foreground="{StaticResource Brush05}" />
+                    <TextBlock Text="{Binding Path=DraftedPlayer.AverageDraftPosition}" FontSize="20" Foreground="{StaticResource Brush05}" />
                 </StackPanel>
                 <StackPanel DockPanel.Dock="Right" Margin="2">
-                    <TextBlock Text="Bye" FontSize="10" Foreground="{StaticResource Brush03}" />
-                    <TextBlock Text="{Binding Path=DraftedPlayer.ByeWeek}" FontSize="20" Foreground="{StaticResource Brush03}" />
+                    <TextBlock Text="Bye" FontSize="10" Foreground="{StaticResource Brush05}" />
+                    <TextBlock Text="{Binding Path=DraftedPlayer.ByeWeek}" FontSize="20" Foreground="{StaticResource Brush05}" />
                 </StackPanel>
                 <StackPanel Margin="0 7 0 7" HorizontalAlignment="Center">
-                    <TextBlock Text="{Binding Path=DraftedPlayer.Team}" FontWeight="Bold" FontSize="11" Foreground="{StaticResource Brush03}" />
-                    <TextBlock Text="{Binding Path=DraftedPlayer.Position}" FontWeight="Bold" FontSize="11" Foreground="{StaticResource Brush03}" />
+                    <TextBlock Text="{Binding Path=DraftedPlayer.Team}" FontWeight="Bold" FontSize="11" Foreground="{StaticResource Brush05}" />
+                    <TextBlock Text="{Binding Path=DraftedPlayer.Position}" FontWeight="Bold" FontSize="11" Foreground="{StaticResource Brush05}" />
                 </StackPanel>
             </DockPanel>
         </StackPanel>

@@ -37,6 +37,8 @@
 
         private void StartDraft_Click(object sender, RoutedEventArgs e)
         {
+            SelectTeam();
+
             LoadingIndicatorCreate.Visibility = Visibility.Visible;
 
             _client = new Server(_draftSettings.LeagueName, _draftSettings.NumberOfTeams);
@@ -57,6 +59,18 @@
                 ContinueButton.Visibility = Visibility.Visible;
                 LoadingIndicatorCreate.Visibility = Visibility.Collapsed;
             }
+        }
+
+        private void SelectTeam()
+        {
+            var teamSelect = new TeamSelect
+            {
+                Teams = _draftSettings.DraftTeams
+            };
+
+            //teamSelect.ShowDialog();
+
+
         }
 
         private void ContinueDraft_Click(object sender, RoutedEventArgs e)
@@ -87,6 +101,9 @@
 
         private void JoinDraft_Click(object sender, RoutedEventArgs e)
         {
+            GetDraftSettings();
+            SelectTeam();
+
             LoadingIndicatorJoin.Visibility = Visibility.Visible;
             var lbi = ServerListBox.SelectedItem as DraftServer;
             if (lbi != null)
@@ -95,6 +112,11 @@
                 MessageBox.Show(string.Format("{0} {1}/{2} {3}:{4}", lbi.FantasyDraft, lbi.ConnectedPlayers, lbi.MaxPlayers, lbi.IpAddress, lbi.IpPort));
             }
             LoadingIndicatorJoin.Visibility = Visibility.Collapsed;
+        }
+
+        private void GetDraftSettings()
+        {
+            //TODO: Get Draft Settings!
         }
 
         private void ServerBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

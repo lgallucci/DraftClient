@@ -16,17 +16,17 @@
             switch ((PlayerPosition)value)
             {
                 case PlayerPosition.QB:
-                    return "SlateBlue";
+                    return "#FFFCA910";
                 case PlayerPosition.RB:
-                    return "DarkBlue";
+                    return "#FF80D5EF";
                 case PlayerPosition.WR:
-                    return "DarkRed";
+                    return "#FFF14D0F";
                 case PlayerPosition.TE:
-                    return "DarkGoldenrod";
+                    return "#FFFFF889";
                 case PlayerPosition.K:
-                    return "MediumOrchid";
+                    return "#FFBB88FF";
                 case PlayerPosition.DEF:
-                    return "DarkOliveGreen";
+                    return "#FFAAFF55";
             }
             return "";
         }

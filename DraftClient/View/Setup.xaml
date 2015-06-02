@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local = "clr-namespace:DraftClient.Themes.Metro.Light"
+      xmlns:view="clr-namespace:DraftClient.View"
       mc:Ignorable="d" Title="Setup Draft"
       DataContext="DraftClient.ViewModel.DraftSettings" Closing="Window_Closing" ResizeMode="NoResize" Height="400" Width="700">
     <Window.Resources>
@@ -17,7 +18,7 @@
             </ResourceDictionary.MergedDictionaries>
 
             <!-- Dark Theme -->
-            <SolidColorBrush x:Key="BackgroundKey" Color="#FFFFFFFF" />
+            <SolidColorBrush x:Key="BackgroundKey" Color="{StaticResource Color_009}" />
             
         </ResourceDictionary>
     </Window.Resources>
@@ -64,10 +65,6 @@
                     <WrapPanel Width="150" Margin="0 5 0 5">
                         <TextBlock  Width="90" VerticalAlignment="Center"><Run Text="WR/RB/TE"/></TextBlock>
                         <TextBox x:Name="WRRBTECount" Width="35" FontSize="14" Text="{Binding FlexWithTightEnd}" TextAlignment="Center"/>
-                    </WrapPanel>
-                    <WrapPanel Width="150" Margin="0 5 0 5">
-                        <TextBlock  Width="90" VerticalAlignment="Center"><Run Text="WR/RB"/></TextBlock>
-                        <TextBox x:Name="WRRBCount" Width="35" FontSize="14" Text="{Binding FlexWithoutTightEnd}" TextAlignment="Center"/>
                     </WrapPanel>
                     <WrapPanel Width="150" Margin="0 5 0 5">
                         <TextBlock  Width="90" VerticalAlignment="Center"><Run Text="TE"/></TextBlock>
