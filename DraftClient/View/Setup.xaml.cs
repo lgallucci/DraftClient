@@ -44,9 +44,14 @@
             _client = new Server(_draftSettings.LeagueName, _draftSettings.NumberOfTeams);
             ((Server)_client).StartServer();
 
+            CreateDraftWindow(true);
+        }
+
+        private void CreateDraftWindow(bool isServer)
+        {
             _draftController = new DraftController(_client, _draftWindow)
             {
-                IsServer = true
+                IsServer = isServer
             };
 
             _draftWindow = new MainWindow(_draftController);
@@ -75,7 +80,7 @@
 
             if (!isServer)
             {
-                //TODO: Send Connect As Team Event
+                
             }
 
         }
@@ -108,15 +113,18 @@
 
         private void JoinDraft_Click(object sender, RoutedEventArgs e)
         {
-            GetDraftSettings();
-            SelectTeam(false);
-
             LoadingIndicatorJoin.Visibility = Visibility.Visible;
+
+            _client = new Client();
             var lbi = ServerListBox.SelectedItem as DraftServer;
             if (lbi != null)
             {
                 _client.ConnectToDraftServer(lbi.IpAddress, lbi.IpPort);
-                MessageBox.Show(string.Format("{0} {1}/{2} {3}:{4}", lbi.FantasyDraft, lbi.ConnectedPlayers, lbi.MaxPlayers, lbi.IpAddress, lbi.IpPort));
+
+                GetDraftSettings();
+                SelectTeam(false);
+
+                CreateDraftWindow(false);
             }
             LoadingIndicatorJoin.Visibility = Visibility.Collapsed;
         }
