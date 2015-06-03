@@ -29,8 +29,8 @@
             get; set;
         }
 
-        private PlayerPresentation _draftedPlayer;
-        public PlayerPresentation DraftedPlayer
+        private Player _draftedPlayer;
+        public Player DraftedPlayer
         {
             get
             {

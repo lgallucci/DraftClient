@@ -140,10 +140,12 @@
                 return Quarterbacks + WideRecievers + RunningBacks + FlexWithTightEnd + TightEnds + Kickers + Defenses + BenchPlayers;
             }
         }
+        public int MyTeamIndex { get; set; }
         public override bool Validate()
         {
             return _leagueName.Length > 0
-                   && _numberOfTeams > 0;
+                   && _numberOfTeams > 0 
+                   && _numberOfTeams < 15;
         }
     }
 }

@@ -16,5 +16,6 @@
         public int Kickers { get; set; }
         public int Defenses { get; set; }
         public int BenchPlayers { get; set; }
+        public int MyTeamIndex { get; set; }
     }
 }

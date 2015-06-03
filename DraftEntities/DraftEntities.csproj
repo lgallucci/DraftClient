@@ -34,6 +34,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Draft.cs" />
     <Compile Include="DraftServer.cs" />
     <Compile Include="DraftSettings.cs" />
     <Compile Include="DraftTeam.cs" />

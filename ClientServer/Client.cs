@@ -78,27 +78,7 @@
 
         private void HandleMessage(object sender, NetworkMessage networkMessage)
         {
-            if (networkMessage.MessageType == NetworkMessageType.LoginMessage)
-            {
-                if (networkMessage.MessageContent is String)
-                {
-                    //TODO: Handle Login
-                }
-            }
-            else if (networkMessage.MessageType == NetworkMessageType.LogoutMessage)
-            {
-                if (networkMessage.MessageContent is String)
-                {
-                    //TODO: Handle Logout
-                }
-            }
-            else if (networkMessage.MessageType == NetworkMessageType.PickMessage)
-            {
-                if (networkMessage.MessageContent is Player)
-                {
-                    //TODO: Handle Pick
-                }
-            }
+            
         }
 
         private void HandleDisconnect(object sender, Guid e)
@@ -106,7 +86,7 @@
             
         }
 
-        public void SendMessage(NetworkMessageType type, object payload)
+        public virtual void SendMessage(NetworkMessageType type, object payload)
         {
             _client.SendMessage(new NetworkMessage
             {
@@ -114,6 +94,44 @@
                 MessageType = type,
                 MessageContent = payload
             });
+        }
+
+        #endregion
+        
+        #region Events
+
+        public delegate Draft RetrieveDraftHandler();
+        public event RetrieveDraftHandler RetrieveDraft;
+        public Draft OnRetrieveDraft()
+        {
+            RetrieveDraftHandler handler = RetrieveDraft;
+            if (handler != null)
+            {
+                return handler();
+            }
+            return null;
+        }
+
+        public delegate void TeamUpdatedHandler(DraftTeam team);
+        public event TeamUpdatedHandler TeamUpdated;
+        public void OnTeamUpdated(DraftTeam team)
+        {
+            TeamUpdatedHandler handler = TeamUpdated;
+            if (handler != null)
+            {
+                handler(team);
+            }
+        }
+
+        public delegate void PickMadeHandler(Player player);
+        public event PickMadeHandler PickMade;
+        public void OnPickMade(Player player)
+        {
+            PickMadeHandler handler = PickMade;
+            if (handler != null)
+            {
+                handler(player);
+            }
         }
 
         #endregion

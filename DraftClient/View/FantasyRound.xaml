@@ -22,6 +22,8 @@
 
             <c:StringLengthToVisibilityConverter x:Key="StringLengthToVisibilityConverter" />
             <c:PositionToColorConverter x:Key="PositionToColorConverter" />
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            
             <prov:PlayerListProvider x:Key="plp" />
             <DataTemplate x:Key="plTemplate">
                 <Border>
@@ -44,7 +46,8 @@
     </UserControl.Resources>
     <Border Background="{Binding DraftedPlayer.Position, Converter={StaticResource PositionToColorConverter}}" BorderBrush="{StaticResource ButtonBorderBrush}" BorderThickness="1" HorizontalAlignment="Stretch">
         <StackPanel HorizontalAlignment="Stretch">
-            <wpf:AutoCompleteTextBox VerticalAlignment="Top" 
+            <wpf:AutoCompleteTextBox Visibility="{Binding Path=CanEdit, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                 VerticalAlignment="Top" 
                                  Height="20" 
                                  Grid.Column="1" 
                                  DisplayMember="Name"                                 
@@ -54,8 +57,7 @@
                                  Text="{Binding Name, Mode=TwoWay}"
                                  SelectedItem="{Binding Path=DraftedPlayer, Mode=TwoWay}"
                                  ItemTemplate="{StaticResource ResourceKey=plTemplate}" 
-                                 Provider="{StaticResource ResourceKey=plp}"
-                                 IsEnabled="{Binding CanEdit}">
+                                 Provider="{StaticResource ResourceKey=plp}">
                 <wpf:AutoCompleteTextBox.LoadingContent>
                     <TextBlock Text="Loading..."
                                 Foreground="{StaticResource Brush01}"

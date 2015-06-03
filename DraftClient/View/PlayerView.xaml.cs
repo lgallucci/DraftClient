@@ -1,10 +1,8 @@
-﻿using System.Windows.Controls;
-using System.Windows.Data;
-
-namespace DraftClient.View
+﻿namespace DraftClient.View
 {
     using DraftClient.ViewModel;
-    using DraftEntities;
+    using System.Windows.Controls;
+    using System.Windows.Data;
 
     /// <summary>
     /// Interaction logic for PlayerView.xaml
@@ -29,33 +27,33 @@ namespace DraftClient.View
 
         private void CollectionViewSource_Filter(object sender, FilterEventArgs e)
         {
-            PlayerPresentation player = e.Item as PlayerPresentation;
+            Player player = e.Item as Player;
             if (player != null)
             // If filter is turned on, filter completed items.
             {
                 switch (player.Position)
                 {
-                    case PlayerPosition.QB:
+                    case DraftEntities.PlayerPosition.QB:
                         if (cbQB.IsChecked.Value) { e.Accepted = true; }
                         else { e.Accepted = false; }
                         break;
-                    case PlayerPosition.WR:
+                    case DraftEntities.PlayerPosition.WR:
                         if (cbWR.IsChecked.Value) { e.Accepted = true; }
                         else { e.Accepted = false; }
                         break;
-                    case PlayerPosition.RB:
+                    case DraftEntities.PlayerPosition.RB:
                         if (cbRB.IsChecked.Value) { e.Accepted = true; }
                         else { e.Accepted = false; }
                         break;
-                    case PlayerPosition.TE:
+                    case DraftEntities.PlayerPosition.TE:
                         if (cbTE.IsChecked.Value) { e.Accepted = true; }
                         else { e.Accepted = false; }
                         break;
-                    case PlayerPosition.K:
+                    case DraftEntities.PlayerPosition.K:
                         if (cbK.IsChecked.Value) { e.Accepted = true; }
                         else { e.Accepted = false; }
                         break;
-                    case PlayerPosition.DEF:
+                    case DraftEntities.PlayerPosition.DEF:
                         if (cbDEF.IsChecked.Value) { e.Accepted = true; }
                         else { e.Accepted = false; }
                         break;

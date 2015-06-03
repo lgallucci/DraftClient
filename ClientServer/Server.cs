@@ -72,7 +72,7 @@
                     var draftServer = new DraftServer
                     {
                         FantasyDraft = _leagueName,
-                        ConnectedPlayers = Connections.Count((x) => x.LoggedIn) + 1,
+                        ConnectedPlayers = Connections.Count(x => x.LoggedIn) + 1,
                         MaxPlayers = _numberOfTeams,
                         IpAddress = ipAddress,
                         IpPort = _port
@@ -102,6 +102,16 @@
                 connection.Client.ClientDisconnect -= HandleDisconnect;
                 connection.Client.Close();
             }
+        }
+
+        public override void SendMessage(NetworkMessageType type, object payload)
+        {
+            BroadcastMessage(new NetworkMessage
+            {
+                Id = _clientId,
+                MessageType = type,
+                MessageContent = payload
+            });
         }
 
         private void WaitForClientConnect()
@@ -144,40 +154,32 @@
         private void HandleMessage(object sender, NetworkMessage networkMessage)
         {
             ConnectedClient connection = Connections.FirstOrDefault(c => c.Client == (SocketClient)sender);
-            if (networkMessage.MessageType == NetworkMessageType.LoginMessage)
+
+            switch (networkMessage.MessageType)
             {
-                if (networkMessage.MessageContent is String)
-                {
+                case NetworkMessageType.LoginMessage:
                     if (connection != null)
                     {
                         connection.LoggedIn = true;
                         connection.ClientName = networkMessage.MessageContent.ToString();
                     }
-                }
-            }
-            else if (networkMessage.MessageType == NetworkMessageType.LogoutMessage)
-            {
-                Logout((SocketClient)sender);
-            }
-            else if (networkMessage.MessageType == NetworkMessageType.PickMessage)
-            {
-                if (networkMessage.MessageContent is Player)
-                {
+                    break;
+                case NetworkMessageType.LogoutMessage:
+                    Logout((SocketClient)sender);
+                    break;
+                case NetworkMessageType.RetrieveDraftMessage:
+                    //TODO: Get Draft
+                    SendMessage(connection, networkMessage);
+                    break;
+                case NetworkMessageType.UpdateTeamMessage:
+                    OnTeamUpdated(networkMessage.MessageContent as DraftTeam);
+                    goto default;
+                case NetworkMessageType.PickMessage:
+                    OnPickMade(networkMessage.MessageContent as Player);
+                    goto default;
+                default:
                     BroadcastMessage(networkMessage);
-                }
-            }
-            else if (networkMessage.MessageType == NetworkMessageType.RetrieveTeamsMessage)
-            {
-                //TODO: Get Teams 
-                SendMessage(connection, networkMessage);
-            }
-            else if (networkMessage.MessageType == NetworkMessageType.ChooseTeamMessage)
-            {
-                if (networkMessage.MessageContent is DraftTeam)
-                {
-                    //TODO: Set that person as team
-                    //TODO: Broadcast team chosen message
-                }
+                    break;
             }
         }
 

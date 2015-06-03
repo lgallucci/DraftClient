@@ -37,14 +37,14 @@
 
         private void StartDraft_Click(object sender, RoutedEventArgs e)
         {
-            SelectTeam();
+            SelectTeam(true);
 
             LoadingIndicatorCreate.Visibility = Visibility.Visible;
 
             _client = new Server(_draftSettings.LeagueName, _draftSettings.NumberOfTeams);
             ((Server)_client).StartServer();
 
-            _draftController = new DraftController(_client)
+            _draftController = new DraftController(_client, _draftWindow)
             {
                 IsServer = true
             };
@@ -61,15 +61,22 @@
             }
         }
 
-        private void SelectTeam()
+        private void SelectTeam(bool isServer)
         {
             var teamSelect = new TeamSelect
             {
+                IsServer = isServer,
                 Teams = _draftSettings.DraftTeams
             };
 
-            //teamSelect.ShowDialog();
+            teamSelect.ShowDialog();
 
+            _draftSettings.MyTeamIndex = teamSelect.Team.Index;
+
+            if (!isServer)
+            {
+                //TODO: Send Connect As Team Event
+            }
 
         }
 
@@ -102,7 +109,7 @@
         private void JoinDraft_Click(object sender, RoutedEventArgs e)
         {
             GetDraftSettings();
-            SelectTeam();
+            SelectTeam(false);
 
             LoadingIndicatorJoin.Visibility = Visibility.Visible;
             var lbi = ServerListBox.SelectedItem as DraftServer;

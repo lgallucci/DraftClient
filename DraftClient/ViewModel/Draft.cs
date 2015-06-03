@@ -44,12 +44,14 @@
         public void PauseDraft()
         {
             PickPauseTime = DateTime.Now.Ticks;
+            Drafting = false;
         }
 
         public void ResumeDraft()
         {
             PickPauseTime = -1;
             PickEndTime = (PickEndTime - PickPauseTime) + DateTime.Now.Ticks;
+            Drafting = true;
         }
 
         public void NextPick()
