@@ -1,17 +1,13 @@
 ﻿namespace DraftClient.Converters
 {
-    using DraftClient;
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+    using System.Globalization;
     using System.Windows.Data;
     using DraftEntities;
 
     class PositionToColorConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             switch ((PlayerPosition)value)
             {
@@ -31,7 +27,7 @@
             return "";
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }
