@@ -1,0 +1,36 @@
+﻿<Window x:Class="DraftClient.View.TeamSelect"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:c="clr-namespace:DraftClient.Converters"
+        Title="{Binding MyTitle}" Width="250" Height="550" Loaded="TeamSelect_OnLoaded" Closing="TeamSelect_OnClosing">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+
+                    <!-- Dark Theme -->
+                    <ResourceDictionary Source="../Themes/Metro/Light/Metro.MSControls.Core.Implicit.xaml" />
+                    <ResourceDictionary Source="../Themes/Metro/Light/Metro.MSControls.Toolkit.Implicit.xaml" />
+
+                </ResourceDictionary.MergedDictionaries>
+
+            <c:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <ItemsControl x:Name="tStack">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <WrapPanel Width="300" Margin="0 5 0 5">
+                        <TextBox Width="150" FontSize="14" Text="{Binding Name}" Tag="{Binding Index}" IsEnabled="{Binding Path=IsServer, Converter={StaticResource InverseBooleanConverter}}" Margin="10 0 10 0"></TextBox>
+                        <Button Content="Join" Tag="{Binding Index}" IsEnabled="{Binding Path=IsConnected, Converter={StaticResource InverseBooleanConverter}}" Click="ButtonBase_OnClick" />
+                    </WrapPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</Window>
