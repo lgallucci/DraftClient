@@ -10,17 +10,18 @@
 
     public class Client
     {
+        public Client()
+        {
+            IsRunning = true;
+            ClientId = Guid.NewGuid();
+        }
+
         //Send Messages on Draft Picks
         public Task ServerListener;
         private UdpClient _updClient;
         protected bool IsRunning;
         private SocketClient _client;
-        protected readonly Guid _clientId;
-        public Client()
-        {
-            IsRunning = true;
-            _clientId = Guid.NewGuid();
-        }
+        public Guid ClientId { get; set; }
 
         #region Network Methods
         public void ListenForServers(Action<DraftServer> serverPingCallback)
@@ -65,7 +66,10 @@
         {
             var _tcpClient = new TcpClient();
             _tcpClient.Connect(new IPEndPoint(IPAddress.Parse(ipAddress), port));
-            _client = new SocketClient(_tcpClient, _clientId);
+            _client = new SocketClient(_tcpClient)
+            {
+                Id = ClientId
+            };
 
             _client.ClientMessage += HandleMessage;
             _client.ClientDisconnect += HandleDisconnect;
@@ -78,7 +82,26 @@
 
         private void HandleMessage(object sender, NetworkMessage networkMessage)
         {
-            
+            switch (networkMessage.MessageType)
+            {
+                case NetworkMessageType.LoginMessage:
+                    break;
+                case NetworkMessageType.LogoutMessage:
+                    OnUserDisconnect(networkMessage.Id);
+                    break;
+                case NetworkMessageType.HandShakeMessage:
+                    OnServerHandshake();
+                    break;
+                case NetworkMessageType.RetrieveDraftMessage:
+                    OnRetrieveDraft(networkMessage.MessageContent as Draft);
+                    break;
+                case NetworkMessageType.RetrieveDraftSettingsMessage:
+                    OnRetrieveDraftSettings(networkMessage.MessageContent as DraftSettings);
+                    break;
+                case NetworkMessageType.UpdateTeamMessage:
+                    OnTeamUpdated(networkMessage.MessageContent as DraftTeam);
+                    break;
+            }
         }
 
         private void HandleDisconnect(object sender, Guid e)
@@ -90,7 +113,7 @@
         {
             _client.SendMessage(new NetworkMessage
             {
-                Id = _clientId,
+                Id = ClientId,
                 MessageType = type,
                 MessageContent = payload
             });
@@ -100,11 +123,45 @@
         
         #region Events
 
-        public delegate Draft RetrieveDraftHandler();
+        public delegate void RetrieveDraftHandler(Draft draft);
         public event RetrieveDraftHandler RetrieveDraft;
-        public Draft OnRetrieveDraft()
+        public void OnRetrieveDraft(Draft draft)
         {
             RetrieveDraftHandler handler = RetrieveDraft;
+            if (handler != null)
+            {
+                handler(draft);
+            }
+        }
+
+        public delegate Draft SendDraftHandler();
+        public event SendDraftHandler SendDraft;
+        public Draft OnSendDraft()
+        {
+            SendDraftHandler handler = SendDraft;
+            if (handler != null)
+            {
+                return handler();
+            }
+            return null;
+        }
+
+        public delegate void RetrieveDraftSettingsHandler(DraftSettings settings);
+        public event RetrieveDraftSettingsHandler RetrieveDraftSettings;
+        public void OnRetrieveDraftSettings(DraftSettings settings)
+        {
+            RetrieveDraftSettingsHandler handler = RetrieveDraftSettings;
+            if (handler != null)
+            {
+                handler(settings);
+            }
+        }
+
+        public delegate DraftSettings SendDraftSettingsHandler();
+        public event SendDraftSettingsHandler SendDraftSettings;
+        public DraftSettings OnSendDraftSettings()
+        {
+            SendDraftSettingsHandler handler = SendDraftSettings;
             if (handler != null)
             {
                 return handler();
@@ -131,6 +188,28 @@
             if (handler != null)
             {
                 handler(player);
+            }
+        }
+
+        public delegate void UserDisconnectHandler(Guid connectedUser);
+        public event UserDisconnectHandler UserDisconnect;
+        public void OnUserDisconnect(Guid connectedUser)
+        {
+            UserDisconnectHandler handler = UserDisconnect;
+            if (handler != null)
+            {
+                handler(connectedUser);
+            }
+        }
+
+        public delegate void ServerHandshakeHandler();
+        public event ServerHandshakeHandler ServerHandshake;
+        public void OnServerHandshake()
+        {
+            ServerHandshakeHandler handler = ServerHandshake;
+            if (handler != null)
+            {
+                handler();
             }
         }
 

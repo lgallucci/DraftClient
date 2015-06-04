@@ -12,12 +12,11 @@
     {
         private readonly TcpClient _clientSocket;
         private NetworkStream _networkStream;
-        private readonly Guid _clientId;
+        public Guid Id { get; set; }
 
-        public SocketClient(TcpClient client, Guid clientId)
+        public SocketClient(TcpClient client)
         {
             _clientSocket = client;
-            _clientId = clientId;
         }
 
         public bool Connected
@@ -51,7 +50,7 @@
                             SerializeException(this, e);
                         }
 
-                        if (networkMessage != null)
+                        if (networkMessage != null && networkMessage.MessageType != NetworkMessageType.KeepAliveMessage)
                         {
                             ClientMessage(this, networkMessage);
                         }
@@ -95,17 +94,17 @@
 
                         if (_networkStream.CanWrite)
                         {
-                        _networkStream.Write(output, 0, output.Length);
-                    }
+                            _networkStream.Write(output, 0, output.Length);
+                        }
                         else
                         {
-                            if (ClientDisconnect != null) ClientDisconnect(this, _clientId);
+                            if (ClientDisconnect != null) ClientDisconnect(this, Id);
                             Close();
                         }
                     }
                     catch (IOException)
                     {
-                        if (ClientDisconnect != null) ClientDisconnect(this, _clientId);
+                        if (ClientDisconnect != null) ClientDisconnect(this, Id);
                         Close();
                     }
                     catch (Exception e)

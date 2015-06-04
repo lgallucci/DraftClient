@@ -1,49 +1,54 @@
 ﻿namespace DraftClient.Controllers
 {
     using System;
+    using System.Collections.ObjectModel;
     using ClientServer;
     using DraftClient.View;
     using DraftEntities;
     using Omu.ValueInjecter;
-    using Omu.ValueInjecter.Injections;
 
     public class DraftController
     {
-        public Client Client { get; set; }
         public bool IsServer { get; set; }
         public ViewModel.Draft CurrentDraft { get; set; }
+        public ViewModel.DraftSettings Settings { get; set; }
 
         private readonly MainWindow _mainWindow;
+        private readonly ConnectionServer _connectionServer;
 
-        public DraftController(Client client, MainWindow mainWindow)
+        public DraftController(MainWindow mainWindow)
         {
-            Client = client;
+            _connectionServer = ConnectionServer.Instance;
             _mainWindow = mainWindow;
-            Client.PickMade += PickMade;
-            Client.RetrieveDraft += RetrieveDraft;
-            Client.TeamUpdated += TeamUpdated;
-            _mainWindow.Closed += RemoveHandlers;
+            _connectionServer.Connection.PickMade += PickMade;
+            _connectionServer.Connection.SendDraft += SendDraft;
+            _connectionServer.Connection.TeamUpdated += TeamUpdated;
+            _connectionServer.Connection.SendDraftSettings += SendDraftSettings;
         }
         
         #region Event Handlers
 
         private void RemoveHandlers(object sender, EventArgs e)
         {
-            Client.PickMade -= PickMade;
-            Client.RetrieveDraft -= RetrieveDraft;
-            Client.TeamUpdated -= TeamUpdated;
+            _connectionServer.Connection.PickMade -= PickMade;
+            _connectionServer.Connection.RetrieveDraft -= RetrieveDraft;
+            _connectionServer.Connection.TeamUpdated -= TeamUpdated;
             _mainWindow.Closed -= RemoveHandlers;
         }
 
-        private Draft RetrieveDraft()
+        private Draft SendDraft()
         {
             Mapper.AddMap<ViewModel.Draft, Draft>(src =>
             {
                 var res = new Draft();
                 res.InjectFrom(src);
-                for (int i = 0; i < src.Picks.GetLength(0); i++)
+                int rows = src.Picks.GetLength(0),
+                columns = src.Picks.GetLength(1);
+
+                res.Picks = new int[rows, columns];
+                for (int i = 0; i < rows; i++)
                 {
-                    for (int j = 0; j < src.Picks.GetLength(1); j++)
+                    for (int j = 0; j < columns; j++)
                     {
                         res.Picks[i, j] = src.Picks[i, j].DraftedPlayer.AverageDraftPosition;
                     }
@@ -51,6 +56,21 @@
                 return res;
             });
             return Mapper.Map<Draft>(CurrentDraft);
+        }
+
+        private DraftSettings SendDraftSettings()
+        {
+            Mapper.AddMap<ViewModel.DraftSettings, DraftSettings>(src =>
+            {
+                var res = new DraftSettings();
+                res.InjectFrom(src);
+                res.DraftTeams = new Collection<DraftTeam>();
+                foreach(var draftTeam in src.DraftTeams){
+                    res.DraftTeams.Add(Mapper.Map<DraftTeam>(draftTeam));
+                }
+                return res;
+            });
+            return Mapper.Map<DraftSettings>(Settings);
         }
 
         private void PickMade(Player player)
@@ -66,7 +86,12 @@
 
         public void MakeMove(ViewModel.Player pick)
         {
-            Client.SendMessage(NetworkMessageType.PickMessage, pick);
+            _connectionServer.Connection.SendMessage(NetworkMessageType.PickMessage, pick);
+        }
+
+        public Guid GetClientId()
+        {
+            return _connectionServer.Connection.ClientId;
         }
     }
 }

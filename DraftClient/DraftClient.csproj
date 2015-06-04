@@ -66,6 +66,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controllers\ConnectionServer.cs" />
     <Compile Include="Controllers\SetupController.cs" />
     <Compile Include="Controllers\DraftController.cs" />
     <Compile Include="Converters\EnumConverter.cs" />

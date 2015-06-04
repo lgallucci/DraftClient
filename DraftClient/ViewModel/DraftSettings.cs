@@ -1,7 +1,6 @@
 ﻿namespace DraftClient.ViewModel
 {
     using System.Collections.ObjectModel;
-    using DraftEntities;
 
     public class DraftSettings : ValidatableBase
     {
@@ -140,7 +139,6 @@
                 return Quarterbacks + WideRecievers + RunningBacks + FlexWithTightEnd + TightEnds + Kickers + Defenses + BenchPlayers;
             }
         }
-        public int MyTeamIndex { get; set; }
         public override bool Validate()
         {
             return _leagueName.Length > 0

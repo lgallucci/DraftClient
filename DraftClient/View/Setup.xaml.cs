@@ -1,5 +1,6 @@
 ﻿namespace DraftClient.View
 {
+    using System;
     using System.ComponentModel;
     using System.Linq;
     using System.Windows;
@@ -14,48 +15,44 @@
     public partial class Setup
     {
         private MainWindow _draftWindow;
-        private readonly DraftSettings _draftSettings;
         private DraftController _draftController;
         private readonly SetupController _setupController;
-        private Client _client;
+
+        public DraftSettings DraftSettings { get; set; }
 
         public Setup()
         {
             InitializeComponent();
 
-            _client = new Client();
-            _draftSettings = new DraftSettings();
-            _setupController = new SetupController
+            DraftSettings = new DraftSettings();
+            _setupController = new SetupController(this)
             {
                 IsRunning = true
             };
 
-            _setupController.SubscribeToMessages(_draftSettings.Servers, _client);
+            _setupController.SubscribeToMessages(DraftSettings.Servers);
 
-            DataContext = _draftSettings;
+            DataContext = DraftSettings;
         }
 
         private void StartDraft_Click(object sender, RoutedEventArgs e)
         {
-            SelectTeam(true);
-
             LoadingIndicatorCreate.Visibility = Visibility.Visible;
 
-            _client = new Server(_draftSettings.LeagueName, _draftSettings.NumberOfTeams);
-            ((Server)_client).StartServer();
-
-            CreateDraftWindow(true);
+            SelectTeam(true, DraftSettings);
         }
 
-        private void CreateDraftWindow(bool isServer)
+        public void CreateDraftWindow(bool isServer, Draft draft)
         {
-            _draftController = new DraftController(_client, _draftWindow)
+            _draftController = new DraftController(_draftWindow)
             {
-                IsServer = isServer
+                IsServer = isServer,
+                CurrentDraft = draft
             };
 
             _draftWindow = new MainWindow(_draftController);
-            if (_draftWindow.SetupDraft(DataContext as DraftSettings))
+
+            if (_draftWindow.SetupDraft(DraftSettings))
             {
                 _draftWindow.Owner = this;
                 Hide();
@@ -66,23 +63,34 @@
             }
         }
 
-        private void SelectTeam(bool isServer)
+        public void SelectTeam(bool isServer, DraftSettings settings)
         {
+            DraftSettings = settings;
             var teamSelect = new TeamSelect
             {
                 IsServer = isServer,
-                Teams = _draftSettings.DraftTeams
+                Teams = DraftSettings.DraftTeams
             };
 
             teamSelect.ShowDialog();
 
-            _draftSettings.MyTeamIndex = teamSelect.Team.Index;
-
-            if (!isServer)
+            if (teamSelect.DialogResult == true)
             {
-                
+                if (isServer)
+                {
+                    _setupController.StartServer(DraftSettings.LeagueName, DraftSettings.NumberOfTeams);
+                    CreateDraftWindow(true, new Draft(DraftSettings.TotalRounds, DraftSettings.NumberOfTeams, true));
+                }
+                else
+                {
+                    _setupController.UpdateTeamInfo(teamSelect.Team);
+                    _setupController.GetDraft();
+                }
             }
-
+            else
+            {
+                _setupController.DisconnectFromDraftServer();
+            }
         }
 
         private void ContinueDraft_Click(object sender, RoutedEventArgs e)
@@ -100,9 +108,9 @@
 
         private void CancelDraft_Click(object sender, RoutedEventArgs e)
         {
-            _draftSettings.Servers.Remove(_draftSettings.Servers.FirstOrDefault(s => s.FantasyDraft == _draftSettings.LeagueName));
+            DraftSettings.Servers.Remove(DraftSettings.Servers.FirstOrDefault(s => s.FantasyDraft == DraftSettings.LeagueName));
 
-            _client.Close();
+            _setupController.CancelDraft();
 
             Startup_Viewer.Visibility = Visibility.Visible;
             ServerSetup_Viewer.Visibility = Visibility.Collapsed;
@@ -115,23 +123,20 @@
         {
             LoadingIndicatorJoin.Visibility = Visibility.Visible;
 
-            _client = new Client();
             var lbi = ServerListBox.SelectedItem as DraftServer;
             if (lbi != null)
             {
-                _client.ConnectToDraftServer(lbi.IpAddress, lbi.IpPort);
-
-                GetDraftSettings();
-                SelectTeam(false);
-
-                CreateDraftWindow(false);
+                try
+                {
+                    _setupController.ConnectToDraftServer(lbi.IpAddress, lbi.IpPort);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message.ToString());
+                    _setupController.DisconnectFromDraftServer();
+                }
+                _setupController.GetDraftSettings();
             }
-            LoadingIndicatorJoin.Visibility = Visibility.Collapsed;
-        }
-
-        private void GetDraftSettings()
-        {
-            //TODO: Get Draft Settings!
         }
 
         private void ServerBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

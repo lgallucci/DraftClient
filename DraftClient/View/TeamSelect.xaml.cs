@@ -30,7 +30,6 @@ namespace DraftClient.View
             InitializeComponent();
         }
 
-        public string MyTitle { get { if (IsServer) { return "Set up Teams"; } return "Select Your Team"; } }
         public bool IsServer { get; set; }
         public ObservableCollection<DraftTeam> Teams { get; set; }
 
@@ -41,15 +40,9 @@ namespace DraftClient.View
             var hwnd = new WindowInteropHelper(this).Handle;
             SetWindowLong(hwnd, GWL_STYLE, GetWindowLong(hwnd, GWL_STYLE) & ~WS_SYSMENU);
 
-            tStack.ItemsSource = Teams;
-        }
+            TitleMessage.Text = IsServer ? "Set up Teams" : "Select Your Team";
 
-        private void TeamSelect_OnClosing(object sender, CancelEventArgs e)
-        {
-            if (Team == null)
-            {
-                e.Cancel = true;
-            }
+            tStack.ItemsSource = Teams;
         }
 
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
@@ -67,9 +60,16 @@ namespace DraftClient.View
                     var team = Teams.First(t => t.Index == index);
                     team.IsConnected = true;
                     Team = team;
+                    DialogResult = true;
                     Close();
                 }
             }
+        }
+
+        private void CancelButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            DialogResult = false;
+            Close();
         }
     }
 }
