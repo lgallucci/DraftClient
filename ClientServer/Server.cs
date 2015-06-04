@@ -16,9 +16,12 @@
     public class ConnectedClient
     {
         public SocketClient Client { get; set; }
-        public bool LoggedIn { get; set; }
-        public Guid Id { get; set; }
-        public string ClientName { get; set; }
+
+        public Guid Id
+        {
+            get { return Client.Id; }
+            set { Client.Id = value; }
+        }
     }
 
     public class Server : Client
@@ -58,7 +61,7 @@
             });
 
             _timKeepAlive.Elapsed += KeepSocketsAlive;
-            _timKeepAlive.Interval = 2000;
+            _timKeepAlive.Interval = 5000;
             _timKeepAlive.Enabled = true;
 
             Task.Run(() =>
@@ -72,7 +75,7 @@
                     var draftServer = new DraftServer
                     {
                         FantasyDraft = _leagueName,
-                        ConnectedPlayers = Connections.Count(x => x.LoggedIn) + 1,
+                        ConnectedPlayers = Connections.Count() + 1,
                         MaxPlayers = _numberOfTeams,
                         IpAddress = ipAddress,
                         IpPort = _port
@@ -108,7 +111,7 @@
         {
             BroadcastMessage(new NetworkMessage
             {
-                Id = _clientId,
+                Id = ClientId,
                 MessageType = type,
                 MessageContent = payload
             });
@@ -123,7 +126,7 @@
         private void OnClientConnect(IAsyncResult asyn)
         {
             TcpClient tcpClient = _listener.EndAcceptTcpClient(asyn);
-            var socketClient = new SocketClient(tcpClient, _clientId);
+            var socketClient = new SocketClient(tcpClient);
 
             socketClient.ClientMessage += HandleMessage;
             socketClient.ClientDisconnect += HandleDisconnect;
@@ -160,24 +163,49 @@
                 case NetworkMessageType.LoginMessage:
                     if (connection != null)
                     {
-                        connection.LoggedIn = true;
-                        connection.ClientName = networkMessage.MessageContent.ToString();
+                        connection.Id = new Guid(networkMessage.MessageContent.ToString());
                     }
+                    SendMessage(connection, new NetworkMessage
+                    {
+                        Id = ClientId,
+                        MessageType = NetworkMessageType.HandShakeMessage
+                    });
                     break;
                 case NetworkMessageType.LogoutMessage:
-                    Logout((SocketClient)sender);
+                    Logout(connection);
                     break;
-                case NetworkMessageType.RetrieveDraftMessage:
-                    //TODO: Get Draft
-                    SendMessage(connection, networkMessage);
+                case NetworkMessageType.SendDraftMessage:
+                    var draft = OnSendDraft();
+                    SendMessage(connection, new NetworkMessage
+                    {
+                        Id = ClientId,
+                        MessageContent = draft,
+                        MessageType = NetworkMessageType.RetrieveDraftMessage
+                    });
+                    break;
+                case NetworkMessageType.SendDraftSettingsMessage:
+                    var draftSettings = OnSendDraftSettings();
+                    SendMessage(connection, new NetworkMessage
+                    {
+                        Id = ClientId,
+                        MessageContent = draftSettings,
+                        MessageType = NetworkMessageType.RetrieveDraftSettingsMessage
+                    });
                     break;
                 case NetworkMessageType.UpdateTeamMessage:
-                    OnTeamUpdated(networkMessage.MessageContent as DraftTeam);
-                    goto default;
+                    var draftTeam = networkMessage.MessageContent as DraftTeam;
+                    if (draftTeam != null)
+                    {
+                        OnTeamUpdated(draftTeam);
+                    }
+                    BroadcastMessage(networkMessage);
+                    break;
                 case NetworkMessageType.PickMessage:
-                    OnPickMade(networkMessage.MessageContent as Player);
-                    goto default;
-                default:
+                    var player = networkMessage.MessageContent as Player;
+                    if (player != null)
+                    {
+                        OnPickMade(player);
+                    }
                     BroadcastMessage(networkMessage);
                     break;
             }
@@ -193,25 +221,27 @@
 
         private void SendMessage(ConnectedClient client, NetworkMessage networkMessage)
         {
-            client.Client.SendMessage(networkMessage);
+            if (client != null)
+            {
+                client.Client.SendMessage(networkMessage);
+            }
         }
 
         private void HandleDisconnect(object sender, Guid id)
         {
-            Connections.Remove(Connections.FirstOrDefault(c => c.Id == id));
-            BroadcastMessage(new NetworkMessage
-            {
-                Id = id,
-                MessageType = NetworkMessageType.LogoutMessage
-            });
-            Logout((SocketClient)sender);
+            ConnectedClient connection = Connections.FirstOrDefault(c => c.Client == sender);
+            Logout(connection);
         }
 
-        private void Logout(SocketClient sender)
+        private void Logout(ConnectedClient connection)
         {
-            ConnectedClient connection = Connections.FirstOrDefault(c => c.Client == sender);
             if (connection != null)
             {
+                BroadcastMessage(new NetworkMessage
+                {
+                    Id = connection.Id,
+                    MessageType = NetworkMessageType.LogoutMessage
+                });
                 Connections.Remove(connection);
             }
         }

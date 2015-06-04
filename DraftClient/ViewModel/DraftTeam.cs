@@ -11,6 +11,7 @@ namespace DraftClient.ViewModel
         private string _name;
         private bool _isConnected;
         private int _index;
+        private Guid _connectedUser;
 
         public string Name 
         { 
@@ -26,6 +27,19 @@ namespace DraftClient.ViewModel
         {
             get { return _index; }
             set { SetProperty(ref _index, value); }
+        }
+
+        public Guid ConnectedUser
+        {
+            get { return _connectedUser; } 
+            set {
+                if (value == Guid.Empty)
+                {
+                    IsConnected = false;
+                }
+                _connectedUser = value;
+            }
+            
         }
     }
 }

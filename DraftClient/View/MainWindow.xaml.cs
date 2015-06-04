@@ -45,7 +45,7 @@
         {
             try
             {
-                _draftController.CurrentDraft = new ViewModel.Draft(settings.TotalRounds, settings.NumberOfTeams, true);
+                _draftController.Settings = settings;
                 _draftController.IsServer = true;
 
                 LoadPlayers(settings.PlayerFile);
@@ -100,7 +100,7 @@
                     HorizontalAlignment = HorizontalAlignment.Center,
                     TeamNumber = i,
                     IsServer = _draftController.IsServer,
-                    IsMyTeam = (i == settings.MyTeamIndex),
+                    IsMyTeam = (settings.DraftTeams[i - 1].ConnectedUser == _draftController.GetClientId()),
                 };
                 teamBlock.SetText(settings.DraftTeams[i-1].Name);
                 teamBlock.SetConnected(settings.DraftTeams[i - 1].IsConnected);

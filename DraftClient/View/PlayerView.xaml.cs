@@ -1,7 +1,7 @@
 ﻿namespace DraftClient.View
 {
+    using System.Windows;
     using DraftClient.ViewModel;
-    using System.Windows.Controls;
     using System.Windows.Data;
 
     /// <summary>

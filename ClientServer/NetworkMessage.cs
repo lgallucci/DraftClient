@@ -20,16 +20,23 @@
         KeepAliveMessage = 1,
         LoginMessage = 2,
         LogoutMessage = 3,
+        HandShakeMessage = 4,
         
         //Draft Action
-        PickMessage = 4,
+        PickMessage = 5,
         
         //Draft & Timer 
-        DraftStartMessage = 5,
-        DraftStopMessage = 6,
+        DraftStartMessage = 6,
+        DraftStopMessage = 7,
 
         //Teams
-        UpdateTeamMessage = 7,
-        RetrieveDraftMessage = 8
+        UpdateTeamMessage = 8,
+
+        //
+        SendDraftMessage = 9,
+        RetrieveDraftMessage = 10,
+
+        SendDraftSettingsMessage = 11,
+        RetrieveDraftSettingsMessage = 12
     }
 }
