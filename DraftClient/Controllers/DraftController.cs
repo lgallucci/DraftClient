@@ -1,5 +1,6 @@
 ﻿namespace DraftClient.Controllers
 {
+    using System;
     using ClientServer;
     using DraftClient.View;
     using DraftEntities;
@@ -21,9 +22,19 @@
             Client.PickMade += PickMade;
             Client.RetrieveDraft += RetrieveDraft;
             Client.TeamUpdated += TeamUpdated;
+            _mainWindow.Closed += RemoveHandlers;
         }
         
         #region Event Handlers
+
+        private void RemoveHandlers(object sender, EventArgs e)
+        {
+            Client.PickMade -= PickMade;
+            Client.RetrieveDraft -= RetrieveDraft;
+            Client.TeamUpdated -= TeamUpdated;
+            _mainWindow.Closed -= RemoveHandlers;
+        }
+
         private Draft RetrieveDraft()
         {
             Mapper.AddMap<ViewModel.Draft, Draft>(src =>
@@ -56,14 +67,6 @@
         public void MakeMove(ViewModel.Player pick)
         {
             Client.SendMessage(NetworkMessageType.PickMessage, pick);
-        }
-
-        public class IntToCountry : ValueInjection
-        {
-            protected override void Inject(object source, object target)
-            {
-                throw new System.NotImplementedException();
-            }
         }
     }
 }

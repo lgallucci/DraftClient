@@ -4,8 +4,7 @@
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
-    using View;
-    using ViewModel;
+    using DraftClient.View;
     using WpfControls;
 
     class PlayerListProvider : ISuggestionProvider
