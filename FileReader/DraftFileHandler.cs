@@ -15,17 +15,20 @@
             while (!fileStream.EndOfStream)
             {
                 var line = fileStream.ReadLine();
-                var values = line.Split(',');
-
-                playerList.Add(new Player
+                if (line != null)
                 {
-                    AverageDraftPosition = Int32.Parse(values[0]),
-                    Name = values[1].ToString(),
-                    Position = (PlayerPosition)Enum.Parse(typeof(PlayerPosition), values[2]),
-                    Team = values[3].ToString(),
-                    ByeWeek = Int32.Parse(values[4]),
-                    ProjectedPoints = Decimal.Parse(values[8])
-                });
+                    var values = line.Split(',');
+
+                    playerList.Add(new Player
+                    {
+                        AverageDraftPosition = Int32.Parse(values[0]),
+                        Name = values[1],
+                        Position = (PlayerPosition)Enum.Parse(typeof(PlayerPosition), values[2]),
+                        Team = values[3],
+                        ByeWeek = Int32.Parse(values[4]),
+                        ProjectedPoints = Decimal.Parse(values[8])
+                    });
+                }
             }
 
             return playerList;

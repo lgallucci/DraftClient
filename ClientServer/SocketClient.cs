@@ -12,10 +12,12 @@
     {
         private readonly TcpClient _clientSocket;
         private NetworkStream _networkStream;
-        
-        public SocketClient(TcpClient client)
+        private readonly Guid _clientId;
+
+        public SocketClient(TcpClient client, Guid clientId)
         {
             _clientSocket = client;
+            _clientId = clientId;
         }
 
         public bool Connected
@@ -48,7 +50,7 @@
                         {
                             SerializeException(this, e);
                         }
-                            
+
                         if (networkMessage != null)
                         {
                             ClientMessage(this, networkMessage);
@@ -77,13 +79,13 @@
                 return input;
             });
         }
-        
+
         public async void SendMessage(NetworkMessage message)
         {
-                await Task.Run(() =>
+            await Task.Run(() =>
+            {
+                using (var memoryStream = new MemoryStream())
                 {
-                    using (var memoryStream = new MemoryStream())
-                    {
                     try
                     {
                         var formatter = new BinaryFormatter();
@@ -93,25 +95,25 @@
 
                         if (_networkStream.CanWrite)
                         {
-                            _networkStream.Write(output, 0, output.Length);
-                        }
+                        _networkStream.Write(output, 0, output.Length);
+                    }
                         else
                         {
-                            if (ClientDisconnect != null) ClientDisconnect(this, new EventArgs());
+                            if (ClientDisconnect != null) ClientDisconnect(this, _clientId);
                             Close();
                         }
                     }
-                        catch (IOException)
-                        {
-                        if (ClientDisconnect != null) ClientDisconnect(this, new EventArgs());
+                    catch (IOException)
+                    {
+                        if (ClientDisconnect != null) ClientDisconnect(this, _clientId);
                         Close();
-                        }
+                    }
                     catch (Exception e)
                     {
                         SerializeException(this, e);
                     }
                 }
-                });
+            });
         }
 
         public void Close()
@@ -123,7 +125,7 @@
         public delegate void HandleMessage(object sender, NetworkMessage e);
         public event HandleMessage ClientMessage;
 
-        public delegate void HandleClientDisconnect(object sender, EventArgs e);
+        public delegate void HandleClientDisconnect(object sender, Guid id);
         public event HandleClientDisconnect ClientDisconnect;
 
         public delegate void HandleSerializeException(object sender, Exception e);

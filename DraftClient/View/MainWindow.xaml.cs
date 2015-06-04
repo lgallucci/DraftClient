@@ -8,9 +8,8 @@
     using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Controls;
-    using Controllers;
-    using ViewModel;
-    using DraftEntities;
+    using DraftClient.Controllers;
+    using DraftClient.ViewModel;
     using FileReader;
 
     /// <summary>
@@ -39,21 +38,14 @@
 
         public bool JoinDraft()
         {
-            _draftController.OnPickMade += PickMade;
-
             return true;
-        }
-
-        public void PickMade(PickEventArgs e)
-        {
-            //PlayerPresentation pick = PlayerList.Players.FirstOrDefault(p => p.AverageDraftPosition == e.AverageDraftPosition);
         }
 
         public bool SetupDraft(DraftSettings settings)
         {
             try
             {
-                _draftController.CurrentDraft = new Draft(settings.TotalRounds, settings.NumberOfTeams, true);
+                _draftController.CurrentDraft = new ViewModel.Draft(settings.TotalRounds, settings.NumberOfTeams, true);
                 _draftController.IsServer = true;
 
                 LoadPlayers(settings.PlayerFile);
@@ -106,9 +98,12 @@
                 {
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Center,
-                    TeamNumber = i
+                    TeamNumber = i,
+                    IsServer = _draftController.IsServer,
+                    IsMyTeam = (i == settings.MyTeamIndex),
                 };
-                teamBlock.SetText("Team " + i);
+                teamBlock.SetText(settings.DraftTeams[i-1].Name);
+                teamBlock.SetConnected(settings.DraftTeams[i - 1].IsConnected);
                 PicksGrid.Children.Add(teamBlock);
                 Grid.SetColumn(teamBlock, i);
                 Grid.SetRow(teamBlock, 0);
@@ -133,23 +128,38 @@
 
         private async void LoadPlayers(string playerFile)
         {
-            List<Player> players = DraftFileHandler.ReadFile(playerFile);
+            List<DraftEntities.Player> players = DraftFileHandler.ReadFile(playerFile);
 
             PlayerList.Players = await Task.Run(() =>
             {
-                var presentationPlayers = players.Select(player => new PlayerPresentation
-                {
-                    AverageDraftPosition = player.AverageDraftPosition, 
-                    Name = player.Name, 
-                    Position = player.Position, 
-                    Team = player.Team, 
-                    ByeWeek = player.ByeWeek, 
-                    ProjectedPoints = player.ProjectedPoints, 
-                    IsPicked = false
+                var presentationPlayers = players.Select(player => new Player
+                    {
+                        AverageDraftPosition = player.AverageDraftPosition,
+                        Name = player.Name,
+                        Position = player.Position,
+                        Team = player.Team,
+                        ByeWeek = player.ByeWeek,
+                        ProjectedPoints = player.ProjectedPoints,
+                        IsPicked = false
                 }).ToList();
 
-                return new ObservableCollection<PlayerPresentation>(presentationPlayers);
+                return new ObservableCollection<Player>(presentationPlayers);
             });
+        }
+
+        public void UpdateTeam(DraftTeam team)
+        {
+            var teamControl = (FantasyTeam)MainGrid.Children.Cast<UIElement>().
+                FirstOrDefault(e => Grid.GetColumn(e) == team.Index && Grid.GetRow(e) == 0);
+
+            if (teamControl != null)
+            {
+                if (!string.IsNullOrWhiteSpace(team.Name))
+                {
+                    teamControl.SetText(team.Name);
+                }
+                teamControl.IsConnected = team.IsConnected;
+            }
         }
     }
 }

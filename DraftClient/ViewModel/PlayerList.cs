@@ -6,19 +6,19 @@
     {
         public PlayerList()
         {
-            _players = new ObservableCollection<PlayerPresentation>();
+            _players = new ObservableCollection<Player>();
         }
 
-        private ObservableCollection<PlayerPresentation> _players;
-        public ObservableCollection<PlayerPresentation> Players
+        private ObservableCollection<Player> _players;
+        public ObservableCollection<Player> Players
         {
             get
             {
-                return this._players;
+                return _players;
             }
             set
             {
-                SetProperty(ref this._players, value);
+                SetProperty(ref _players, value);
             }
         }
     }

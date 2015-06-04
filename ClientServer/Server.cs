@@ -15,9 +15,10 @@
 
     public class ConnectedClient
     {
-        public SocketClient Client;
-        public bool LoggedIn;
-        public string ClientName;
+        public SocketClient Client { get; set; }
+        public bool LoggedIn { get; set; }
+        public Guid Id { get; set; }
+        public string ClientName { get; set; }
     }
 
     public class Server : Client
@@ -55,7 +56,7 @@
                 _listener.Start();
                 WaitForClientConnect();
             });
-            
+
             _timKeepAlive.Elapsed += KeepSocketsAlive;
             _timKeepAlive.Interval = 2000;
             _timKeepAlive.Enabled = true;
@@ -68,10 +69,10 @@
 
                 while (IsRunning)
                 {
-                    var draftServer = new DraftServer()
+                    var draftServer = new DraftServer
                     {
                         FantasyDraft = _leagueName,
-                        ConnectedPlayers = Connections.Count((x) => x.LoggedIn) + 1,
+                        ConnectedPlayers = Connections.Count(x => x.LoggedIn) + 1,
                         MaxPlayers = _numberOfTeams,
                         IpAddress = ipAddress,
                         IpPort = _port
@@ -103,6 +104,16 @@
             }
         }
 
+        public override void SendMessage(NetworkMessageType type, object payload)
+        {
+            BroadcastMessage(new NetworkMessage
+            {
+                Id = _clientId,
+                MessageType = type,
+                MessageContent = payload
+            });
+        }
+
         private void WaitForClientConnect()
         {
             var obj = new object();
@@ -112,7 +123,7 @@
         private void OnClientConnect(IAsyncResult asyn)
         {
             TcpClient tcpClient = _listener.EndAcceptTcpClient(asyn);
-            var socketClient = new SocketClient(tcpClient);
+            var socketClient = new SocketClient(tcpClient, _clientId);
 
             socketClient.ClientMessage += HandleMessage;
             socketClient.ClientDisconnect += HandleDisconnect;
@@ -142,33 +153,57 @@
 
         private void HandleMessage(object sender, NetworkMessage networkMessage)
         {
-            if (networkMessage.MessageType == NetworkMessageType.LoginMessage)
+            ConnectedClient connection = Connections.FirstOrDefault(c => c.Client == (SocketClient)sender);
+
+            switch (networkMessage.MessageType)
             {
-                if (networkMessage.MessageContent is String)
-                {
-                    ConnectedClient connection = Connections.FirstOrDefault(c => c.Client == (SocketClient)sender);
+                case NetworkMessageType.LoginMessage:
                     if (connection != null)
                     {
                         connection.LoggedIn = true;
                         connection.ClientName = networkMessage.MessageContent.ToString();
                     }
-                }
-            }
-            else if (networkMessage.MessageType == NetworkMessageType.LogoutMessage)
-            {
-                Logout((SocketClient)sender);
-                }
-            else if (networkMessage.MessageType == NetworkMessageType.PickMessage)
-            {
-                if (networkMessage.MessageContent is Player)
-                {
-                    //TODO: Handle Pick
-                }
+                    break;
+                case NetworkMessageType.LogoutMessage:
+                    Logout((SocketClient)sender);
+                    break;
+                case NetworkMessageType.RetrieveDraftMessage:
+                    //TODO: Get Draft
+                    SendMessage(connection, networkMessage);
+                    break;
+                case NetworkMessageType.UpdateTeamMessage:
+                    OnTeamUpdated(networkMessage.MessageContent as DraftTeam);
+                    goto default;
+                case NetworkMessageType.PickMessage:
+                    OnPickMade(networkMessage.MessageContent as Player);
+                    goto default;
+                default:
+                    BroadcastMessage(networkMessage);
+                    break;
             }
         }
 
-        private void HandleDisconnect(object sender, EventArgs e)
+        private void BroadcastMessage(NetworkMessage networkMessage)
         {
+            foreach (var connection in Connections.Where(c => c.Id != networkMessage.Id))
+            {
+                connection.Client.SendMessage(networkMessage);
+            }
+        }
+
+        private void SendMessage(ConnectedClient client, NetworkMessage networkMessage)
+        {
+            client.Client.SendMessage(networkMessage);
+        }
+
+        private void HandleDisconnect(object sender, Guid id)
+        {
+            Connections.Remove(Connections.FirstOrDefault(c => c.Id == id));
+            BroadcastMessage(new NetworkMessage
+            {
+                Id = id,
+                MessageType = NetworkMessageType.LogoutMessage
+            });
             Logout((SocketClient)sender);
         }
 

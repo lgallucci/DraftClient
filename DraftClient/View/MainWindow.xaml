@@ -9,13 +9,13 @@
             <ResourceDictionary.MergedDictionaries>
 
                 <!-- Dark Theme -->
-                <ResourceDictionary Source="../Themes/Metro/Dark/MetroDark.MSControls.Core.Implicit.xaml" />
-                <ResourceDictionary Source="../Themes/Metro/Dark/MetroDark.MSControls.Toolkit.Implicit.xaml" />
+                <ResourceDictionary Source="../Themes/Metro/Light/Metro.MSControls.Core.Implicit.xaml" />
+                <ResourceDictionary Source="../Themes/Metro/Light/Metro.MSControls.Toolkit.Implicit.xaml" />
 
             </ResourceDictionary.MergedDictionaries>
 
             <!-- Dark Theme -->
-            <SolidColorBrush x:Key="BackgroundKey" Color="#FF181818" />
+            <SolidColorBrush x:Key="BackgroundKey" Color="{StaticResource Color_009}" />
 
             <Style TargetType="TextBlock">
                 <Setter Property="FontSize" Value="16" />

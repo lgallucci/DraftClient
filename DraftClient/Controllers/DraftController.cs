@@ -1,36 +1,69 @@
 ﻿namespace DraftClient.Controllers
 {
     using ClientServer;
-    using ViewModel;
-
-    public delegate void PickEventHandler(PickEventArgs e);
-
-    public class PickEventArgs
-    {
-        public int AverageDraftPosition { get; set; }
-    }
+    using DraftClient.View;
+    using DraftEntities;
+    using Omu.ValueInjecter;
+    using Omu.ValueInjecter.Injections;
 
     public class DraftController
     {
         public Client Client { get; set; }
         public bool IsServer { get; set; }
-        public Draft CurrentDraft { get; set; }
+        public ViewModel.Draft CurrentDraft { get; set; }
 
-        public DraftController(Client client)
+        private readonly MainWindow _mainWindow;
+
+        public DraftController(Client client, MainWindow mainWindow)
         {
             Client = client;
+            _mainWindow = mainWindow;
+            Client.PickMade += PickMade;
+            Client.RetrieveDraft += RetrieveDraft;
+            Client.TeamUpdated += TeamUpdated;
         }
-
-        public void OnMove() //RECEIVE PICK FROM SERVER
+        
+        #region Event Handlers
+        private Draft RetrieveDraft()
         {
-            OnPickMade(new PickEventArgs() /*{ AverageDraftPosition = }*/);
+            Mapper.AddMap<ViewModel.Draft, Draft>(src =>
+            {
+                var res = new Draft();
+                res.InjectFrom(src);
+                for (int i = 0; i < src.Picks.GetLength(0); i++)
+                {
+                    for (int j = 0; j < src.Picks.GetLength(1); j++)
+                    {
+                        res.Picks[i, j] = src.Picks[i, j].DraftedPlayer.AverageDraftPosition;
+                    }
+                }
+                return res;
+            });
+            return Mapper.Map<Draft>(CurrentDraft);
         }
 
-        public void MakeMove() //SEND PICK TO SERVER
+        private void PickMade(Player player)
         {
-
+            throw new System.NotImplementedException();
         }
 
-        public event PickEventHandler OnPickMade;
+        private void TeamUpdated(DraftTeam team)
+        {
+            _mainWindow.UpdateTeam(Mapper.Map<ViewModel.DraftTeam>(team));
+        }
+        #endregion
+
+        public void MakeMove(ViewModel.Player pick)
+        {
+            Client.SendMessage(NetworkMessageType.PickMessage, pick);
+        }
+
+        public class IntToCountry : ValueInjection
+        {
+            protected override void Inject(object source, object target)
+            {
+                throw new System.NotImplementedException();
+            }
+        }
     }
 }

@@ -15,10 +15,11 @@
         private UdpClient _updClient;
         protected bool IsRunning;
         private SocketClient _client;
-
+        protected readonly Guid _clientId;
         public Client()
         {
             IsRunning = true;
+            _clientId = Guid.NewGuid();
         }
 
         #region Network Methods
@@ -62,9 +63,9 @@
 
         public void ConnectToDraftServer(string ipAddress, int port)
         {
-            var tcpClient = new TcpClient();
-            tcpClient.Connect(new IPEndPoint(IPAddress.Parse(ipAddress), port));
-            _client = new SocketClient(tcpClient);
+            var _tcpClient = new TcpClient();
+            _tcpClient.Connect(new IPEndPoint(IPAddress.Parse(ipAddress), port));
+            _client = new SocketClient(_tcpClient, _clientId);
 
             _client.ClientMessage += HandleMessage;
             _client.ClientDisconnect += HandleDisconnect;
@@ -77,32 +78,60 @@
 
         private void HandleMessage(object sender, NetworkMessage networkMessage)
         {
-            if (networkMessage.MessageType == NetworkMessageType.LoginMessage)
+            
+        }
+
+        private void HandleDisconnect(object sender, Guid e)
+        {
+            
+        }
+
+        public virtual void SendMessage(NetworkMessageType type, object payload)
+        {
+            _client.SendMessage(new NetworkMessage
             {
-                if (networkMessage.MessageContent is String)
-                {
-                    //TODO: Handle Login
-                }
+                Id = _clientId,
+                MessageType = type,
+                MessageContent = payload
+            });
+        }
+
+        #endregion
+        
+        #region Events
+
+        public delegate Draft RetrieveDraftHandler();
+        public event RetrieveDraftHandler RetrieveDraft;
+        public Draft OnRetrieveDraft()
+        {
+            RetrieveDraftHandler handler = RetrieveDraft;
+            if (handler != null)
+            {
+                return handler();
             }
-            else if (networkMessage.MessageType == NetworkMessageType.LogoutMessage)
+            return null;
+        }
+
+        public delegate void TeamUpdatedHandler(DraftTeam team);
+        public event TeamUpdatedHandler TeamUpdated;
+        public void OnTeamUpdated(DraftTeam team)
+        {
+            TeamUpdatedHandler handler = TeamUpdated;
+            if (handler != null)
             {
-                if (networkMessage.MessageContent is String)
-                {
-                    //TODO: Handle Logout
-                }
-            }
-            else if (networkMessage.MessageType == NetworkMessageType.PickMessage)
-            {
-                if (networkMessage.MessageContent is Player)
-                {
-                    //TODO: Handle Pick
-                }
+                handler(team);
             }
         }
 
-        private void HandleDisconnect(object sender, EventArgs e)
+        public delegate void PickMadeHandler(Player player);
+        public event PickMadeHandler PickMade;
+        public void OnPickMade(Player player)
         {
-            //TODO: Handle disconnect
+            PickMadeHandler handler = PickMade;
+            if (handler != null)
+            {
+                handler(player);
+            }
         }
 
         #endregion
@@ -121,11 +150,6 @@
                 _client.ClientMessage -= HandleMessage;
                 _client.ClientDisconnect -= HandleDisconnect;
                 _client.Close();
-            }
-
-            if (ServerListener != null)
-            {                
-                ServerListener.Dispose();
             }
         }
     }

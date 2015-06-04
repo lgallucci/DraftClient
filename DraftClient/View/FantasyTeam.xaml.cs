@@ -4,6 +4,10 @@ using System.Windows.Input;
 
 namespace DraftClient.View
 {
+    using System;
+    using System.Windows.Media;
+    using System.Windows.Media.Imaging;
+
     /// <summary>
     /// Interaction logic for FantasyTeam.xaml
     /// </summary>
@@ -23,14 +27,20 @@ namespace DraftClient.View
 
         private void TeamName_MouseUp(object sender, MouseButtonEventArgs e)
         {
+            if (!IsServer && !IsMyTeam) return;
             CreateTextBox(RemoveElements());
         }
+
+        public bool IsServer { get; set; }
+        public bool IsMyTeam { get; set; }
+        public bool IsConnected { get; set; }
 
         private void TeamNameEdit_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                if ((this.MainPanel.Children[0] as TextBox).Text != string.Empty)
+                var textBox = (TeamPanel.Children[0] as TextBox);
+                if (textBox != null && textBox.Text != string.Empty)
                 {
                     CreateTextBlock(RemoveElements());
                 }
@@ -39,7 +49,8 @@ namespace DraftClient.View
 
         private void TeamNameEdit_LostFocus(object sender, RoutedEventArgs e)
         {
-            if ((this.MainPanel.Children[0] as TextBox).Text != string.Empty)
+            var textBox = (TeamPanel.Children[0] as TextBox);
+            if (textBox != null && textBox.Text != string.Empty)
             {
                 CreateTextBlock(RemoveElements());
             }
@@ -57,7 +68,7 @@ namespace DraftClient.View
             textBox.KeyUp += TeamNameEdit_KeyUp;
             textBox.LostFocus += TeamNameEdit_LostFocus;
 
-            this.MainPanel.Children.Add(textBox);
+            TeamPanel.Children.Add(textBox);
 
             textBox.Focus();
             textBox.SelectAll();
@@ -73,25 +84,25 @@ namespace DraftClient.View
                 Text = text
             };
             textBlock.MouseUp += TeamName_MouseUp;
-            this.MainPanel.Children.Add(textBlock);
+            TeamPanel.Children.Add(textBlock);
         }
 
         private string RemoveElements()
         {
-            var textBox = this.MainPanel.Children[0] as TextBox;
-            if(textBox != null) 
+            var textBox = TeamPanel.Children[0] as TextBox;
+            if (textBox != null)
             {
                 textBox.KeyUp -= TeamNameEdit_KeyUp;
                 textBox.LostFocus -= TeamNameEdit_LostFocus;
-                this.MainPanel.Children.Clear();
+                TeamPanel.Children.Clear();
                 return textBox.Text;
             }
-            
-            var textBlock = this.MainPanel.Children[0] as TextBlock;
+
+            var textBlock = TeamPanel.Children[0] as TextBlock;
             if (textBlock != null)
             {
                 textBlock.MouseUp -= TeamName_MouseUp;
-                this.MainPanel.Children.Clear();
+                TeamPanel.Children.Clear();
                 return textBlock.Text;
             }
 
@@ -99,5 +110,11 @@ namespace DraftClient.View
         }
 
 
+        public void SetConnected(bool isConnected)
+        {
+            ConnectedImage.Source = isConnected ?
+                new BitmapImage(new Uri("pack://application:,,,/Resources/Connected.png")) 
+                : new BitmapImage(new Uri("pack://application:,,,/Resources/Disconnected.png"));
+        }
     }
 }
