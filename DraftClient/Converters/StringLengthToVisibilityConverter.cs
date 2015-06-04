@@ -1,27 +1,17 @@
 ﻿namespace DraftClient.Converters
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+    using System.Globalization;
     using System.Windows.Data;
 
     class StringLengthToVisibilityConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!string.IsNullOrWhiteSpace((string)value))
-            {
-                return "Visible";
-            }
-            else
-            {
-                return "Hidden";
-            }
+            return !string.IsNullOrWhiteSpace((string)value) ? "Visible" : "Hidden";
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }

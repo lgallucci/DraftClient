@@ -1,7 +1,7 @@
 ﻿namespace DraftClient.View
 {
     using System.Windows;
-    using DraftClient.ViewModel;
+    using ViewModel;
 
     /// <summary>
     /// Interaction logic for FantasyRound.xaml
@@ -19,7 +19,7 @@
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            this.DataContext = Pick;
+            DataContext = Pick;
         }
 
     }

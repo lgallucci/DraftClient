@@ -62,7 +62,6 @@
 
         private void SetupGrid(DraftSettings settings)
         {
-
             for (int i = 0; i < settings.NumberOfTeams + 1; i++)
             {
                 PicksGrid.ColumnDefinitions.Add(new ColumnDefinition
@@ -134,14 +133,14 @@
             PlayerList.Players = await Task.Run(() =>
             {
                 var presentationPlayers = players.Select(player => new Player
-                {
-                    AverageDraftPosition = player.AverageDraftPosition,
-                    Name = player.Name,
-                    Position = player.Position,
-                    Team = player.Team,
-                    ByeWeek = player.ByeWeek,
-                    ProjectedPoints = player.ProjectedPoints,
-                    IsPicked = false
+                    {
+                        AverageDraftPosition = player.AverageDraftPosition,
+                        Name = player.Name,
+                        Position = player.Position,
+                        Team = player.Team,
+                        ByeWeek = player.ByeWeek,
+                        ProjectedPoints = player.ProjectedPoints,
+                        IsPicked = false
                 }).ToList();
 
                 return new ObservableCollection<Player>(presentationPlayers);

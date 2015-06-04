@@ -5,19 +5,19 @@
     using System.Windows;
     using System.Windows.Controls;
     using ClientServer;
-    using DraftClient.Controllers;
-    using DraftClient.ViewModel;
+    using Controllers;
+    using ViewModel;
 
     /// <summary>
     /// Interaction logic for Setup.xaml
     /// </summary>
     public partial class Setup
     {
-        MainWindow _draftWindow;
-        readonly DraftSettings _draftSettings;
-        DraftController _draftController;
+        private MainWindow _draftWindow;
+        private readonly DraftSettings _draftSettings;
+        private DraftController _draftController;
         private readonly SetupController _setupController;
-        Client _client;
+        private Client _client;
 
         public Setup()
         {
@@ -149,14 +149,7 @@
         private void SetDraftButtonEnabled()
         {
             var lbi = ServerListBox.SelectedItem;
-            if (lbi != null)
-            {
-                JoinDraftButton.IsEnabled = true;
-            }
-            else
-            {
-                JoinDraftButton.IsEnabled = false;
-            }
+            JoinDraftButton.IsEnabled = lbi != null;
         }
     }
 }

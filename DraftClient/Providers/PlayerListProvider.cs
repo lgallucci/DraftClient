@@ -5,6 +5,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using View;
+    using ViewModel;
     using WpfControls;
 
     class PlayerListProvider : ISuggestionProvider

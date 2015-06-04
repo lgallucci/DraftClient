@@ -39,7 +39,7 @@
 
                 _updClient.Client.Bind(localEp);
 
-                IPAddress multicastaddress = IPAddress.Parse(Server.MulticastAddress);
+                var multicastaddress = IPAddress.Parse(Server.MulticastAddress);
                 _updClient.JoinMulticastGroup(multicastaddress);
 
                 while (IsRunning)
@@ -51,7 +51,7 @@
 
                     if (networkMessage.MessageType == NetworkMessageType.BroadcastMessage && networkMessage.MessageContent is DraftServer)
                     {
-                        serverPingCallback(networkMessage.MessageContent as DraftServer);
+                        serverPingCallback((DraftServer) networkMessage.MessageContent);
                     }
                 }
             });
