@@ -1,10 +1,9 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-
-namespace DraftClient.View
+﻿namespace DraftClient.View
 {
     using System;
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Input;
     using System.Windows.Media;
     using System.Windows.Media.Imaging;
 
@@ -22,6 +21,7 @@ namespace DraftClient.View
 
         public void SetText(string text)
         {
+            RemoveElements();
             CreateTextBlock(text);
         }
 
@@ -61,7 +61,7 @@ namespace DraftClient.View
             var textBox = new TextBox
             {
                 Name = "TeamNameEdit",
-                FontFamily = new System.Windows.Media.FontFamily("Franklin Gothic Medium"),
+                FontFamily = new FontFamily("Franklin Gothic Medium"),
                 FontSize = 16,
                 Text = text
             };
@@ -79,7 +79,7 @@ namespace DraftClient.View
             var textBlock = new TextBlock
             {
                 Name = "TeamName",
-                FontFamily = new System.Windows.Media.FontFamily("Franklin Gothic Medium"),
+                FontFamily = new FontFamily("Franklin Gothic Medium"),
                 FontSize = 16,
                 Text = text
             };
@@ -89,21 +89,24 @@ namespace DraftClient.View
 
         private string RemoveElements()
         {
-            var textBox = TeamPanel.Children[0] as TextBox;
-            if (textBox != null)
+            if (TeamPanel.Children.Count > 0)
             {
-                textBox.KeyUp -= TeamNameEdit_KeyUp;
-                textBox.LostFocus -= TeamNameEdit_LostFocus;
-                TeamPanel.Children.Clear();
-                return textBox.Text;
-            }
+                var textBox = TeamPanel.Children[0] as TextBox;
+                if (textBox != null)
+                {
+                    textBox.KeyUp -= TeamNameEdit_KeyUp;
+                    textBox.LostFocus -= TeamNameEdit_LostFocus;
+                    TeamPanel.Children.Clear();
+                    return textBox.Text;
+                }
 
-            var textBlock = TeamPanel.Children[0] as TextBlock;
-            if (textBlock != null)
-            {
-                textBlock.MouseUp -= TeamName_MouseUp;
-                TeamPanel.Children.Clear();
-                return textBlock.Text;
+                var textBlock = TeamPanel.Children[0] as TextBlock;
+                if (textBlock != null)
+                {
+                    textBlock.MouseUp -= TeamName_MouseUp;
+                    TeamPanel.Children.Clear();
+                    return textBlock.Text;
+                }
             }
 
             return "";
@@ -113,7 +116,7 @@ namespace DraftClient.View
         public void SetConnected(bool isConnected)
         {
             ConnectedImage.Source = isConnected ?
-                new BitmapImage(new Uri("pack://application:,,,/Resources/Connected.png")) 
+                new BitmapImage(new Uri("pack://application:,,,/Resources/Connected.png"))
                 : new BitmapImage(new Uri("pack://application:,,,/Resources/Disconnected.png"));
         }
     }

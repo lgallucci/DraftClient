@@ -34,8 +34,16 @@
 
         public void StartServer(string leagueName, int numberOfTeams)
         {
+            Connection.ServerHandshake -= ServerHandshake;
             Connection = new Server(leagueName, numberOfTeams);
             ((Server)Connection).StartServer();
+        }
+
+        public void ResetConnection()
+        {
+            Connection.ServerHandshake -= ServerHandshake;
+            Connection = new Client();
+            Connection.ServerHandshake += ServerHandshake;
         }
 
         public void ConnectToDraft(string ipAddress, int ipPort)

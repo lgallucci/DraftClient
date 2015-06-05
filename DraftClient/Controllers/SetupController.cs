@@ -15,7 +15,7 @@
     public class SetupController
     {
         public bool IsRunning { get; set; }
-        
+
         private readonly Setup _setupWindow;
         private readonly ConnectionServer _connectionServer;
 
@@ -83,7 +83,16 @@
 
         private void RetrieveDraftSettings(DraftSettings settings)
         {
-            Application.Current.Dispatcher.Invoke(() => _setupWindow.SelectTeam(false, (ViewModel.DraftSettings) _setupWindow.DraftSettings.InjectFrom(settings)));
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                _setupWindow.DraftSettings.InjectFrom(settings);
+                _setupWindow.DraftSettings.DraftTeams = new ObservableCollection<ViewModel.DraftTeam>();
+                foreach (var draftTeam in settings.DraftTeams)
+                {
+                    _setupWindow.DraftSettings.DraftTeams.Add(Mapper.Map<ViewModel.DraftTeam>(draftTeam));
+                }
+                _setupWindow.SelectTeam(false);
+            });
         }
 
         public void ConnectToDraftServer(string ipAddress, int ipPort)
@@ -93,7 +102,7 @@
 
         public void CancelDraft()
         {
-            _connectionServer.Connection.Close();
+            
         }
 
         public void StartServer(string leagueName, int numberOfTeams)
@@ -104,12 +113,17 @@
         public void UpdateTeamInfo(ViewModel.DraftTeam team)
         {
             team.ConnectedUser = _connectionServer.Connection.ClientId;
-            _connectionServer.Connection.SendMessage(NetworkMessageType.UpdateTeamMessage, Mapper.Map<ViewModel.DraftTeam, DraftTeam>(team));   
+            _connectionServer.Connection.SendMessage(NetworkMessageType.UpdateTeamMessage, Mapper.Map<ViewModel.DraftTeam, DraftTeam>(team));
         }
 
         public void DisconnectFromDraftServer()
         {
             _connectionServer.Connection.SendMessage(NetworkMessageType.LogoutMessage, null);
+        }
+
+        public Guid GetClientId()
+        {
+            return _connectionServer.Connection.ClientId;
         }
     }
 }

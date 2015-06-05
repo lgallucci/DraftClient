@@ -2,6 +2,8 @@
 {
     using System;
     using System.Collections.ObjectModel;
+    using System.Linq;
+    using System.Windows;
     using ClientServer;
     using DraftClient.View;
     using DraftEntities;
@@ -24,15 +26,19 @@
             _connectionServer.Connection.SendDraft += SendDraft;
             _connectionServer.Connection.TeamUpdated += TeamUpdated;
             _connectionServer.Connection.SendDraftSettings += SendDraftSettings;
+            _connectionServer.Connection.UserDisconnect += UserDisconnect;
+            _mainWindow.Closed += RemoveHandlers;
         }
-        
+
         #region Event Handlers
 
         private void RemoveHandlers(object sender, EventArgs e)
         {
             _connectionServer.Connection.PickMade -= PickMade;
-            _connectionServer.Connection.RetrieveDraft -= RetrieveDraft;
+            _connectionServer.Connection.SendDraft -= SendDraft;
             _connectionServer.Connection.TeamUpdated -= TeamUpdated;
+            _connectionServer.Connection.SendDraftSettings -= SendDraftSettings;
+            _connectionServer.Connection.UserDisconnect -= UserDisconnect;
             _mainWindow.Closed -= RemoveHandlers;
         }
 
@@ -50,7 +56,10 @@
                 {
                     for (int j = 0; j < columns; j++)
                     {
-                        res.Picks[i, j] = src.Picks[i, j].DraftedPlayer.AverageDraftPosition;
+                        if (src.Picks[i, j].DraftedPlayer != null)
+                        {
+                            res.Picks[i, j] = src.Picks[i, j].DraftedPlayer.AverageDraftPosition;
+                        }
                     }
                 }
                 return res;
@@ -80,8 +89,26 @@
 
         private void TeamUpdated(DraftTeam team)
         {
-            _mainWindow.UpdateTeam(Mapper.Map<ViewModel.DraftTeam>(team));
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                _mainWindow.UpdateTeam(Mapper.Map<ViewModel.DraftTeam>(team));
+            });
         }
+
+        private void UserDisconnect(Guid connecteduser)
+        {
+            var draftTeam = Settings.DraftTeams.FirstOrDefault(d => d.ConnectedUser.Equals(connecteduser));
+
+            if (draftTeam != null)
+            {
+                draftTeam.IsConnected = false;
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    _mainWindow.UpdateTeam(draftTeam);
+                });
+            }
+        }
+
         #endregion
 
         public void MakeMove(ViewModel.Player pick)

@@ -5,7 +5,6 @@
     using System.Linq;
     using System.Windows;
     using System.Windows.Controls;
-    using ClientServer;
     using Controllers;
     using ViewModel;
 
@@ -15,7 +14,6 @@
     public partial class Setup
     {
         private MainWindow _draftWindow;
-        private DraftController _draftController;
         private readonly SetupController _setupController;
 
         public DraftSettings DraftSettings { get; set; }
@@ -39,18 +37,12 @@
         {
             LoadingIndicatorCreate.Visibility = Visibility.Visible;
 
-            SelectTeam(true, DraftSettings);
+            SelectTeam(true);
         }
 
         public void CreateDraftWindow(bool isServer, Draft draft)
         {
-            _draftController = new DraftController(_draftWindow)
-            {
-                IsServer = isServer,
-                CurrentDraft = draft
-            };
-
-            _draftWindow = new MainWindow(_draftController);
+            _draftWindow = new MainWindow(isServer, draft);
 
             if (_draftWindow.SetupDraft(DraftSettings))
             {
@@ -63,9 +55,8 @@
             }
         }
 
-        public void SelectTeam(bool isServer, DraftSettings settings)
+        public void SelectTeam(bool isServer)
         {
-            DraftSettings = settings;
             var teamSelect = new TeamSelect
             {
                 IsServer = isServer,
@@ -73,11 +64,12 @@
             };
 
             teamSelect.ShowDialog();
-
+            
             if (teamSelect.DialogResult == true)
             {
                 if (isServer)
                 {
+                    teamSelect.Team.ConnectedUser = _setupController.GetClientId();
                     _setupController.StartServer(DraftSettings.LeagueName, DraftSettings.NumberOfTeams);
                     CreateDraftWindow(true, new Draft(DraftSettings.TotalRounds, DraftSettings.NumberOfTeams, true));
                 }
@@ -147,7 +139,7 @@
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             _setupController.IsRunning = false;
-            _draftController = null;
+            _setupController.DisconnectFromDraftServer();
             Application.Current.Shutdown();
         }
 

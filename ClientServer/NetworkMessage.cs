@@ -32,7 +32,7 @@
         //Teams
         UpdateTeamMessage = 8,
 
-        //
+        //Draft Setup
         SendDraftMessage = 9,
         RetrieveDraftMessage = 10,
 

@@ -32,6 +32,8 @@
         private readonly int _port;
         private readonly System.Timers.Timer _timKeepAlive;
 
+        private object ConnectionLock = new object();
+
         public static int Port = 11000;
         public static string MulticastAddress = "239.0.0.222";
         public readonly Collection<ConnectedClient> Connections;
@@ -131,10 +133,13 @@
             socketClient.ClientMessage += HandleMessage;
             socketClient.ClientDisconnect += HandleDisconnect;
 
-            Connections.Add(new ConnectedClient
+            lock (ConnectionLock)
             {
-                Client = socketClient
-            });
+                Connections.Add(new ConnectedClient
+                {
+                    Client = socketClient
+                });
+            }
 
             socketClient.StartClient();
 
@@ -156,8 +161,11 @@
 
         private void HandleMessage(object sender, NetworkMessage networkMessage)
         {
-            ConnectedClient connection = Connections.FirstOrDefault(c => c.Client == (SocketClient)sender);
-
+            ConnectedClient connection;
+            lock (ConnectionLock)
+            {
+                connection = Connections.FirstOrDefault(c => c.Client == (SocketClient) sender);
+            }
             switch (networkMessage.MessageType)
             {
                 case NetworkMessageType.LoginMessage:
@@ -213,9 +221,12 @@
 
         private void BroadcastMessage(NetworkMessage networkMessage)
         {
-            foreach (var connection in Connections.Where(c => c.Id != networkMessage.Id))
+            lock (ConnectionLock)
             {
-                connection.Client.SendMessage(networkMessage);
+                foreach (var connection in Connections.Where(c => c.Id != networkMessage.Id))
+                {
+                    connection.Client.SendMessage(networkMessage);
+                }
             }
         }
 
@@ -229,20 +240,28 @@
 
         private void HandleDisconnect(object sender, Guid id)
         {
-            ConnectedClient connection = Connections.FirstOrDefault(c => c.Client == sender);
-            Logout(connection);
+            lock (ConnectionLock)
+            {
+                var connection = Connections.FirstOrDefault(c => c.Client == sender);
+                Logout(connection);
+            }
         }
 
         private void Logout(ConnectedClient connection)
         {
             if (connection != null)
             {
+                OnUserDisconnect(connection.Id);
+
                 BroadcastMessage(new NetworkMessage
                 {
                     Id = connection.Id,
                     MessageType = NetworkMessageType.LogoutMessage
                 });
-                Connections.Remove(connection);
+                lock (ConnectionLock)
+                {
+                    Connections.Remove(connection);
+                }
             }
         }
 

@@ -111,12 +111,15 @@
 
         public virtual void SendMessage(NetworkMessageType type, object payload)
         {
-            _client.SendMessage(new NetworkMessage
+            if (_client != null)
             {
-                Id = ClientId,
-                MessageType = type,
-                MessageContent = payload
-            });
+                _client.SendMessage(new NetworkMessage
+                {
+                    Id = ClientId,
+                    MessageType = type,
+                    MessageContent = payload
+                });
+            }
         }
 
         #endregion

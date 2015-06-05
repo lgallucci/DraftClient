@@ -11,6 +11,7 @@
     using DraftClient.Controllers;
     using DraftClient.ViewModel;
     using FileReader;
+    using Omu.ValueInjecter;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -20,10 +21,15 @@
         public static PlayerList PlayerList = new PlayerList();
         readonly DraftController _draftController;
 
-        public MainWindow(DraftController draftController)
+        public MainWindow(bool isServer, Draft draft)
         {
             InitializeComponent();
-            _draftController = draftController;
+
+            _draftController = new DraftController(this)
+            {
+                IsServer = isServer,
+                CurrentDraft = draft
+            };
         }
 
         private void OnClosing(object sender, CancelEventArgs e)
@@ -149,8 +155,10 @@
 
         public void UpdateTeam(DraftTeam team)
         {
-            var teamControl = (FantasyTeam)MainGrid.Children.Cast<UIElement>().
-                FirstOrDefault(e => Grid.GetColumn(e) == team.Index && Grid.GetRow(e) == 0);
+            _draftController.Settings.DraftTeams[team.Index].InjectFrom(team);
+
+            var teamControl = (FantasyTeam)PicksGrid.Children.Cast<UIElement>().
+                FirstOrDefault(e => Grid.GetColumn(e) == team.Index + 1 && Grid.GetRow(e) == 0);
 
             if (teamControl != null)
             {
@@ -158,7 +166,7 @@
                 {
                     teamControl.SetText(team.Name);
                 }
-                teamControl.IsConnected = team.IsConnected;
+                teamControl.SetConnected(team.IsConnected);
             }
         }
     }
