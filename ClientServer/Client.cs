@@ -22,6 +22,7 @@
         protected bool IsRunning;
         private SocketClient _client;
         public Guid ClientId { get; set; }
+        public bool IsConnected { get { return _client.Connected; } }
 
         #region Network Methods
         public void ListenForServers(Action<DraftServer> serverPingCallback)
@@ -183,14 +184,14 @@
             }
         }
 
-        public delegate void PickMadeHandler(Player player);
+        public delegate void PickMadeHandler(DraftPick pick);
         public event PickMadeHandler PickMade;
-        public void OnPickMade(Player player)
+        public void OnPickMade(DraftPick pick)
         {
             PickMadeHandler handler = PickMade;
             if (handler != null)
             {
-                handler(player);
+                handler(pick);
             }
         }
 

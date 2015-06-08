@@ -47,6 +47,14 @@
       <Project>{C76D12D3-58A2-4EF5-A2F1-436E7E12EFBC}</Project>
       <Name>ClientServer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DraftClient\DraftClient.csproj">
+      <Project>{48f75aa8-1885-49b6-808f-7751d68ab756}</Project>
+      <Name>DraftClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DraftEntities\DraftEntities.csproj">
+      <Project>{65184f9c-4e20-4e4a-8f1c-0f61c4f1d5c9}</Project>
+      <Name>DraftEntities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -52,7 +52,7 @@
 
                         if (networkMessage != null && networkMessage.MessageType != NetworkMessageType.KeepAliveMessage)
                         {
-                            ClientMessage(this, networkMessage);
+                            Task.Run(() => ClientMessage(this, networkMessage));
                         }
                     }
                     Thread.Sleep(50); // i dont want to read all the time

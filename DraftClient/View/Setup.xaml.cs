@@ -3,6 +3,7 @@
     using System;
     using System.ComponentModel;
     using System.Linq;
+    using System.Threading;
     using System.Windows;
     using System.Windows.Controls;
     using Controllers;
@@ -15,6 +16,7 @@
     {
         private MainWindow _draftWindow;
         private readonly SetupController _setupController;
+        public AutoResetEvent SettingsResetEvent;
 
         public DraftSettings DraftSettings { get; set; }
 
@@ -40,23 +42,33 @@
             SelectTeam(true);
         }
 
-        public void CreateDraftWindow(bool isServer, Draft draft)
+        public void CreateDraftWindow(bool isServer, int totalRounds, int numberOfTeams)
         {
-            _draftWindow = new MainWindow(isServer, draft);
-
-            if (_draftWindow.SetupDraft(DraftSettings))
+            try
             {
-                _draftWindow.Owner = this;
-                Hide();
-                _draftWindow.Show();
-                StartButton.Visibility = Visibility.Collapsed;
-                ContinueButton.Visibility = Visibility.Visible;
-                LoadingIndicatorCreate.Visibility = Visibility.Collapsed;
+                _draftWindow = new MainWindow(isServer, totalRounds, numberOfTeams);
+
+                if (_draftWindow.SetupDraft(DraftSettings))
+                {
+                    _draftWindow.Owner = this;
+                    Hide();
+                    _draftWindow.Show();
+                    StartButton.Visibility = Visibility.Collapsed;
+                    ContinueButton.Visibility = Visibility.Visible;
+                    LoadingIndicatorCreate.Visibility = Visibility.Collapsed;
+                }
+            }
+            catch (TimeoutException ex)
+            {
+                MessageBox.Show(ex.Message);
+                _setupController.DisconnectFromDraftServer();
             }
         }
 
         public void SelectTeam(bool isServer)
         {
+            if (!isServer && !_setupController.IsConnected) return;
+
             var teamSelect = new TeamSelect
             {
                 IsServer = isServer,
@@ -71,12 +83,12 @@
                 {
                     teamSelect.Team.ConnectedUser = _setupController.GetClientId();
                     _setupController.StartServer(DraftSettings.LeagueName, DraftSettings.NumberOfTeams);
-                    CreateDraftWindow(true, new Draft(DraftSettings.TotalRounds, DraftSettings.NumberOfTeams, true));
+                    CreateDraftWindow(true, DraftSettings.TotalRounds, DraftSettings.NumberOfTeams);
                 }
                 else
                 {
                     _setupController.UpdateTeamInfo(teamSelect.Team);
-                    _setupController.GetDraft();
+                    CreateDraftWindow(false, DraftSettings.TotalRounds, DraftSettings.NumberOfTeams);
                 }
             }
             else
@@ -121,13 +133,19 @@
                 try
                 {
                     _setupController.ConnectToDraftServer(lbi.IpAddress, lbi.IpPort);
+                     SettingsResetEvent = new AutoResetEvent(false);
+                    _setupController.GetDraftSettings();
+                    if (SettingsResetEvent.WaitOne(5000))
+                    {
+                        throw new TimeoutException("Didn't recieve draft settings");
+                    }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message.ToString());
+                    MessageBox.Show(ex.Message);
+                    SettingsResetEvent.Reset();
                     _setupController.DisconnectFromDraftServer();
                 }
-                _setupController.GetDraftSettings();
             }
         }
 

@@ -2,22 +2,32 @@
 {
     using System;
     using System.Collections.ObjectModel;
-    using System.IO;
     using System.Linq;
-    using System.Net;
-    using System.Net.Sockets;
-    using System.Runtime.Serialization.Formatters.Binary;
+    using System.Threading;
     using ClientServer;
     using DraftEntities;
 
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
+        {
+            if (args == null) throw new ArgumentNullException("args");
+            ClientRunner runner = new ClientRunner();
+            runner.RunClient();
+        }
+    }
+
+    internal class ClientRunner
+    {
+        private Client _client;
+        private AutoResetEvent _reset;
+
+        public void RunClient()
         {
             var servers = new Collection<DraftServer>();
 
-            var client = new Client();
-            client.ListenForServers((server) =>
+            _client = new Client();
+            _client.ListenForServers((server) =>
             {
                 if (server != null)
                 {
@@ -39,7 +49,8 @@
                 Console.Clear();
                 foreach (var server in servers)
                 {
-                    Console.WriteLine("Server: {0} {1}/{2} from {3}:{4}", server.FantasyDraft, server.ConnectedPlayers, server.MaxPlayers, server.IpAddress, server.IpPort);
+                    Console.WriteLine("Server: {0} {1}/{2} from {3}:{4}", server.FantasyDraft, server.ConnectedPlayers,
+                        server.MaxPlayers, server.IpAddress, server.IpPort);
                 }
 
                 try
@@ -49,24 +60,25 @@
 
                     if (!string.IsNullOrWhiteSpace(name))
                     {
-                        var tcpClient = new TcpClient();
-                        tcpClient.Connect(new IPEndPoint(IPAddress.Parse(servers[0].IpAddress), servers[0].IpPort));
+                        _reset = new AutoResetEvent(false);
 
-                        using (var memoryStream = new MemoryStream())
-                        {
-                            var formatter = new BinaryFormatter();
-                            formatter.Serialize(memoryStream, new NetworkMessage
-                            {
-                                MessageType = NetworkMessageType.LoginMessage,
-                                MessageContent = name
-                            });
-                            tcpClient.Client.Send(memoryStream.ToArray());
-                            Console.WriteLine("Connected to {0} as {1}", servers[0].FantasyDraft, name);
-                        }
+                        _client.ConnectToDraftServer(servers[0].IpAddress, servers[0].IpPort);
+                        _client.ServerHandshake += ServerHandshake;
+                        _client.SendMessage(NetworkMessageType.LoginMessage, Guid.NewGuid().ToString());
+
+                        _reset.WaitOne(5000);
+
+                        Console.WriteLine("Connected to {0} as {1}", servers[0].FantasyDraft, name);
+
+                        _client.RetrieveDraft += RetrieveDraft;
+                        _client.RetrieveDraftSettings += RetrieveDraftSettings;
 
                         while (true)
                         {
-
+                            GetDraftSettings();
+                            Thread.Sleep(5000);
+                            GetDraft();
+                            Thread.Sleep(5000);
                         }
                     }
 
@@ -77,6 +89,34 @@
                 }
             }
 
+        }
+
+        private void ServerHandshake()
+        {
+            Console.WriteLine("Recieved Login Handshake");
+            _reset.Set();
+        }
+
+        private void GetDraftSettings()
+        {
+            Console.WriteLine("Getting DraftSettings!");
+            _client.SendMessage(NetworkMessageType.SendDraftSettingsMessage, null);
+        }
+
+        private void RetrieveDraftSettings(DraftSettings settings)
+        {
+            Console.WriteLine("Recieved DraftSettings!");
+        }
+
+        private void GetDraft()
+        {
+            Console.WriteLine("Getting Draft!");
+            _client.SendMessage(NetworkMessageType.SendDraftMessage, null);
+        }
+
+        private void RetrieveDraft(Draft draft)
+        {
+            Console.WriteLine("Recieved Draft!");
         }
     }
 }

@@ -5,7 +5,6 @@ namespace DraftClient.View
     using System;
     using System.Linq;
     using System.Collections.ObjectModel;
-    using System.ComponentModel;
     using System.Runtime.InteropServices;
     using System.Windows;
     using System.Windows.Controls;
@@ -42,7 +41,14 @@ namespace DraftClient.View
 
             TitleMessage.Text = IsServer ? "Set up Teams" : "Select Your Team";
 
+            EventManager.RegisterClassHandler(typeof(TextBox), TextBox.GotFocusEvent, new RoutedEventHandler(TextBox_GotFocus));
+
             tStack.ItemsSource = Teams;
+        }
+
+        private void TextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            (sender as TextBox).SelectAll();
         }
 
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)

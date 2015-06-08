@@ -5,9 +5,9 @@
     using System.Linq;
     using System.Windows;
     using ClientServer;
-    using DraftClient.View;
-    using DraftEntities;
+    using View;
     using Omu.ValueInjecter;
+    using DraftEntities;
 
     public class DraftController
     {
@@ -27,6 +27,7 @@
             _connectionServer.Connection.TeamUpdated += TeamUpdated;
             _connectionServer.Connection.SendDraftSettings += SendDraftSettings;
             _connectionServer.Connection.UserDisconnect += UserDisconnect;
+            _connectionServer.Connection.RetrieveDraft += RetrieveDraft;
             _mainWindow.Closed += RemoveHandlers;
         }
 
@@ -39,7 +40,44 @@
             _connectionServer.Connection.TeamUpdated -= TeamUpdated;
             _connectionServer.Connection.SendDraftSettings -= SendDraftSettings;
             _connectionServer.Connection.UserDisconnect -= UserDisconnect;
+            _connectionServer.Connection.RetrieveDraft -= RetrieveDraft;
             _mainWindow.Closed -= RemoveHandlers;
+        }
+
+        public void GetDraft()
+        {
+            _connectionServer.Connection.SendMessage(NetworkMessageType.SendDraftMessage, null);
+
+
+        }
+
+        private void RetrieveDraft(Draft draft)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                var draftModel = new ViewModel.Draft(draft.MaxRound, draft.MaxTeam, false);
+                draftModel.InjectFrom(draft);
+                for (int i = 0; i < draft.MaxRound; i++)
+                {
+                    for (int j = 0; j < draft.MaxTeam; j++)
+                    {
+                        if (draft.Picks[i, j] != 0)
+                        {
+                            var player =
+                                MainWindow.PlayerList.Players.First(p => p.AverageDraftPosition == draft.Picks[i, j]);
+
+                            draftModel.Picks[i, j] = new ViewModel.DraftPick
+                            {
+                                DraftedPlayer = player,
+                                CanEdit = IsServer,
+                                Name = player.Name
+                            };
+                        }
+                    }
+                }
+                CurrentDraft = draftModel;
+                _mainWindow.SetupDraft(Settings);
+            });
         }
 
         private Draft SendDraft()
@@ -74,7 +112,8 @@
                 var res = new DraftSettings();
                 res.InjectFrom(src);
                 res.DraftTeams = new Collection<DraftTeam>();
-                foreach(var draftTeam in src.DraftTeams){
+                foreach (var draftTeam in src.DraftTeams)
+                {
                     res.DraftTeams.Add(Mapper.Map<DraftTeam>(draftTeam));
                 }
                 return res;
@@ -82,9 +121,12 @@
             return Mapper.Map<DraftSettings>(Settings);
         }
 
-        private void PickMade(Player player)
+        private void PickMade(DraftPick pick)
         {
-            throw new System.NotImplementedException();
+            var player =
+                MainWindow.PlayerList.Players.First(p => p.AverageDraftPosition == pick.AverageDraftPosition);
+
+            CurrentDraft.Picks[pick.Row, pick.Column].DraftedPlayer = player;
         }
 
         private void TeamUpdated(DraftTeam team)

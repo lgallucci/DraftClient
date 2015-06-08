@@ -209,10 +209,10 @@
                     BroadcastMessage(networkMessage);
                     break;
                 case NetworkMessageType.PickMessage:
-                    var player = networkMessage.MessageContent as Player;
-                    if (player != null)
+                    var pick = networkMessage.MessageContent as DraftPick;
+                    if (pick != null)
                     {
-                        OnPickMade(player);
+                        OnPickMade(pick);
                     }
                     BroadcastMessage(networkMessage);
                     break;

@@ -4,6 +4,7 @@
     using ClientServer;
     using System;
     using System.Linq;
+    using DraftEntities;
 
     class Program
     {
@@ -13,6 +14,14 @@
             
             server.StartServer();
 
+            server.SendDraft += () => new Draft
+            {
+                Drafting = true,
+                Picks = new int[5,5]
+            };
+
+
+
             while (true)
             {
                 Console.Clear();
@@ -21,6 +30,7 @@
                 Console.WriteLine("Users:" + server.Connections.Select(c => c.Id.ToString()).DefaultIfEmpty().Aggregate((a, x) => a + ", " + x));
                 Thread.Sleep(2000);
             }
+
         }
     }
 }

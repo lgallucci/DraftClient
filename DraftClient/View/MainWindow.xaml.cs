@@ -1,10 +1,12 @@
 ﻿namespace DraftClient.View
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.IO;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Controls;
@@ -20,16 +22,30 @@
     {
         public static PlayerList PlayerList = new PlayerList();
         readonly DraftController _draftController;
+        public AutoResetEvent DraftReset;
 
-        public MainWindow(bool isServer, Draft draft)
+        public MainWindow(bool isServer, int totalRounds, int numberOfTeams)
         {
             InitializeComponent();
-
             _draftController = new DraftController(this)
             {
-                IsServer = isServer,
-                CurrentDraft = draft
+                IsServer = isServer
             };
+            if (isServer)
+            {
+                _draftController.CurrentDraft = new Draft(totalRounds, numberOfTeams, true);
+            }
+            else
+            {
+                //TODO: Loading Screen ?
+                
+                DraftReset = new AutoResetEvent(false);
+                _draftController.GetDraft();
+                if (!DraftReset.WaitOne())
+                {
+                    throw new TimeoutException("Didn't retrieve draft from server");
+                }
+            }
         }
 
         private void OnClosing(object sender, CancelEventArgs e)
@@ -42,20 +58,15 @@
             }
         }
 
-        public bool JoinDraft()
-        {
-            return true;
-        }
-
         public bool SetupDraft(DraftSettings settings)
         {
             try
             {
                 _draftController.Settings = settings;
-                _draftController.IsServer = true;
 
                 LoadPlayers(settings.PlayerFile);
                 SetupGrid(settings);
+                SetupPicks();
             }
             catch (IOException)
             {
@@ -108,7 +119,7 @@
                     IsServer = _draftController.IsServer,
                     IsMyTeam = (settings.DraftTeams[i - 1].ConnectedUser == _draftController.GetClientId()),
                 };
-                teamBlock.SetText(settings.DraftTeams[i-1].Name);
+                teamBlock.SetText(settings.DraftTeams[i - 1].Name);
                 teamBlock.SetConnected(settings.DraftTeams[i - 1].IsConnected);
                 PicksGrid.Children.Add(teamBlock);
                 Grid.SetColumn(teamBlock, i);
@@ -121,7 +132,7 @@
                 {
                     var newRound = new FantasyRound
                     {
-                        Pick = _draftController.CurrentDraft.Picks[i-1,j-1],
+                        Pick = _draftController.CurrentDraft.Picks[i - 1, j - 1],
                         Round = i,
                         Team = j
                     };
@@ -147,10 +158,15 @@
                         ByeWeek = player.ByeWeek,
                         ProjectedPoints = player.ProjectedPoints,
                         IsPicked = false
-                }).ToList();
+                    }).ToList();
 
                 return new ObservableCollection<Player>(presentationPlayers);
             });
+        }
+
+        private void SetupPicks()
+        {
+            
         }
 
         public void UpdateTeam(DraftTeam team)

@@ -7,9 +7,8 @@
     public sealed class ConnectionServer
     {
         private AutoResetEvent _connectionReset;
-        private bool _handshook;
         public Client Connection { get; set; }
-
+        
         private static readonly ConnectionServer instance = new ConnectionServer();
 
         // Explicit static constructor to tell C# compiler
@@ -53,17 +52,14 @@
             _connectionReset = new AutoResetEvent(false);
             Connection.SendMessage(NetworkMessageType.LoginMessage, Connection.ClientId.ToString());
 
-            _connectionReset.WaitOne(5000);
-
-            if (!_handshook)
+            if (!_connectionReset.WaitOne(5000))
             {
-                throw new Exception("Couldn't successfully connect to draft server");
+                throw new TimeoutException("Couldn't connect to draft server");
             }
         }
 
         private void ServerHandshake()
         {
-            _handshook = true;
             _connectionReset.Set();
         }
 

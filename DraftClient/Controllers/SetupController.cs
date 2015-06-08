@@ -9,8 +9,8 @@
     using System.Windows.Threading;
     using ClientServer;
     using DraftClient.View;
-    using DraftEntities;
     using Omu.ValueInjecter;
+    using DraftEntities;
 
     public class SetupController
     {
@@ -18,17 +18,18 @@
 
         private readonly Setup _setupWindow;
         private readonly ConnectionServer _connectionServer;
+        public bool IsConnected { get { return _connectionServer.Connection.IsConnected; } }
 
         public SetupController(Setup setupWindow)
         {
             _connectionServer = ConnectionServer.Instance;
             _setupWindow = setupWindow;
-            _connectionServer.Connection.RetrieveDraft += RetrieveDraft;
             _connectionServer.Connection.RetrieveDraftSettings += RetrieveDraftSettings;
         }
+
         public void SubscribeToMessages(ObservableCollection<ViewModel.DraftServer> servers)
         {
-            Dispatcher dispatch = Dispatcher.CurrentDispatcher;
+            Dispatcher dispatch = Application.Current.Dispatcher;
 
             _connectionServer.Connection.ListenForServers(o =>
             {
@@ -39,7 +40,11 @@
 
                 if (matchedServer != default(ViewModel.DraftServer))
                 {
-                    dispatch.Invoke(() => matchedServer.Timeout = DateTime.Now.AddSeconds(7));
+                    dispatch.Invoke(() =>
+                    {
+                        matchedServer.InjectFrom(server);
+                        matchedServer.Timeout = DateTime.Now.AddSeconds(7);
+                    });
                 }
                 else
                 {
@@ -71,16 +76,6 @@
             _connectionServer.Connection.SendMessage(NetworkMessageType.SendDraftSettingsMessage, null);
         }
 
-        public void GetDraft()
-        {
-            _connectionServer.Connection.SendMessage(NetworkMessageType.SendDraftMessage, null);
-        }
-
-        private void RetrieveDraft(Draft draft)
-        {
-            Application.Current.Dispatcher.Invoke(() => _setupWindow.CreateDraftWindow(false, Mapper.Map<ViewModel.Draft>(draft)));
-        }
-
         private void RetrieveDraftSettings(DraftSettings settings)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -91,6 +86,7 @@
                 {
                     _setupWindow.DraftSettings.DraftTeams.Add(Mapper.Map<ViewModel.DraftTeam>(draftTeam));
                 }
+                _setupWindow.SettingsResetEvent.Set();
                 _setupWindow.SelectTeam(false);
             });
         }
