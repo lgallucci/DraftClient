@@ -108,6 +108,9 @@
                 case NetworkMessageType.UpdateTeamMessage:
                     OnTeamUpdated(networkMessage.MessageContent as DraftTeam);
                     break;
+                case NetworkMessageType.PickMessage:
+                    OnPickMade(networkMessage.MessageContent as DraftPick);
+                    break;
             }
         }
 

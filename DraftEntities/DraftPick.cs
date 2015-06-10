@@ -1,5 +1,8 @@
 ﻿namespace DraftEntities
 {
+    using System;
+
+    [Serializable]
     public class DraftPick
     {
         public int AverageDraftPosition { get; set; }

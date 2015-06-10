@@ -20,6 +20,24 @@
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             DataContext = Pick;
+            Pick.MakePick += adp => OnMakePick(adp, Round, Team);
         }
+
+        #region Events
+
+        public delegate void MakePickHandler(int adp, int row, int column);
+
+        public event MakePickHandler MakePick;
+
+        public void OnMakePick(int adp, int row, int column)
+        {
+            MakePickHandler handler = MakePick;
+            if (handler != null)
+            {
+                handler(adp, row, column);
+            }
+        }
+
+        #endregion
     }
 }

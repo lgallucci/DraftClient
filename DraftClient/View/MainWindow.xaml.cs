@@ -11,10 +11,14 @@
     using System.Windows;
     using System.Windows.Controls;
     using DraftClient.Controllers;
-    using DraftClient.ViewModel;
+    using DraftEntities;
     using FileReader;
     using Omu.ValueInjecter;
+    using Draft = DraftClient.ViewModel.Draft;
+    using DraftSettings = DraftClient.ViewModel.DraftSettings;
+    using DraftTeam = DraftClient.ViewModel.DraftTeam;
     using Player = DraftEntities.Player;
+    using PlayerList = DraftClient.ViewModel.PlayerList;
 
     /// <summary>
     ///     Interaction logic for MainWindow.xaml
@@ -55,7 +59,6 @@
                 await RetrieveDraft();
 
                 SetupGrid(settings);
-                SetupPicks();
             }
             catch (IOException)
             {
@@ -124,6 +127,7 @@
                     IsServer = _draftController.IsServer,
                     IsMyTeam = (settings.DraftTeams[i - 1].ConnectedUser == _draftController.GetClientId()),
                 };
+                teamBlock.TeamChanged += (number, name) => _draftController.UpdateTeam(number, name);
                 teamBlock.SetText(settings.DraftTeams[i - 1].Name);
                 teamBlock.SetConnected(settings.DraftTeams[i - 1].IsConnected);
                 PicksGrid.Children.Add(teamBlock);
@@ -141,6 +145,15 @@
                         Round = i,
                         Team = j
                     };
+                    if (_draftController.IsServer)
+                    {
+                        newRound.MakePick += (adp, row, column) => _draftController.MakeMove(new DraftPick
+                        {
+                            AverageDraftPosition = adp,
+                            Row = row-1,
+                            Column = column-1
+                        });
+                    }
                     PicksGrid.Children.Add(newRound);
                     Grid.SetRow(newRound, i);
                     Grid.SetColumn(newRound, j);
@@ -167,10 +180,6 @@
 
                 return new ObservableCollection<ViewModel.Player>(presentationPlayers);
             });
-        }
-
-        private void SetupPicks()
-        {
         }
 
         public void UpdateTeam(DraftTeam team)

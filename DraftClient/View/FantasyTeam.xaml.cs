@@ -6,6 +6,7 @@
     using System.Windows.Input;
     using System.Windows.Media;
     using System.Windows.Media.Imaging;
+    using ClientServer;
 
     /// <summary>
     ///     Interaction logic for FantasyTeam.xaml
@@ -45,7 +46,7 @@
                 var textBox = (TeamPanel.Children[0] as TextBox);
                 if (textBox != null && textBox.Text != string.Empty)
                 {
-                    CreateTextBlock(RemoveElements());
+                    CreateTextBlock(RemoveElements(), true);
                 }
             }
         }
@@ -55,7 +56,7 @@
             var textBox = (TeamPanel.Children[0] as TextBox);
             if (textBox != null && textBox.Text != string.Empty)
             {
-                CreateTextBlock(RemoveElements());
+                CreateTextBlock(RemoveElements(), true);
             }
         }
 
@@ -77,9 +78,12 @@
             textBox.SelectAll();
         }
 
-        private void CreateTextBlock(string text)
+        private void CreateTextBlock(string text, bool triggerEvent = false)
         {
-            //TODO: Trigger event to update all clients
+            if (triggerEvent)
+            {
+                OnTeamChanged(TeamNumber, text);
+            }
             var textBlock = new TextBlock
             {
                 Name = "TeamName",
@@ -123,5 +127,22 @@
                 new BitmapImage(new Uri("pack://application:,,,/Resources/Connected.png"))
                 : new BitmapImage(new Uri("pack://application:,,,/Resources/Disconnected.png"));
         }
+
+        #region events
+
+        public delegate void TeamChangedHandler(int teamNumber, string name);
+        public event TeamChangedHandler TeamChanged;
+
+        public void OnTeamChanged(int teamNumber, string name)
+        {
+            TeamChangedHandler handler = TeamChanged;
+            if (handler != null)
+            {
+                handler(teamNumber, name);
+            }
+        }
+
+        #endregion
+
     }
 }

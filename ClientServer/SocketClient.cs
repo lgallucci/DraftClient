@@ -40,15 +40,9 @@
                     {
                         byte[] message = await ReadMessage();
                         NetworkMessage networkMessage = null;
-                        try
-                        {
-                            var formatter = new BinaryFormatter();
-                            networkMessage = (NetworkMessage) formatter.Deserialize(new MemoryStream(message));
-                        }
-                        catch (Exception e)
-                        {
-                            SerializeException(this, e);
-                        }
+
+                        var formatter = new BinaryFormatter();
+                        networkMessage = (NetworkMessage)formatter.Deserialize(new MemoryStream(message));
 
                         if (networkMessage != null && networkMessage.MessageType != NetworkMessageType.KeepAliveMessage)
                         {
@@ -113,10 +107,6 @@
                         }
                         Close();
                     }
-                    catch (Exception e)
-                    {
-                        SerializeException(this, e);
-                    }
                 }
             });
         }
@@ -133,13 +123,9 @@
 
         public delegate void HandleMessage(object sender, NetworkMessage e);
 
-        public delegate void HandleSerializeException(object sender, Exception e);
-
         public event HandleMessage ClientMessage;
 
         public event HandleClientDisconnect ClientDisconnect;
-
-        public event HandleSerializeException SerializeException;
 
         #endregion
     }

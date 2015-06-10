@@ -18,12 +18,12 @@
         private readonly SetupController _setupController;
         public AutoResetEvent SettingsResetEvent;
         private MainWindow _draftWindow;
-
+        //TODO: Allow Client to resume draft
         public Setup()
         {
             InitializeComponent();
 
-            DraftSettings = new DraftSettings();
+            DraftSettings = DraftSettings.Instance;
             _setupController = new SetupController(this)
             {
                 IsRunning = true

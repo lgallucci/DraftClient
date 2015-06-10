@@ -20,12 +20,12 @@
         {
             _connectionServer = ConnectionServer.Instance;
             _mainWindow = mainWindow;
-            _connectionServer.Connection.PickMade += PickMade;
-            _connectionServer.Connection.SendDraft += SendDraft;
-            _connectionServer.Connection.TeamUpdated += TeamUpdated;
-            _connectionServer.Connection.SendDraftSettings += SendDraftSettings;
-            _connectionServer.Connection.UserDisconnect += UserDisconnect;
-            _connectionServer.Connection.RetrieveDraft += RetrieveDraft;
+            _connectionServer.PickMade += PickMade;
+            _connectionServer.SendDraft += SendDraft;
+            _connectionServer.TeamUpdated += TeamUpdated;
+            _connectionServer.SendDraftSettings += SendDraftSettings;
+            _connectionServer.UserDisconnect += UserDisconnect;
+            _connectionServer.RetrieveDraft += RetrieveDraft;
             _mainWindow.Closed += RemoveHandlers;
         }
 
@@ -33,19 +33,19 @@
 
         private void RemoveHandlers(object sender, EventArgs e)
         {
-            _connectionServer.Connection.PickMade -= PickMade;
-            _connectionServer.Connection.SendDraft -= SendDraft;
-            _connectionServer.Connection.TeamUpdated -= TeamUpdated;
-            _connectionServer.Connection.SendDraftSettings -= SendDraftSettings;
-            _connectionServer.Connection.UserDisconnect -= UserDisconnect;
-            _connectionServer.Connection.RetrieveDraft -= RetrieveDraft;
+            _connectionServer.PickMade -= PickMade;
+            _connectionServer.SendDraft -= SendDraft;
+            _connectionServer.TeamUpdated -= TeamUpdated;
+            _connectionServer.SendDraftSettings -= SendDraftSettings;
+            _connectionServer.UserDisconnect -= UserDisconnect;
+            _connectionServer.RetrieveDraft -= RetrieveDraft;
             _mainWindow.Closed -= RemoveHandlers;
         }
 
         public Task<bool> GetDraft()
         {
             DraftReset = new AutoResetEvent(false);
-            _connectionServer.Connection.SendMessage(NetworkMessageType.SendDraftMessage, null);
+            _connectionServer.SendMessage(NetworkMessageType.SendDraftMessage, null);
 
             return Task.Run(() => DraftReset.WaitOne(5000));
         }
@@ -127,6 +127,7 @@
                 MainWindow.PlayerList.Players.First(p => p.AverageDraftPosition == pick.AverageDraftPosition);
 
             CurrentDraft.Picks[pick.Row, pick.Column].DraftedPlayer = player;
+            CurrentDraft.Picks[pick.Row, pick.Column].Name = player.Name;
         }
 
         private void TeamUpdated(DraftTeam team)
@@ -152,14 +153,25 @@
         public ViewModel.DraftSettings Settings { get; set; }
         public AutoResetEvent DraftReset { get; set; }
 
-        public void MakeMove(Player pick)
+        public void MakeMove(DraftPick pick)
         {
-            _connectionServer.Connection.SendMessage(NetworkMessageType.PickMessage, pick);
+            _connectionServer.SendMessage(NetworkMessageType.PickMessage, pick);
         }
 
         public Guid GetClientId()
         {
-            return _connectionServer.Connection.ClientId;
+            return _connectionServer.GetClientId();
         }
+
+        public void UpdateTeam(int teamNumber, string name)
+        {
+            var team = Settings.DraftTeams[teamNumber-1];
+
+            team.Name = name;
+
+            _connectionServer.SendMessage(NetworkMessageType.UpdateTeamMessage, Mapper.Map<DraftTeam>(team));
+        }
+
+
     }
 }

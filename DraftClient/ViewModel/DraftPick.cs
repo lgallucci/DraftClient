@@ -35,11 +35,30 @@
                     _draftedPlayer.IsPicked = false;
                 }
                 SetProperty(ref _draftedPlayer, value);
+                OnMakePick(_draftedPlayer == null ? 0 : _draftedPlayer.AverageDraftPosition);
                 if (_draftedPlayer != null)
                 {
                     _draftedPlayer.IsPicked = true;
                 }
             }
         }
+
+        #region Events
+
+        public delegate void MakePickHandler(int adp);
+
+        public event MakePickHandler MakePick;
+
+        public void OnMakePick(int adp)
+        {
+            MakePickHandler handler = MakePick;
+            if (handler != null)
+            {
+                handler(adp);
+            }
+        }
+
+        #endregion
+
     }
 }

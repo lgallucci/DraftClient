@@ -10,13 +10,32 @@
         private int _flexWithTightEnd = 1;
         private int _kickers = 1;
         private string _leagueName = "";
-        private int _numberOfTeams;
+        private int _numberOfTeams = 12;
         private string _playerFile = @"FantasyPlayerRankings.csv";
         private int _quarterbacks = 1;
         private int _runningBacks = 2;
         private ObservableCollection<DraftServer> _servers;
         private int _tightEnds = 1;
         private int _wideRecievers = 2;
+
+        private static DraftSettings _instance;
+        public static DraftSettings Instance
+        {
+            get { return _instance ?? (_instance = new DraftSettings()); }
+        }
+
+        private DraftSettings()
+        {
+            for (int i = 0; i < _numberOfTeams; i++)
+            {
+                DraftTeams.Add(new DraftTeam
+                {
+                    Index = i,
+                    IsConnected = false,
+                    Name = string.Format("Team{0}", i + 1)
+                });
+            }
+        }
 
         public string LeagueName
         {

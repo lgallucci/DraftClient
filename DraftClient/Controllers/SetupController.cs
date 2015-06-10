@@ -23,21 +23,27 @@
         {
             _connectionServer = ConnectionServer.Instance;
             _setupWindow = setupWindow;
-            _connectionServer.Connection.RetrieveDraftSettings += RetrieveDraftSettings;
+            _connectionServer.RetrieveDraftSettings += RetrieveDraftSettings;
+            _connectionServer.TeamUpdated += TeamUpdated;
+        }
+
+        private void TeamUpdated(DraftEntities.DraftTeam team)
+        {
+            _setupWindow.DraftSettings.DraftTeams[team.Index].InjectFrom(team);
         }
 
         public bool IsRunning { get; set; }
 
         public bool IsConnected
         {
-            get { return _connectionServer.Connection.IsConnected; }
+            get { return _connectionServer.IsConnected; }
         }
 
         public void SubscribeToMessages(ObservableCollection<DraftServer> servers)
         {
             Dispatcher dispatch = Application.Current.Dispatcher;
 
-            _connectionServer.Connection.ListenForServers(o =>
+            _connectionServer.ListenForServers(o =>
             {
                 var server = new DraftServer();
                 server.InjectFrom(o);
@@ -79,7 +85,7 @@
 
         public void GetDraftSettings()
         {
-            _connectionServer.Connection.SendMessage(NetworkMessageType.SendDraftSettingsMessage, null);
+            _connectionServer.SendMessage(NetworkMessageType.SendDraftSettingsMessage, null);
         }
 
         private void RetrieveDraftSettings(DraftSettings settings)
@@ -104,6 +110,7 @@
 
         public void CancelDraft()
         {
+            _connectionServer.ResetConnection();
         }
 
         public void StartServer(string leagueName, int numberOfTeams)
@@ -113,18 +120,18 @@
 
         public void UpdateTeamInfo(DraftTeam team)
         {
-            team.ConnectedUser = _connectionServer.Connection.ClientId;
-            _connectionServer.Connection.SendMessage(NetworkMessageType.UpdateTeamMessage, Mapper.Map<DraftTeam, DraftEntities.DraftTeam>(team));
+            team.ConnectedUser = _connectionServer.GetClientId();
+            _connectionServer.SendMessage(NetworkMessageType.UpdateTeamMessage, Mapper.Map<DraftTeam, DraftEntities.DraftTeam>(team));
         }
 
         public void DisconnectFromDraftServer()
         {
-            _connectionServer.Connection.SendMessage(NetworkMessageType.LogoutMessage, null);
+            _connectionServer.SendMessage(NetworkMessageType.LogoutMessage, null);
         }
 
         public Guid GetClientId()
         {
-            return _connectionServer.Connection.ClientId;
+            return _connectionServer.GetClientId();
         }
     }
 }

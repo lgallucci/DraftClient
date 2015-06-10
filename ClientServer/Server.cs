@@ -226,6 +226,16 @@
             }
         }
 
+        public void BroadcastMessage(NetworkMessageType type, object payload)
+        {
+            BroadcastMessage(new NetworkMessage
+            {
+                Id = ClientId,
+                MessageContent = payload,
+                MessageType = type
+            });
+        }
+
         private void BroadcastMessage(NetworkMessage networkMessage)
         {
             lock (ConnectionLock)
