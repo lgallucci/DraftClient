@@ -71,6 +71,7 @@
     <Compile Include="Controllers\DraftController.cs" />
     <Compile Include="Converters\EnumConverter.cs" />
     <Compile Include="Converters\InverseBooleanConverter.cs" />
+    <Compile Include="Converters\InverseBooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\PositionToColorConverter.cs" />
     <Compile Include="Converters\StringLengthToVisibilityConverter.cs" />
     <Compile Include="Providers\PlayerListProvider.cs" />

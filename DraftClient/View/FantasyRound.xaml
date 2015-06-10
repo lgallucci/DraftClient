@@ -23,6 +23,7 @@
             <c:StringLengthToVisibilityConverter x:Key="StringLengthToVisibilityConverter" />
             <c:PositionToColorConverter x:Key="PositionToColorConverter" />
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <c:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
 
             <prov:PlayerListProvider x:Key="plp" />
             <DataTemplate x:Key="plTemplate">
@@ -80,6 +81,8 @@
                     </Border>
                 </wpf:AutoCompleteTextBox.Icon>
             </wpf:AutoCompleteTextBox>
+            <TextBlock Text="{Binding Path=Name}" Visibility="{Binding Path=CanEdit, Converter={StaticResource InverseBooleanToVisibilityConverter}}" 
+                       FontSize="12" HorizontalAlignment="Center" Foreground="{StaticResource Brush05}" FontWeight="Bold" />
             <DockPanel Visibility="{Binding Path=Name, Converter={StaticResource StringLengthToVisibilityConverter}}"
                        HorizontalAlignment="Stretch" VerticalAlignment="Center">
                 <StackPanel DockPanel.Dock="Left">

@@ -50,20 +50,10 @@
             {
                 _draftController.Settings = settings;
 
-                if (_draftController.IsServer)
-                {
-                    _draftController.CurrentDraft = new Draft(_draftController.Settings.TotalRounds, _draftController.Settings.NumberOfTeams, true);
-                }
-                else
-                {
-                    if (!await _draftController.GetDraft())
-                    {
-                        throw new TimeoutException("Didn't recieve draft information in time");
-                    }
-                }
-
-
                 LoadPlayers(settings.PlayerFile);
+
+                await RetrieveDraft();
+
                 SetupGrid(settings);
                 SetupPicks();
             }
@@ -74,6 +64,21 @@
             }
 
             return true;
+        }
+
+        private async Task RetrieveDraft()
+        {
+            if (_draftController.IsServer)
+            {
+                _draftController.CurrentDraft = new Draft(_draftController.Settings.TotalRounds, _draftController.Settings.NumberOfTeams, true);
+            }
+            else
+            {
+                if (!await _draftController.GetDraft())
+                {
+                    throw new TimeoutException("Didn't recieve draft information in time");
+                }
+            }
         }
 
         private void SetupGrid(DraftSettings settings)
