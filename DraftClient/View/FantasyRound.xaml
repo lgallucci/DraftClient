@@ -1,8 +1,8 @@
 ﻿<UserControl x:Class="DraftClient.View.FantasyRound"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:wpf="http://wpfcontrols.com/"
              xmlns:prov="clr-namespace:DraftClient.Providers"
              xmlns:c="clr-namespace:DraftClient.Converters"
@@ -23,18 +23,20 @@
             <c:StringLengthToVisibilityConverter x:Key="StringLengthToVisibilityConverter" />
             <c:PositionToColorConverter x:Key="PositionToColorConverter" />
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-            
+
             <prov:PlayerListProvider x:Key="plp" />
             <DataTemplate x:Key="plTemplate">
                 <Border>
-                    <StackPanel Orientation="Vertical" >
+                    <StackPanel Orientation="Vertical">
                         <TextBlock Text="{Binding Path=Name}" FontWeight="Bold" FontSize="10" />
                         <WrapPanel>
                             <TextBlock Text="{Binding Path=Team, StringFormat=' {0} -'}" FontSize="10" />
                             <TextBlock Text="{Binding Path=Position, StringFormat=' {0}'}" FontSize="10" />
                         </WrapPanel>
                         <WrapPanel>
-                            <TextBlock Text="{Binding Path=AverageDraftPosition, StringFormat='AverageDraftPosition: {0} -'}" FontSize="10" />
+                            <TextBlock
+                                Text="{Binding Path=AverageDraftPosition, StringFormat='AverageDraftPosition: {0} -'}"
+                                FontSize="10" />
                             <TextBlock Text="{Binding Path=ByeWeek, StringFormat=' Bye: {0}'}" FontSize="10" />
                         </WrapPanel>
                     </StackPanel>
@@ -42,52 +44,59 @@
             </DataTemplate>
 
         </ResourceDictionary>
-        
+
     </UserControl.Resources>
-    <Border Background="{Binding DraftedPlayer.Position, Converter={StaticResource PositionToColorConverter}}" BorderBrush="{StaticResource ButtonBorderBrush}" BorderThickness="1" HorizontalAlignment="Stretch">
+    <Border Background="{Binding DraftedPlayer.Position, Converter={StaticResource PositionToColorConverter}}"
+            BorderBrush="{StaticResource ButtonBorderBrush}" BorderThickness="1" HorizontalAlignment="Stretch">
         <StackPanel HorizontalAlignment="Stretch">
-            <wpf:AutoCompleteTextBox Visibility="{Binding Path=CanEdit, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                 VerticalAlignment="Top" 
-                                 Height="20" 
-                                 Grid.Column="1" 
-                                 DisplayMember="Name"                                 
-                                 ForegroundColor="{StaticResource Brush01}"
-                                 FontSize="10"
-                                 Background="{StaticResource BackgroundKey}"
-                                 Text="{Binding Name, Mode=TwoWay}"
-                                 SelectedItem="{Binding Path=DraftedPlayer, Mode=TwoWay}"
-                                 ItemTemplate="{StaticResource ResourceKey=plTemplate}" 
-                                 Provider="{StaticResource ResourceKey=plp}">
+            <wpf:AutoCompleteTextBox
+                Visibility="{Binding Path=CanEdit, Converter={StaticResource BooleanToVisibilityConverter}}"
+                VerticalAlignment="Top"
+                Height="20"
+                Grid.Column="1"
+                DisplayMember="Name"
+                ForegroundColor="{StaticResource Brush01}"
+                FontSize="10"
+                Background="{StaticResource BackgroundKey}"
+                Text="{Binding Name, Mode=TwoWay}"
+                SelectedItem="{Binding Path=DraftedPlayer, Mode=TwoWay}"
+                ItemTemplate="{StaticResource ResourceKey=plTemplate}"
+                Provider="{StaticResource ResourceKey=plp}">
                 <wpf:AutoCompleteTextBox.LoadingContent>
                     <TextBlock Text="Loading..."
-                                Foreground="{StaticResource Brush01}"
-                           Margin="5"
-                           FontSize="10"/>
+                               Foreground="{StaticResource Brush01}"
+                               Margin="5"
+                               FontSize="10" />
                 </wpf:AutoCompleteTextBox.LoadingContent>
                 <wpf:AutoCompleteTextBox.Icon>
                     <Border Width="10"
-                        Height="10">
-                        <TextBlock Text="🔍"                                 
-                               Foreground="{StaticResource Brush01}"
-                               FontSize="8"
-                               FontFamily="Segoe UI Symbol"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center" />
+                            Height="10">
+                        <TextBlock Text="🔍"
+                                   Foreground="{StaticResource Brush01}"
+                                   FontSize="8"
+                                   FontFamily="Segoe UI Symbol"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
                     </Border>
                 </wpf:AutoCompleteTextBox.Icon>
             </wpf:AutoCompleteTextBox>
-            <DockPanel Visibility="{Binding Path=Name, Converter={StaticResource StringLengthToVisibilityConverter}}" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+            <DockPanel Visibility="{Binding Path=Name, Converter={StaticResource StringLengthToVisibilityConverter}}"
+                       HorizontalAlignment="Stretch" VerticalAlignment="Center">
                 <StackPanel DockPanel.Dock="Left">
                     <TextBlock Text="ADP" FontSize="10" Margin="2" Foreground="{StaticResource Brush05}" />
-                    <TextBlock Text="{Binding Path=DraftedPlayer.AverageDraftPosition}" FontSize="20" Foreground="{StaticResource Brush05}" />
+                    <TextBlock Text="{Binding Path=DraftedPlayer.AverageDraftPosition}" FontSize="20"
+                               Foreground="{StaticResource Brush05}" />
                 </StackPanel>
                 <StackPanel DockPanel.Dock="Right" Margin="2">
                     <TextBlock Text="Bye" FontSize="10" Foreground="{StaticResource Brush05}" />
-                    <TextBlock Text="{Binding Path=DraftedPlayer.ByeWeek}" FontSize="20" Foreground="{StaticResource Brush05}" />
+                    <TextBlock Text="{Binding Path=DraftedPlayer.ByeWeek}" FontSize="20"
+                               Foreground="{StaticResource Brush05}" />
                 </StackPanel>
                 <StackPanel Margin="0 7 0 7" HorizontalAlignment="Center">
-                    <TextBlock Text="{Binding Path=DraftedPlayer.Team}" FontWeight="Bold" FontSize="11" Foreground="{StaticResource Brush05}" />
-                    <TextBlock Text="{Binding Path=DraftedPlayer.Position}" FontWeight="Bold" FontSize="11" Foreground="{StaticResource Brush05}" />
+                    <TextBlock Text="{Binding Path=DraftedPlayer.Team}" FontWeight="Bold" FontSize="11"
+                               Foreground="{StaticResource Brush05}" />
+                    <TextBlock Text="{Binding Path=DraftedPlayer.Position}" FontWeight="Bold" FontSize="11"
+                               Foreground="{StaticResource Brush05}" />
                 </StackPanel>
             </DockPanel>
         </StackPanel>

@@ -35,7 +35,10 @@
             }
 
             storage = value;
-            if (propertyName != null) this.OnPropertyChanged(propertyName);
+            if (propertyName != null)
+            {
+                OnPropertyChanged(propertyName);
+            }
             return true;
         }
 
@@ -49,7 +52,7 @@
         /// </param>
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            PropertyChangedEventHandler eventHandler = this.PropertyChanged;
+            PropertyChangedEventHandler eventHandler = PropertyChanged;
             if (eventHandler != null)
             {
                 eventHandler(this, new PropertyChangedEventArgs(propertyName));

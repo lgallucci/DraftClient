@@ -1,11 +1,12 @@
 ﻿namespace DraftClient.View
 {
     using System.Windows;
-    using DraftClient.ViewModel;
     using System.Windows.Data;
+    using DraftEntities;
+    using Player = DraftClient.ViewModel.Player;
 
     /// <summary>
-    /// Interaction logic for PlayerView.xaml
+    ///     Interaction logic for PlayerView.xaml
     /// </summary>
     public partial class PlayerView
     {
@@ -17,45 +18,87 @@
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             DataContext = MainWindow.PlayerList;
-            cbQB.Checked += cbPosition_Changed; cbQB.Unchecked += cbPosition_Changed;
-            cbWR.Checked += cbPosition_Changed; cbWR.Unchecked += cbPosition_Changed;
-            cbRB.Checked += cbPosition_Changed; cbRB.Unchecked += cbPosition_Changed;
-            cbTE.Checked += cbPosition_Changed; cbTE.Unchecked += cbPosition_Changed;
-            cbK.Checked += cbPosition_Changed; cbK.Unchecked += cbPosition_Changed;
-            cbDEF.Checked += cbPosition_Changed; cbDEF.Unchecked += cbPosition_Changed;
+            cbQB.Checked += cbPosition_Changed;
+            cbQB.Unchecked += cbPosition_Changed;
+            cbWR.Checked += cbPosition_Changed;
+            cbWR.Unchecked += cbPosition_Changed;
+            cbRB.Checked += cbPosition_Changed;
+            cbRB.Unchecked += cbPosition_Changed;
+            cbTE.Checked += cbPosition_Changed;
+            cbTE.Unchecked += cbPosition_Changed;
+            cbK.Checked += cbPosition_Changed;
+            cbK.Unchecked += cbPosition_Changed;
+            cbDEF.Checked += cbPosition_Changed;
+            cbDEF.Unchecked += cbPosition_Changed;
         }
 
         private void CollectionViewSource_Filter(object sender, FilterEventArgs e)
         {
-            Player player = e.Item as Player;
+            var player = e.Item as Player;
             if (player != null)
-            // If filter is turned on, filter completed items.
+                // If filter is turned on, filter completed items.
             {
                 switch (player.Position)
                 {
-                    case DraftEntities.PlayerPosition.QB:
-                        if (cbQB.IsChecked.Value) { e.Accepted = true; }
-                        else { e.Accepted = false; }
+                    case PlayerPosition.QB:
+                        if (cbQB.IsChecked.Value)
+                        {
+                            e.Accepted = true;
+                        }
+                        else
+                        {
+                            e.Accepted = false;
+                        }
                         break;
-                    case DraftEntities.PlayerPosition.WR:
-                        if (cbWR.IsChecked.Value) { e.Accepted = true; }
-                        else { e.Accepted = false; }
+                    case PlayerPosition.WR:
+                        if (cbWR.IsChecked.Value)
+                        {
+                            e.Accepted = true;
+                        }
+                        else
+                        {
+                            e.Accepted = false;
+                        }
                         break;
-                    case DraftEntities.PlayerPosition.RB:
-                        if (cbRB.IsChecked.Value) { e.Accepted = true; }
-                        else { e.Accepted = false; }
+                    case PlayerPosition.RB:
+                        if (cbRB.IsChecked.Value)
+                        {
+                            e.Accepted = true;
+                        }
+                        else
+                        {
+                            e.Accepted = false;
+                        }
                         break;
-                    case DraftEntities.PlayerPosition.TE:
-                        if (cbTE.IsChecked.Value) { e.Accepted = true; }
-                        else { e.Accepted = false; }
+                    case PlayerPosition.TE:
+                        if (cbTE.IsChecked.Value)
+                        {
+                            e.Accepted = true;
+                        }
+                        else
+                        {
+                            e.Accepted = false;
+                        }
                         break;
-                    case DraftEntities.PlayerPosition.K:
-                        if (cbK.IsChecked.Value) { e.Accepted = true; }
-                        else { e.Accepted = false; }
+                    case PlayerPosition.K:
+                        if (cbK.IsChecked.Value)
+                        {
+                            e.Accepted = true;
+                        }
+                        else
+                        {
+                            e.Accepted = false;
+                        }
                         break;
-                    case DraftEntities.PlayerPosition.DEF:
-                        if (cbDEF.IsChecked.Value) { e.Accepted = true; }
-                        else { e.Accepted = false; }
+                    case PlayerPosition.DEF:
+                        if (cbDEF.IsChecked.Value)
+                        {
+                            e.Accepted = true;
+                        }
+                        else
+                        {
+                            e.Accepted = false;
+                        }
                         break;
                 }
             }

@@ -21,10 +21,10 @@
         LoginMessage = 2,
         LogoutMessage = 3,
         HandShakeMessage = 4,
-        
+
         //Draft Action
         PickMessage = 5,
-        
+
         //Draft & Timer 
         DraftStartMessage = 6,
         DraftStopMessage = 7,

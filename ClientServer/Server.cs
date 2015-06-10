@@ -12,6 +12,7 @@
     using System.Threading.Tasks;
     using System.Timers;
     using DraftEntities;
+    using Timer = System.Timers.Timer;
 
     public class ConnectedClient
     {
@@ -26,24 +27,23 @@
 
     public class Server : Client
     {
-        private readonly string _leagueName;
-        private readonly int _numberOfTeams;
         private static TcpListener _listener;
-        private readonly int _port;
-        private readonly System.Timers.Timer _timKeepAlive;
-
-        private object ConnectionLock = new object();
 
         public static int Port = 11000;
         public static string MulticastAddress = "239.0.0.222";
+        private readonly object ConnectionLock = new object();
         public readonly Collection<ConnectedClient> Connections;
+        private readonly string _leagueName;
+        private readonly int _numberOfTeams;
+        private readonly int _port;
+        private readonly Timer _timKeepAlive;
 
         public Server(string leagueName, int numberOfTeams)
         {
             _leagueName = leagueName;
             _numberOfTeams = numberOfTeams;
             Connections = new Collection<ConnectedClient>();
-            _timKeepAlive = new System.Timers.Timer();
+            _timKeepAlive = new Timer();
 
             _port = Port;
         }
@@ -53,7 +53,7 @@
             var udpclient = new UdpClient();
             IsRunning = true;
             var formatter = new BinaryFormatter();
-            var ipAddress = GetFirstIpAddress();
+            string ipAddress = GetFirstIpAddress();
 
             Task.Run(() =>
             {
@@ -86,7 +86,11 @@
                     byte[] requestData;
                     using (var memoryStream = new MemoryStream())
                     {
-                        formatter.Serialize(memoryStream, new NetworkMessage { MessageType = NetworkMessageType.BroadcastMessage, MessageContent = draftServer });
+                        formatter.Serialize(memoryStream, new NetworkMessage
+                        {
+                            MessageType = NetworkMessageType.BroadcastMessage,
+                            MessageContent = draftServer
+                        });
                         requestData = memoryStream.ToArray();
                     }
 
@@ -100,9 +104,12 @@
         public override void Close()
         {
             IsRunning = false;
-            foreach (var connection in Connections)
+            foreach (ConnectedClient connection in Connections)
             {
-                connection.Client.SendMessage(new NetworkMessage { MessageType = NetworkMessageType.DraftStopMessage });
+                connection.Client.SendMessage(new NetworkMessage
+                {
+                    MessageType = NetworkMessageType.DraftStopMessage
+                });
                 connection.Client.ClientMessage -= HandleMessage;
                 connection.Client.ClientDisconnect -= HandleDisconnect;
                 connection.Client.Close();
@@ -148,7 +155,7 @@
 
         private void KeepSocketsAlive(object sender, ElapsedEventArgs e)
         {
-            foreach (var connection in Connections)
+            foreach (ConnectedClient connection in Connections)
             {
                 connection.Client.SendMessage(new NetworkMessage
                 {
@@ -183,7 +190,7 @@
                     Logout(connection);
                     break;
                 case NetworkMessageType.SendDraftMessage:
-                    var draft = OnSendDraft();
+                    Draft draft = OnSendDraft();
                     SendMessage(connection, new NetworkMessage
                     {
                         Id = ClientId,
@@ -192,7 +199,7 @@
                     });
                     break;
                 case NetworkMessageType.SendDraftSettingsMessage:
-                    var draftSettings = OnSendDraftSettings();
+                    DraftSettings draftSettings = OnSendDraftSettings();
                     SendMessage(connection, new NetworkMessage
                     {
                         Id = ClientId,
@@ -223,7 +230,7 @@
         {
             lock (ConnectionLock)
             {
-                foreach (var connection in Connections.Where(c => c.Id != networkMessage.Id))
+                foreach (ConnectedClient connection in Connections.Where(c => c.Id != networkMessage.Id))
                 {
                     connection.Client.SendMessage(networkMessage);
                 }
@@ -242,7 +249,7 @@
         {
             lock (ConnectionLock)
             {
-                var connection = Connections.FirstOrDefault(c => c.Client == sender);
+                ConnectedClient connection = Connections.FirstOrDefault(c => c.Client == sender);
                 Logout(connection);
             }
         }
@@ -268,38 +275,46 @@
         #endregion
 
         #region Helper Methods
-        /// <summary> 
-        /// This utility function displays all the IP (v4, not v6) addresses of the local computer. 
-        /// </summary> 
+
+        /// <summary>
+        ///     This utility function displays all the IP (v4, not v6) addresses of the local computer.
+        /// </summary>
         public string GetFirstIpAddress()
         {
             // Get a list of all network interfaces (usually one per network card, dialup, and VPN connection) 
-            var networkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
+            NetworkInterface[] networkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
 
-            foreach (var network in networkInterfaces)
+            foreach (NetworkInterface network in networkInterfaces)
             {
                 // Read the IP configuration for each network 
                 IPInterfaceProperties properties = network.GetIPProperties();
 
                 if (network.OperationalStatus != OperationalStatus.Up)
+                {
                     continue;
+                }
 
                 // Each network interface may have multiple IP addresses 
-                foreach (var address in properties.UnicastAddresses)
+                foreach (UnicastIPAddressInformation address in properties.UnicastAddresses)
                 {
                     // We're only interested in IPv4 addresses for now 
                     if (address.Address.AddressFamily != AddressFamily.InterNetwork)
+                    {
                         continue;
+                    }
 
                     // Ignore loopback addresses (e.g., 127.0.0.1) 
                     if (IPAddress.IsLoopback(address.Address))
+                    {
                         continue;
+                    }
 
                     return address.Address.ToString();
                 }
             }
             return string.Empty;
         }
+
         #endregion
     }
 }

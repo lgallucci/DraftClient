@@ -5,11 +5,11 @@
     using System.Windows.Data;
     using DraftEntities;
 
-    class PositionToColorConverter : IValueConverter
+    internal class PositionToColorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            switch ((PlayerPosition)value)
+            switch ((PlayerPosition) value)
             {
                 case PlayerPosition.QB:
                     return "#FFFCA910";

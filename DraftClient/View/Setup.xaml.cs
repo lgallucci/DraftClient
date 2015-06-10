@@ -4,21 +4,20 @@
     using System.ComponentModel;
     using System.Linq;
     using System.Threading;
+    using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Controls;
-    using Controllers;
-    using ViewModel;
+    using DraftClient.Controllers;
+    using DraftClient.ViewModel;
 
     /// <summary>
-    /// Interaction logic for Setup.xaml
+    ///     Interaction logic for Setup.xaml
     /// </summary>
     public partial class Setup
     {
-        private MainWindow _draftWindow;
         private readonly SetupController _setupController;
         public AutoResetEvent SettingsResetEvent;
-
-        public DraftSettings DraftSettings { get; set; }
+        private MainWindow _draftWindow;
 
         public Setup()
         {
@@ -35,6 +34,8 @@
             DataContext = DraftSettings;
         }
 
+        public DraftSettings DraftSettings { get; set; }
+
         private void StartDraft_Click(object sender, RoutedEventArgs e)
         {
             LoadingIndicatorCreate.Visibility = Visibility.Visible;
@@ -42,13 +43,13 @@
             SelectTeam(true);
         }
 
-        public void CreateDraftWindow(bool isServer, int totalRounds, int numberOfTeams)
+        public async Task CreateDraftWindow(bool isServer, int totalRounds, int numberOfTeams)
         {
             try
             {
-                _draftWindow = new MainWindow(isServer, totalRounds, numberOfTeams);
+                _draftWindow = new MainWindow(isServer);
 
-                if (_draftWindow.SetupDraft(DraftSettings))
+                if (await _draftWindow.SetupDraft(DraftSettings))
                 {
                     _draftWindow.Owner = this;
                     Hide();
@@ -67,7 +68,10 @@
 
         public void SelectTeam(bool isServer)
         {
-            if (!isServer && !_setupController.IsConnected) return;
+            if (!isServer && !_setupController.IsConnected)
+            {
+                return;
+            }
 
             var teamSelect = new TeamSelect
             {
@@ -76,7 +80,7 @@
             };
 
             teamSelect.ShowDialog();
-            
+
             if (teamSelect.DialogResult == true)
             {
                 if (isServer)
@@ -133,7 +137,7 @@
                 try
                 {
                     _setupController.ConnectToDraftServer(lbi.IpAddress, lbi.IpPort);
-                     SettingsResetEvent = new AutoResetEvent(false);
+                    SettingsResetEvent = new AutoResetEvent(false);
                     _setupController.GetDraftSettings();
                     if (SettingsResetEvent.WaitOne(5000))
                     {
@@ -143,7 +147,6 @@
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
-                    SettingsResetEvent.Reset();
                     _setupController.DisconnectFromDraftServer();
                 }
             }
@@ -163,7 +166,7 @@
 
         private void SetDraftButtonEnabled()
         {
-            var lbi = ServerListBox.SelectedItem;
+            object lbi = ServerListBox.SelectedItem;
             JoinDraftButton.IsEnabled = lbi != null;
         }
     }

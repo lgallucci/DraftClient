@@ -3,10 +3,11 @@
     using System;
     using System.Threading;
 
-    class Reader
+    internal class Reader
     {
         private static Thread inputThread;
-        private static AutoResetEvent getInput, gotInput;
+        private static readonly AutoResetEvent getInput;
+        private static readonly AutoResetEvent gotInput;
         private static string input;
 
         static Reader()
@@ -33,9 +34,10 @@
             getInput.Set();
             bool success = gotInput.WaitOne(timeOutMillisecs);
             if (success)
+            {
                 return input;
-            else
-                throw new TimeoutException("User did not provide input within the timelimit.");
+            }
+            throw new TimeoutException("User did not provide input within the timelimit.");
         }
     }
 }

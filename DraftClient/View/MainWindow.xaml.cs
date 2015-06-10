@@ -14,38 +14,24 @@
     using DraftClient.ViewModel;
     using FileReader;
     using Omu.ValueInjecter;
+    using Player = DraftEntities.Player;
 
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    ///     Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow
     {
         public static PlayerList PlayerList = new PlayerList();
-        readonly DraftController _draftController;
+        private readonly DraftController _draftController;
         public AutoResetEvent DraftReset;
 
-        public MainWindow(bool isServer, int totalRounds, int numberOfTeams)
+        public MainWindow(bool isServer)
         {
             InitializeComponent();
             _draftController = new DraftController(this)
             {
                 IsServer = isServer
             };
-            if (isServer)
-            {
-                _draftController.CurrentDraft = new Draft(totalRounds, numberOfTeams, true);
-            }
-            else
-            {
-                //TODO: Loading Screen ?
-                
-                DraftReset = new AutoResetEvent(false);
-                _draftController.GetDraft();
-                if (!DraftReset.WaitOne())
-                {
-                    throw new TimeoutException("Didn't retrieve draft from server");
-                }
-            }
         }
 
         private void OnClosing(object sender, CancelEventArgs e)
@@ -58,11 +44,24 @@
             }
         }
 
-        public bool SetupDraft(DraftSettings settings)
+        public async Task<bool> SetupDraft(DraftSettings settings)
         {
             try
             {
                 _draftController.Settings = settings;
+
+                if (_draftController.IsServer)
+                {
+                    _draftController.CurrentDraft = new Draft(_draftController.Settings.TotalRounds, _draftController.Settings.NumberOfTeams, true);
+                }
+                else
+                {
+                    if (!await _draftController.GetDraft())
+                    {
+                        throw new TimeoutException("Didn't recieve draft information in time");
+                    }
+                }
+
 
                 LoadPlayers(settings.PlayerFile);
                 SetupGrid(settings);
@@ -79,6 +78,7 @@
 
         private void SetupGrid(DraftSettings settings)
         {
+            //TODO: Add Fantasy Timer
             for (int i = 0; i < settings.NumberOfTeams + 1; i++)
             {
                 PicksGrid.ColumnDefinitions.Add(new ColumnDefinition
@@ -145,35 +145,34 @@
 
         private async void LoadPlayers(string playerFile)
         {
-            List<DraftEntities.Player> players = DraftFileHandler.ReadFile(playerFile);
+            List<Player> players = DraftFileHandler.ReadFile(playerFile);
 
             PlayerList.Players = await Task.Run(() =>
             {
-                var presentationPlayers = players.Select(player => new Player
-                    {
-                        AverageDraftPosition = player.AverageDraftPosition,
-                        Name = player.Name,
-                        Position = player.Position,
-                        Team = player.Team,
-                        ByeWeek = player.ByeWeek,
-                        ProjectedPoints = player.ProjectedPoints,
-                        IsPicked = false
-                    }).ToList();
+                List<ViewModel.Player> presentationPlayers = players.Select(player => new ViewModel.Player
+                {
+                    AverageDraftPosition = player.AverageDraftPosition,
+                    Name = player.Name,
+                    Position = player.Position,
+                    Team = player.Team,
+                    ByeWeek = player.ByeWeek,
+                    ProjectedPoints = player.ProjectedPoints,
+                    IsPicked = false
+                }).ToList();
 
-                return new ObservableCollection<Player>(presentationPlayers);
+                return new ObservableCollection<ViewModel.Player>(presentationPlayers);
             });
         }
 
         private void SetupPicks()
         {
-            
         }
 
         public void UpdateTeam(DraftTeam team)
         {
             _draftController.Settings.DraftTeams[team.Index].InjectFrom(team);
 
-            var teamControl = (FantasyTeam)PicksGrid.Children.Cast<UIElement>().
+            var teamControl = (FantasyTeam) PicksGrid.Children.Cast<UIElement>().
                 FirstOrDefault(e => Grid.GetColumn(e) == team.Index + 1 && Grid.GetRow(e) == 0);
 
             if (teamControl != null)

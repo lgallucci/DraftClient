@@ -3,20 +3,18 @@
     using System;
     using System.Collections.ObjectModel;
     using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
     using System.Windows;
     using ClientServer;
-    using View;
-    using Omu.ValueInjecter;
+    using DraftClient.View;
     using DraftEntities;
+    using Omu.ValueInjecter;
 
     public class DraftController
     {
-        public bool IsServer { get; set; }
-        public ViewModel.Draft CurrentDraft { get; set; }
-        public ViewModel.DraftSettings Settings { get; set; }
-
-        private readonly MainWindow _mainWindow;
         private readonly ConnectionServer _connectionServer;
+        private readonly MainWindow _mainWindow;
 
         public DraftController(MainWindow mainWindow)
         {
@@ -44,11 +42,12 @@
             _mainWindow.Closed -= RemoveHandlers;
         }
 
-        public void GetDraft()
+        public Task<bool> GetDraft()
         {
+            DraftReset = new AutoResetEvent(false);
             _connectionServer.Connection.SendMessage(NetworkMessageType.SendDraftMessage, null);
 
-
+            return Task.Run(() => DraftReset.WaitOne(5000));
         }
 
         private void RetrieveDraft(Draft draft)
@@ -63,7 +62,7 @@
                     {
                         if (draft.Picks[i, j] != 0)
                         {
-                            var player =
+                            ViewModel.Player player =
                                 MainWindow.PlayerList.Players.First(p => p.AverageDraftPosition == draft.Picks[i, j]);
 
                             draftModel.Picks[i, j] = new ViewModel.DraftPick
@@ -76,8 +75,9 @@
                     }
                 }
                 CurrentDraft = draftModel;
-                _mainWindow.SetupDraft(Settings);
             });
+
+            DraftReset.Set();
         }
 
         private Draft SendDraft()
@@ -87,7 +87,7 @@
                 var res = new Draft();
                 res.InjectFrom(src);
                 int rows = src.Picks.GetLength(0),
-                columns = src.Picks.GetLength(1);
+                    columns = src.Picks.GetLength(1);
 
                 res.Picks = new int[rows, columns];
                 for (int i = 0; i < rows; i++)
@@ -112,7 +112,7 @@
                 var res = new DraftSettings();
                 res.InjectFrom(src);
                 res.DraftTeams = new Collection<DraftTeam>();
-                foreach (var draftTeam in src.DraftTeams)
+                foreach (ViewModel.DraftTeam draftTeam in src.DraftTeams)
                 {
                     res.DraftTeams.Add(Mapper.Map<DraftTeam>(draftTeam));
                 }
@@ -123,7 +123,7 @@
 
         private void PickMade(DraftPick pick)
         {
-            var player =
+            ViewModel.Player player =
                 MainWindow.PlayerList.Players.First(p => p.AverageDraftPosition == pick.AverageDraftPosition);
 
             CurrentDraft.Picks[pick.Row, pick.Column].DraftedPlayer = player;
@@ -131,29 +131,28 @@
 
         private void TeamUpdated(DraftTeam team)
         {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                _mainWindow.UpdateTeam(Mapper.Map<ViewModel.DraftTeam>(team));
-            });
+            Application.Current.Dispatcher.Invoke(() => _mainWindow.UpdateTeam(Mapper.Map<ViewModel.DraftTeam>(team)));
         }
 
         private void UserDisconnect(Guid connecteduser)
         {
-            var draftTeam = Settings.DraftTeams.FirstOrDefault(d => d.ConnectedUser.Equals(connecteduser));
+            ViewModel.DraftTeam draftTeam = Settings.DraftTeams.FirstOrDefault(d => d.ConnectedUser.Equals(connecteduser));
 
             if (draftTeam != null)
             {
                 draftTeam.IsConnected = false;
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    _mainWindow.UpdateTeam(draftTeam);
-                });
+                Application.Current.Dispatcher.Invoke(() => _mainWindow.UpdateTeam(draftTeam));
             }
         }
 
         #endregion
 
-        public void MakeMove(ViewModel.Player pick)
+        public bool IsServer { get; set; }
+        public ViewModel.Draft CurrentDraft { get; set; }
+        public ViewModel.DraftSettings Settings { get; set; }
+        public AutoResetEvent DraftReset { get; set; }
+
+        public void MakeMove(Player pick)
         {
             _connectionServer.Connection.SendMessage(NetworkMessageType.PickMessage, pick);
         }

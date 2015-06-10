@@ -19,7 +19,7 @@
     <Grid>
         <StackPanel>
             <TextBlock x:Name="TitleMessage" FontSize="14" HorizontalAlignment="Center" />
-            <ItemsControl x:Name="tStack" >
+            <ItemsControl x:Name="tStack">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel />
@@ -28,14 +28,19 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <WrapPanel Width="300" Margin="0 5 0 5">
-                            <TextBox Width="150" FontSize="14" Text="{Binding Name}" Tag="{Binding Index}" IsEnabled="{Binding Path=IsServer, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Margin="10 0 10 0"></TextBox>
-                            <Button Content="Join" Tag="{Binding Index}" IsEnabled="{Binding Path=IsConnected, Converter={StaticResource InverseBooleanConverter}}" Click="ButtonBase_OnClick" />
+                            <TextBox Width="150" FontSize="14" Text="{Binding Name}" Tag="{Binding Index}"
+                                     IsEnabled="{Binding Path=IsServer, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                     Margin="10 0 10 0" />
+                            <Button Content="Join" Tag="{Binding Index}"
+                                    IsEnabled="{Binding Path=IsConnected, Converter={StaticResource InverseBooleanConverter}}"
+                                    Click="ButtonBase_OnClick" />
                         </WrapPanel>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-            <Button x:Name="CancelButton" FontSize="14" Content="Cancel" Margin ="5"  HorizontalAlignment="Right" Click="CancelButton_OnClick" />
+            <Button x:Name="CancelButton" FontSize="14" Content="Cancel" Margin="5" HorizontalAlignment="Right"
+                    Click="CancelButton_OnClick" />
         </StackPanel>
     </Grid>
 </Window>

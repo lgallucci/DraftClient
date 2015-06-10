@@ -1,26 +1,25 @@
 ﻿namespace DraftClient.View
 {
     using System.Windows;
-    using ViewModel;
+    using DraftClient.ViewModel;
 
     /// <summary>
-    /// Interaction logic for FantasyRound.xaml
+    ///     Interaction logic for FantasyRound.xaml
     /// </summary>
     public partial class FantasyRound
     {
-        public int Round { get; set; }
-        public int Team { get; set; }
-        public DraftPick Pick { get; set; }
-
         public FantasyRound()
         {
             InitializeComponent();
         }
 
+        public int Round { get; set; }
+        public int Team { get; set; }
+        public DraftPick Pick { get; set; }
+
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             DataContext = Pick;
         }
-
     }
 }

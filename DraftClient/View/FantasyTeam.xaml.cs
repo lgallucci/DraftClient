@@ -8,16 +8,20 @@
     using System.Windows.Media.Imaging;
 
     /// <summary>
-    /// Interaction logic for FantasyTeam.xaml
+    ///     Interaction logic for FantasyTeam.xaml
     /// </summary>
     public partial class FantasyTeam
     {
-        public int TeamNumber { get; set; }
-
         public FantasyTeam()
         {
             InitializeComponent();
         }
+
+        public int TeamNumber { get; set; }
+
+        public bool IsServer { get; set; }
+        public bool IsMyTeam { get; set; }
+        public bool IsConnected { get; set; }
 
         public void SetText(string text)
         {
@@ -27,13 +31,12 @@
 
         private void TeamName_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (!IsServer && !IsMyTeam) return;
+            if (!IsServer && !IsMyTeam)
+            {
+                return;
+            }
             CreateTextBox(RemoveElements());
         }
-
-        public bool IsServer { get; set; }
-        public bool IsMyTeam { get; set; }
-        public bool IsConnected { get; set; }
 
         private void TeamNameEdit_KeyUp(object sender, KeyEventArgs e)
         {
@@ -76,6 +79,7 @@
 
         private void CreateTextBlock(string text)
         {
+            //TODO: Trigger event to update all clients
             var textBlock = new TextBlock
             {
                 Name = "TeamName",

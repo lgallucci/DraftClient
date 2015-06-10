@@ -1,13 +1,13 @@
 ﻿namespace DraftClient.Providers
 {
-    using DraftClient.ViewModel;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using DraftClient.View;
+    using DraftClient.ViewModel;
     using WpfControls;
 
-    class PlayerListProvider : ISuggestionProvider
+    internal class PlayerListProvider : ISuggestionProvider
     {
         public IEnumerable GetSuggestions(string filter)
         {

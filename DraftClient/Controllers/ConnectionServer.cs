@@ -6,10 +6,8 @@
 
     public sealed class ConnectionServer
     {
-        private AutoResetEvent _connectionReset;
-        public Client Connection { get; set; }
-        
         private static readonly ConnectionServer instance = new ConnectionServer();
+        private AutoResetEvent _connectionReset;
 
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
@@ -23,19 +21,18 @@
             Connection.ServerHandshake += ServerHandshake;
         }
 
+        public Client Connection { get; set; }
+
         public static ConnectionServer Instance
         {
-            get
-            {
-                return instance;
-            }
+            get { return instance; }
         }
 
         public void StartServer(string leagueName, int numberOfTeams)
         {
             Connection.ServerHandshake -= ServerHandshake;
             Connection = new Server(leagueName, numberOfTeams);
-            ((Server)Connection).StartServer();
+            ((Server) Connection).StartServer();
         }
 
         public void ResetConnection()
@@ -62,6 +59,5 @@
         {
             _connectionReset.Set();
         }
-
     }
 }
