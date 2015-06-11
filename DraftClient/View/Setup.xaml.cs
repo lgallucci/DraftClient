@@ -135,7 +135,7 @@
                     _setupController.ConnectToDraftServer(lbi.IpAddress, lbi.IpPort);
                      SettingsResetEvent = new AutoResetEvent(false);
                     _setupController.GetDraftSettings();
-                    if (SettingsResetEvent.WaitOne(5000))
+                    if (SettingsResetEvent.WaitOne(5000)) //TODO: WaitOne holds up the UI thread
                     {
                         throw new TimeoutException("Didn't recieve draft settings");
                     }
