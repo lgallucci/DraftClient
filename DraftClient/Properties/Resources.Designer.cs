@@ -61,6 +61,16 @@ namespace DraftClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        public static byte[] buzzer {
+            get {
+                object obj = ResourceManager.GetObject("buzzer", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap Connected {
@@ -71,12 +81,32 @@ namespace DraftClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        public static byte[] countdown_beep {
+            get {
+                object obj = ResourceManager.GetObject("countdown_beep", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap Disconnected {
             get {
                 object obj = ResourceManager.GetObject("Disconnected", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        public static byte[] glass_ping {
+            get {
+                object obj = ResourceManager.GetObject("glass_ping", resourceCulture);
+                return ((byte[])(obj));
             }
         }
     }

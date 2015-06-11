@@ -1,6 +1,7 @@
 ﻿namespace DraftClient.View
 {
     using System;
+    using System.Collections.Generic;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Media;
@@ -12,6 +13,10 @@
     /// </summary>
     public partial class DraftTimerControl : UserControl
     {
+        private Dictionary<int, string> SoundFiles = new Dictionary<int, string>
+        {
+        };
+
         private DispatcherTimer _timer;
         
         //TODO: Send timer info over wire
@@ -25,6 +30,8 @@
             };
             _timer.Tick += (sender, args) =>
             {
+                if (State == null) return;
+
                 var pausedTicks = State.PickPauseTime > DateTime.MinValue ? (DateTime.UtcNow - State.PickPauseTime) : new TimeSpan(0);
                 var timeLeft = State.PickEndTime + pausedTicks + State.PausedTime - DateTime.UtcNow;
 
@@ -48,12 +55,12 @@
                     CountdownTextBlock.Text = "00:00";
                 }
             };
-            _timer.Start();
         }
+
 
         private void PlaySound(string uriPath)
         {
-            Uri uri = new Uri(@"pack://application:,,,/Media/movepoint.wav");
+            Uri uri = new Uri(@"pack://application:,,,/Resources/movepoint.wav");
             var player = new MediaPlayer();
             player.Open(uri);
             player.Play();
@@ -61,8 +68,10 @@
 
         public void PopulateState(DraftState state)
         {
+            _timer.Stop();
             State = state;
             DataContext = State;
+            _timer.Start();
         }
 
         private DraftState State { get; set; }

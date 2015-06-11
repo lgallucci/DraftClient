@@ -24,7 +24,7 @@
             set { Client.Id = value; }
         }
     }
-
+    //TODO: Robust Acknowledge & retry
     public class Server : Client
     {
         private static TcpListener _listener;
