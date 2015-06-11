@@ -14,16 +14,16 @@
 
             while (!fileStream.EndOfStream)
             {
-                var line = fileStream.ReadLine();
+                string line = fileStream.ReadLine();
                 if (line != null)
                 {
-                    var values = line.Split(',');
+                    string[] values = line.Split(',');
 
                     playerList.Add(new Player
                     {
                         AverageDraftPosition = Int32.Parse(values[0]),
                         Name = values[1],
-                        Position = (PlayerPosition)Enum.Parse(typeof(PlayerPosition), values[2]),
+                        Position = (PlayerPosition) Enum.Parse(typeof (PlayerPosition), values[2]),
                         Team = values[3],
                         ByeWeek = Int32.Parse(values[4]),
                         ProjectedPoints = Decimal.Parse(values[8])

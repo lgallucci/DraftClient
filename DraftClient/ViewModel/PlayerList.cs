@@ -4,22 +4,17 @@
 
     public class PlayerList : BindableBase
     {
+        private ObservableCollection<Player> _players;
+
         public PlayerList()
         {
             _players = new ObservableCollection<Player>();
         }
 
-        private ObservableCollection<Player> _players;
         public ObservableCollection<Player> Players
         {
-            get
-            {
-                return _players;
-            }
-            set
-            {
-                SetProperty(ref _players, value);
-            }
+            get { return _players; }
+            set { SetProperty(ref _players, value); }
         }
     }
 }

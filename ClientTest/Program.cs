@@ -11,8 +11,11 @@
     {
         private static void Main(string[] args)
         {
-            if (args == null) throw new ArgumentNullException("args");
-            ClientRunner runner = new ClientRunner();
+            if (args == null)
+            {
+                throw new ArgumentNullException("args");
+            }
+            var runner = new ClientRunner();
             runner.RunClient();
         }
     }
@@ -27,11 +30,11 @@
             var servers = new Collection<DraftServer>();
 
             _client = new Client();
-            _client.ListenForServers((server) =>
+            _client.ListenForServers(server =>
             {
                 if (server != null)
                 {
-                    var match = servers.FirstOrDefault(s => s.IpPort == server.IpPort && s.IpAddress == server.IpAddress);
+                    DraftServer match = servers.FirstOrDefault(s => s.IpPort == server.IpPort && s.IpAddress == server.IpAddress);
                     if (match != null)
                     {
                         servers[servers.IndexOf(match)] = server;
@@ -41,13 +44,12 @@
                         servers.Add(server);
                     }
                 }
-
             });
 
             while (true)
             {
                 Console.Clear();
-                foreach (var server in servers)
+                foreach (DraftServer server in servers)
                 {
                     Console.WriteLine("Server: {0} {1}/{2} from {3}:{4}", server.FantasyDraft, server.ConnectedPlayers,
                         server.MaxPlayers, server.IpAddress, server.IpPort);
@@ -81,14 +83,12 @@
                             Thread.Sleep(5000);
                         }
                     }
-
                 }
                 catch (TimeoutException)
                 {
                     Console.WriteLine("Sorry, you waited too long.");
                 }
             }
-
         }
 
         private void ServerHandshake()

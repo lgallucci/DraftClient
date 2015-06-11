@@ -6,10 +6,6 @@
     [Serializable]
     public class DraftTeams
     {
-        public DraftTeams()
-        {
-        }
-
         public List<DraftTeam> Teams { get; set; }
     }
 }

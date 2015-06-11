@@ -6,18 +6,23 @@
     using System.Windows.Input;
     using System.Windows.Media;
     using System.Windows.Media.Imaging;
+    using ClientServer;
 
     /// <summary>
-    /// Interaction logic for FantasyTeam.xaml
+    ///     Interaction logic for FantasyTeam.xaml
     /// </summary>
     public partial class FantasyTeam
     {
-        public int TeamNumber { get; set; }
-
         public FantasyTeam()
         {
             InitializeComponent();
         }
+
+        public int TeamNumber { get; set; }
+
+        public bool IsServer { get; set; }
+        public bool IsMyTeam { get; set; }
+        public bool IsConnected { get; set; }
 
         public void SetText(string text)
         {
@@ -27,13 +32,12 @@
 
         private void TeamName_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (!IsServer && !IsMyTeam) return;
+            if (!IsServer && !IsMyTeam)
+            {
+                return;
+            }
             CreateTextBox(RemoveElements());
         }
-
-        public bool IsServer { get; set; }
-        public bool IsMyTeam { get; set; }
-        public bool IsConnected { get; set; }
 
         private void TeamNameEdit_KeyUp(object sender, KeyEventArgs e)
         {
@@ -42,7 +46,7 @@
                 var textBox = (TeamPanel.Children[0] as TextBox);
                 if (textBox != null && textBox.Text != string.Empty)
                 {
-                    CreateTextBlock(RemoveElements());
+                    CreateTextBlock(RemoveElements(), true);
                 }
             }
         }
@@ -52,7 +56,7 @@
             var textBox = (TeamPanel.Children[0] as TextBox);
             if (textBox != null && textBox.Text != string.Empty)
             {
-                CreateTextBlock(RemoveElements());
+                CreateTextBlock(RemoveElements(), true);
             }
         }
 
@@ -74,8 +78,12 @@
             textBox.SelectAll();
         }
 
-        private void CreateTextBlock(string text)
+        private void CreateTextBlock(string text, bool triggerEvent = false)
         {
+            if (triggerEvent)
+            {
+                OnTeamChanged(TeamNumber, text);
+            }
             var textBlock = new TextBlock
             {
                 Name = "TeamName",
@@ -119,5 +127,22 @@
                 new BitmapImage(new Uri("pack://application:,,,/Resources/Connected.png"))
                 : new BitmapImage(new Uri("pack://application:,,,/Resources/Disconnected.png"));
         }
+
+        #region events
+
+        public delegate void TeamChangedHandler(int teamNumber, string name);
+        public event TeamChangedHandler TeamChanged;
+
+        public void OnTeamChanged(int teamNumber, string name)
+        {
+            TeamChangedHandler handler = TeamChanged;
+            if (handler != null)
+            {
+                handler(teamNumber, name);
+            }
+        }
+
+        #endregion
+
     }
 }

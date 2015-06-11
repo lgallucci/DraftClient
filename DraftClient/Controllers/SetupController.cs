@@ -1,6 +1,7 @@
 ﻿namespace DraftClient.Controllers
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Threading;
@@ -9,36 +10,47 @@
     using System.Windows.Threading;
     using ClientServer;
     using DraftClient.View;
+    using DraftClient.ViewModel;
     using Omu.ValueInjecter;
-    using DraftEntities;
+    using DraftSettings = DraftEntities.DraftSettings;
 
     public class SetupController
     {
-        public bool IsRunning { get; set; }
-
-        private readonly Setup _setupWindow;
         private readonly ConnectionServer _connectionServer;
-        public bool IsConnected { get { return _connectionServer.Connection.IsConnected; } }
+        private readonly Setup _setupWindow;
 
         public SetupController(Setup setupWindow)
         {
             _connectionServer = ConnectionServer.Instance;
             _setupWindow = setupWindow;
-            _connectionServer.Connection.RetrieveDraftSettings += RetrieveDraftSettings;
+            _connectionServer.RetrieveDraftSettings += RetrieveDraftSettings;
+            _connectionServer.TeamUpdated += TeamUpdated;
         }
 
-        public void SubscribeToMessages(ObservableCollection<ViewModel.DraftServer> servers)
+        private void TeamUpdated(DraftEntities.DraftTeam team)
+        {
+            _setupWindow.DraftSettings.DraftTeams[team.Index].InjectFrom(team);
+        }
+
+        public bool IsRunning { get; set; }
+
+        public bool IsConnected
+        {
+            get { return _connectionServer.IsConnected; }
+        }
+
+        public void SubscribeToMessages(ObservableCollection<DraftServer> servers)
         {
             Dispatcher dispatch = Application.Current.Dispatcher;
 
-            _connectionServer.Connection.ListenForServers(o =>
+            _connectionServer.ListenForServers(o =>
             {
-                var server = new ViewModel.DraftServer();
+                var server = new DraftServer();
                 server.InjectFrom(o);
 
-                var matchedServer = servers.FirstOrDefault(s => s.IpAddress == server.IpAddress && s.IpPort == server.IpPort);
+                DraftServer matchedServer = servers.FirstOrDefault(s => s.IpAddress == server.IpAddress && s.IpPort == server.IpPort);
 
-                if (matchedServer != default(ViewModel.DraftServer))
+                if (matchedServer != default(DraftServer))
                 {
                     dispatch.Invoke(() =>
                     {
@@ -60,10 +72,10 @@
             {
                 while (IsRunning)
                 {
-                    var itemsToRemove = servers.Where(s => s.Timeout < DateTime.Now).ToList();
-                    foreach (var item in itemsToRemove)
+                    List<DraftServer> itemsToRemove = servers.Where(s => s.Timeout < DateTime.Now).ToList();
+                    foreach (DraftServer item in itemsToRemove)
                     {
-                        ViewModel.DraftServer item1 = item;
+                        DraftServer item1 = item;
                         dispatch.Invoke(() => servers.Remove(item1));
                     }
                     Thread.Sleep(1000);
@@ -73,7 +85,7 @@
 
         public void GetDraftSettings()
         {
-            _connectionServer.Connection.SendMessage(NetworkMessageType.SendDraftSettingsMessage, null);
+            _connectionServer.SendMessage(NetworkMessageType.SendDraftSettingsMessage, null);
         }
 
         private void RetrieveDraftSettings(DraftSettings settings)
@@ -81,10 +93,10 @@
             Application.Current.Dispatcher.Invoke(() =>
             {
                 _setupWindow.DraftSettings.InjectFrom(settings);
-                _setupWindow.DraftSettings.DraftTeams = new ObservableCollection<ViewModel.DraftTeam>();
-                foreach (var draftTeam in settings.DraftTeams)
+                _setupWindow.DraftSettings.DraftTeams = new ObservableCollection<DraftTeam>();
+                foreach (DraftEntities.DraftTeam draftTeam in settings.DraftTeams)
                 {
-                    _setupWindow.DraftSettings.DraftTeams.Add(Mapper.Map<ViewModel.DraftTeam>(draftTeam));
+                    _setupWindow.DraftSettings.DraftTeams.Add(Mapper.Map<DraftTeam>(draftTeam));
                 }
                 _setupWindow.SettingsResetEvent.Set();
                 _setupWindow.SelectTeam(false);
@@ -98,7 +110,7 @@
 
         public void CancelDraft()
         {
-            
+            _connectionServer.ResetConnection();
         }
 
         public void StartServer(string leagueName, int numberOfTeams)
@@ -106,20 +118,20 @@
             _connectionServer.StartServer(leagueName, numberOfTeams);
         }
 
-        public void UpdateTeamInfo(ViewModel.DraftTeam team)
+        public void UpdateTeamInfo(DraftTeam team)
         {
-            team.ConnectedUser = _connectionServer.Connection.ClientId;
-            _connectionServer.Connection.SendMessage(NetworkMessageType.UpdateTeamMessage, Mapper.Map<ViewModel.DraftTeam, DraftTeam>(team));
+            team.ConnectedUser = _connectionServer.GetClientId();
+            _connectionServer.SendMessage(NetworkMessageType.UpdateTeamMessage, Mapper.Map<DraftTeam, DraftEntities.DraftTeam>(team));
         }
 
         public void DisconnectFromDraftServer()
         {
-            _connectionServer.Connection.SendMessage(NetworkMessageType.LogoutMessage, null);
+            _connectionServer.SendMessage(NetworkMessageType.LogoutMessage, null);
         }
 
         public Guid GetClientId()
         {
-            return _connectionServer.Connection.ClientId;
+            return _connectionServer.GetClientId();
         }
     }
 }

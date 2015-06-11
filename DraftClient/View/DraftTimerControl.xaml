@@ -1,0 +1,61 @@
+﻿<UserControl x:Class="DraftClient.View.DraftTimerControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:c="clr-namespace:DraftClient.Converters"
+             mc:Ignorable="d"  d:DesignWidth="400">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+
+                <!-- Gray Theme -->
+                <ResourceDictionary Source="../Themes/Metro/Light/Metro.MSControls.Toolkit.Implicit.xaml" />
+
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Gray Theme -->
+            <SolidColorBrush x:Key="BackgroundKey" Color="{StaticResource Color_009}" />
+
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <c:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
+
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <StackPanel>
+            <StackPanel Name="StartDraftPanel" Orientation="Horizontal" HorizontalAlignment="Center" Visibility="{Binding Path=Drafting, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Height="100">
+                <Button Background="LimeGreen" 
+                        Foreground="White" 
+                        Content="Start Draft"
+                        Height="50"
+                        Width="200"
+                        FontFamily="Segoe UI"
+                        FontSize="16"
+                        FontWeight="DemiBold"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center" 
+                        Name="StartDraftButton"
+                        Click="StartDraftButton_OnClick" />
+            </StackPanel>
+            <StackPanel Name="TimeDraftPanel" Orientation="Horizontal" HorizontalAlignment="Center" Visibility="{Binding Path=Drafting, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Button Background="#DD0000" Visibility="{Binding Path=CanPause, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Foreground="Black"
+                        FontWeight="DemiBold" Height="50" Width="100" Content="Pause" FontFamily="Segoe UI" FontSize="16"
+                        Click="PauseDraftButton_OnClick"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                <Button Background="LimeGreen" Visibility="{Binding Path=CanResume, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Foreground="White"
+                        FontWeight="DemiBold" Height="50" Width="100" Content="Resume" FontFamily="Segoe UI" FontSize="16"
+                        Click="ResumeDraftButton_OnClick"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                <TextBlock Name="CountdownTextBlock" Margin="5 0 0 0" Text="00:00:00" FontWeight="DemiBold" FontFamily="Segoe UI" FontSize="36" Foreground="LimeGreen"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+            </StackPanel>
+        </StackPanel>
+
+    </Grid>
+</UserControl>

@@ -10,21 +10,26 @@
 
     public class Client
     {
+        protected bool IsRunning;
+        public Task ServerListener;
+        private SocketClient _client;
+        private UdpClient _updClient;
+
         public Client()
         {
             IsRunning = true;
             ClientId = Guid.NewGuid();
         }
 
-        //Send Messages on Draft Picks
-        public Task ServerListener;
-        private UdpClient _updClient;
-        protected bool IsRunning;
-        private SocketClient _client;
         public Guid ClientId { get; set; }
-        public bool IsConnected { get { return _client.Connected; } }
+
+        public bool IsConnected
+        {
+            get { return _client.Connected; }
+        }
 
         #region Network Methods
+
         public void ListenForServers(Action<DraftServer> serverPingCallback)
         {
             ServerListener = Task.Run(() =>
@@ -41,15 +46,15 @@
 
                 _updClient.Client.Bind(localEp);
 
-                var multicastaddress = IPAddress.Parse(Server.MulticastAddress);
+                IPAddress multicastaddress = IPAddress.Parse(Server.MulticastAddress);
                 _updClient.JoinMulticastGroup(multicastaddress);
 
                 while (IsRunning)
                 {
-                    var serverBroadcastData = _updClient.Receive(ref localEp);
+                    byte[] serverBroadcastData = _updClient.Receive(ref localEp);
 
                     var formatter = new BinaryFormatter();
-                    var networkMessage = (NetworkMessage)formatter.Deserialize(new MemoryStream(serverBroadcastData));
+                    var networkMessage = (NetworkMessage) formatter.Deserialize(new MemoryStream(serverBroadcastData));
 
                     if (networkMessage.MessageType == NetworkMessageType.BroadcastMessage && networkMessage.MessageContent is DraftServer)
                     {
@@ -77,6 +82,7 @@
 
             _client.StartClient();
         }
+
         #endregion
 
         #region Event Handlers
@@ -102,12 +108,15 @@
                 case NetworkMessageType.UpdateTeamMessage:
                     OnTeamUpdated(networkMessage.MessageContent as DraftTeam);
                     break;
+                case NetworkMessageType.PickMessage:
+                    OnPickMade(networkMessage.MessageContent as DraftPick);
+                    break;
             }
         }
 
         private void HandleDisconnect(object sender, Guid e)
         {
-            
+            //TODO: Handle Disconnect
         }
 
         public virtual void SendMessage(NetworkMessageType type, object payload)
@@ -124,11 +133,27 @@
         }
 
         #endregion
-        
+
         #region Events
 
+        public delegate void PickMadeHandler(DraftPick pick);
+
         public delegate void RetrieveDraftHandler(Draft draft);
+
+        public delegate void RetrieveDraftSettingsHandler(DraftSettings settings);
+
+        public delegate Draft SendDraftHandler();
+
+        public delegate DraftSettings SendDraftSettingsHandler();
+
+        public delegate void ServerHandshakeHandler();
+
+        public delegate void TeamUpdatedHandler(DraftTeam team);
+
+        public delegate void UserDisconnectHandler(Guid connectedUser);
+
         public event RetrieveDraftHandler RetrieveDraft;
+
         public void OnRetrieveDraft(Draft draft)
         {
             RetrieveDraftHandler handler = RetrieveDraft;
@@ -138,8 +163,8 @@
             }
         }
 
-        public delegate Draft SendDraftHandler();
         public event SendDraftHandler SendDraft;
+
         public Draft OnSendDraft()
         {
             SendDraftHandler handler = SendDraft;
@@ -150,8 +175,8 @@
             return null;
         }
 
-        public delegate void RetrieveDraftSettingsHandler(DraftSettings settings);
         public event RetrieveDraftSettingsHandler RetrieveDraftSettings;
+
         public void OnRetrieveDraftSettings(DraftSettings settings)
         {
             RetrieveDraftSettingsHandler handler = RetrieveDraftSettings;
@@ -161,8 +186,8 @@
             }
         }
 
-        public delegate DraftSettings SendDraftSettingsHandler();
         public event SendDraftSettingsHandler SendDraftSettings;
+
         public DraftSettings OnSendDraftSettings()
         {
             SendDraftSettingsHandler handler = SendDraftSettings;
@@ -173,8 +198,8 @@
             return null;
         }
 
-        public delegate void TeamUpdatedHandler(DraftTeam team);
         public event TeamUpdatedHandler TeamUpdated;
+
         public void OnTeamUpdated(DraftTeam team)
         {
             TeamUpdatedHandler handler = TeamUpdated;
@@ -184,8 +209,8 @@
             }
         }
 
-        public delegate void PickMadeHandler(DraftPick pick);
         public event PickMadeHandler PickMade;
+
         public void OnPickMade(DraftPick pick)
         {
             PickMadeHandler handler = PickMade;
@@ -195,8 +220,8 @@
             }
         }
 
-        public delegate void UserDisconnectHandler(Guid connectedUser);
         public event UserDisconnectHandler UserDisconnect;
+
         public void OnUserDisconnect(Guid connectedUser)
         {
             UserDisconnectHandler handler = UserDisconnect;
@@ -206,8 +231,8 @@
             }
         }
 
-        public delegate void ServerHandshakeHandler();
         public event ServerHandshakeHandler ServerHandshake;
+
         public void OnServerHandshake()
         {
             ServerHandshakeHandler handler = ServerHandshake;

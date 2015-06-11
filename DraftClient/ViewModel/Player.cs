@@ -1,70 +1,57 @@
 ﻿namespace DraftClient.ViewModel
 {
+    using DraftEntities;
+
     public class Player : BindableBase
     {
         private int _averageDraftPosition;
-        private string _name;
-        private DraftEntities.PlayerPosition _position;
-        private string _team;
         private int _byeWeek;
-        private decimal _projectedPoints;
         private bool _isPicked;
+        private string _name;
+        private PlayerPosition _position;
+        private decimal _projectedPoints;
+        private string _team;
 
         public int AverageDraftPosition
         {
-            get { return this._averageDraftPosition; }
-            set
-            {
-                SetProperty(ref this._averageDraftPosition, value);
-            }
+            get { return _averageDraftPosition; }
+            set { SetProperty(ref _averageDraftPosition, value); }
         }
+
         public string Name
         {
-            get { return this._name; }
-            set
-            {
-                SetProperty(ref this._name, value);
-            }
+            get { return _name; }
+            set { SetProperty(ref _name, value); }
         }
-        public DraftEntities.PlayerPosition Position
+
+        public PlayerPosition Position
         {
-            get { return this._position; }
-            set
-            {
-                SetProperty(ref this._position, value);
-            }
+            get { return _position; }
+            set { SetProperty(ref _position, value); }
         }
+
         public string Team
         {
-            get { return this._team; }
-            set
-            {
-                SetProperty(ref this._team, value);
-            }
+            get { return _team; }
+            set { SetProperty(ref _team, value); }
         }
+
         public int ByeWeek
         {
-            get { return this._byeWeek; }
-            set
-            {
-                SetProperty(ref this._byeWeek, value);
-            }
+            get { return _byeWeek; }
+            set { SetProperty(ref _byeWeek, value); }
         }
+
         public decimal ProjectedPoints
         {
-            get { return this._projectedPoints; }
-            set
-            {
-                SetProperty(ref this._projectedPoints, value);
-            }
+            get { return _projectedPoints; }
+            set { SetProperty(ref _projectedPoints, value); }
         }
+
         public bool IsPicked
         {
-            get { return this._isPicked; }
-            set
-            {
-                SetProperty(ref this._isPicked, value);
-            }
+            get { return _isPicked; }
+            set { SetProperty(ref _isPicked, value); }
         }
     }
 }

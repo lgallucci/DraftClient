@@ -4,82 +4,47 @@
 
     public class DraftServer : BindableBase
     {
+        private int _connectedPlayers;
         private string _fantasyDraft;
+        private string _ipAddress;
+        private int _ipPort;
+        private int _maxPlayers;
+        private DateTime _timeout;
+
         public string FantasyDraft
         {
-            get
-            {
-                return _fantasyDraft;
-            }
-            set
-            {
-                SetProperty(ref this._fantasyDraft, value);
-            }
+            get { return _fantasyDraft; }
+            set { SetProperty(ref _fantasyDraft, value); }
         }
 
-        private int _connectedPlayers;
         public int ConnectedPlayers
         {
-            get
-            {
-                return _connectedPlayers;
-            }
-            set
-            {
-                SetProperty(ref this._connectedPlayers, value);
-            }
+            get { return _connectedPlayers; }
+            set { SetProperty(ref _connectedPlayers, value); }
         }
 
-        private int _maxPlayers;
         public int MaxPlayers
         {
-            get
-            {
-                return _maxPlayers;
-            }
-            set
-            {
-                SetProperty(ref this._maxPlayers, value);
-            }
+            get { return _maxPlayers; }
+            set { SetProperty(ref _maxPlayers, value); }
         }
 
-        private string _ipAddress;
         public string IpAddress
         {
-            get
-            {
-                return _ipAddress;
-            }
-            set
-            {
-                SetProperty(ref this._ipAddress, value);
-            }
+            get { return _ipAddress; }
+            set { SetProperty(ref _ipAddress, value); }
         }
 
-        private int _ipPort;
         public int IpPort
         {
-            get
-            {
-                return _ipPort;
-            }
-            set
-            {
-                SetProperty(ref this._ipPort, value);
-            }
+            get { return _ipPort; }
+            set { SetProperty(ref _ipPort, value); }
         }
 
-        private DateTime _timeout;
         public DateTime Timeout
         {
-            get
-            {
-                return _timeout;
-            }
-            set
-            {
-                SetProperty(ref this._timeout, value);
-            }
+            get { return _timeout; }
+            set { SetProperty(ref _timeout, value); }
         }
     }
 }

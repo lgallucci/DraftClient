@@ -7,17 +7,17 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-
     public class SocketClient
     {
         private readonly TcpClient _clientSocket;
         private NetworkStream _networkStream;
-        public Guid Id { get; set; }
 
         public SocketClient(TcpClient client)
         {
             _clientSocket = client;
         }
+
+        public Guid Id { get; set; }
 
         public bool Connected
         {
@@ -29,7 +29,7 @@
             _networkStream = _clientSocket.GetStream();
             ListenForMessages();
         }
-
+        //TODO: Switch keepalive to the client
         private void ListenForMessages()
         {
             Task.Run(async () =>
@@ -40,15 +40,9 @@
                     {
                         byte[] message = await ReadMessage();
                         NetworkMessage networkMessage = null;
-                        try
-                        {
-                            var formatter = new BinaryFormatter();
-                            networkMessage = (NetworkMessage)formatter.Deserialize(new MemoryStream(message));
-                        }
-                        catch (Exception e)
-                        {
-                            SerializeException(this, e);
-                        }
+
+                        var formatter = new BinaryFormatter();
+                        networkMessage = (NetworkMessage)formatter.Deserialize(new MemoryStream(message));
 
                         if (networkMessage != null && networkMessage.MessageType != NetworkMessageType.KeepAliveMessage)
                         {
@@ -69,8 +63,8 @@
                 var input = new byte[0];
                 while (_networkStream.DataAvailable)
                 {
-                    var length = _networkStream.Read(buffer, 0, 1024);
-                    var index = input.Length;
+                    int length = _networkStream.Read(buffer, 0, 1024);
+                    int index = input.Length;
                     Array.Resize(ref input, input.Length + length);
 
                     Array.Copy(buffer, 0, input, index, length);
@@ -98,18 +92,20 @@
                         }
                         else
                         {
-                            if (ClientDisconnect != null) ClientDisconnect(this, Id);
+                            if (ClientDisconnect != null)
+                            {
+                                ClientDisconnect(this, Id);
+                            }
                             Close();
                         }
                     }
                     catch (IOException)
                     {
-                        if (ClientDisconnect != null) ClientDisconnect(this, Id);
+                        if (ClientDisconnect != null)
+                        {
+                            ClientDisconnect(this, Id);
+                        }
                         Close();
-                    }
-                    catch (Exception e)
-                    {
-                        SerializeException(this, e);
                     }
                 }
             });
@@ -121,13 +117,16 @@
             _clientSocket.Close();
         }
 
-        public delegate void HandleMessage(object sender, NetworkMessage e);
-        public event HandleMessage ClientMessage;
+        #region Events
 
         public delegate void HandleClientDisconnect(object sender, Guid id);
+
+        public delegate void HandleMessage(object sender, NetworkMessage e);
+
+        public event HandleMessage ClientMessage;
+
         public event HandleClientDisconnect ClientDisconnect;
 
-        public delegate void HandleSerializeException(object sender, Exception e);
-        public event HandleSerializeException SerializeException;
+        #endregion
     }
 }

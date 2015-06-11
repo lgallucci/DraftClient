@@ -1,5 +1,8 @@
 ﻿namespace DraftEntities
 {
+    using System;
+
+    [Serializable]
     public enum PlayerPosition
     {
         QB = 0,

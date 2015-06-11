@@ -1,25 +1,24 @@
 ﻿namespace ServerTest
 {
-    using System.Threading;
-    using ClientServer;
     using System;
     using System.Linq;
+    using System.Threading;
+    using ClientServer;
     using DraftEntities;
 
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var server = new Server("Test Fantasy League", 12);
-            
+
             server.StartServer();
 
             server.SendDraft += () => new Draft
             {
                 Drafting = true,
-                Picks = new int[5,5]
+                Picks = new int[5, 5]
             };
-
 
 
             while (true)
@@ -30,7 +29,6 @@
                 Console.WriteLine("Users:" + server.Connections.Select(c => c.Id.ToString()).DefaultIfEmpty().Aggregate((a, x) => a + ", " + x));
                 Thread.Sleep(2000);
             }
-
         }
     }
 }
