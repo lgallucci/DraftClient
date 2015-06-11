@@ -36,7 +36,7 @@
                         </WrapPanel>
                         <WrapPanel>
                             <TextBlock
-                                Text="{Binding Path=AverageDraftPosition, StringFormat='AverageDraftPosition: {0} -'}"
+                                Text="{Binding Path=AverageDraftPosition, StringFormat='ADP: {0} -'}"
                                 FontSize="10" />
                             <TextBlock Text="{Binding Path=ByeWeek, StringFormat=' Bye: {0}'}" FontSize="10" />
                         </WrapPanel>

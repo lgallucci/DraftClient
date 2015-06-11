@@ -38,23 +38,23 @@
                         Name="StartDraftButton"
                         Click="StartDraftButton_OnClick" />
             </StackPanel>
-            <WrapPanel Name="TimeDraftPanel" Orientation="Horizontal" HorizontalAlignment="Center" Visibility="{Binding Path=Drafting, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <Button Background="#DD0000" Visibility="{Binding Path=CanPause, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
+            <StackPanel Name="TimeDraftPanel" Orientation="Horizontal" HorizontalAlignment="Center" Visibility="{Binding Path=Drafting, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Button Background="#DD0000" Visibility="{Binding Path=CanPause, Converter={StaticResource BooleanToVisibilityConverter}}"
                         Foreground="Black"
                         FontWeight="DemiBold" Height="50" Width="100" Content="Pause" FontFamily="Segoe UI" FontSize="16"
                         Click="PauseDraftButton_OnClick"
                         HorizontalAlignment="Center"
-                        VerticalAlignment="Center" ></Button>
-                <Button Background="LimeGreen" Visibility="{Binding Path=CanResume, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
+                        VerticalAlignment="Center" />
+                <Button Background="LimeGreen" Visibility="{Binding Path=CanResume, Converter={StaticResource BooleanToVisibilityConverter}}"
                         Foreground="White"
                         FontWeight="DemiBold" Height="50" Width="100" Content="Resume" FontFamily="Segoe UI" FontSize="16"
                         Click="ResumeDraftButton_OnClick"
                         HorizontalAlignment="Center"
-                        VerticalAlignment="Center" ></Button>
+                        VerticalAlignment="Center" />
                 <TextBlock Name="CountdownTextBlock" Margin="5 0 0 0" Text="00:00:00" FontWeight="DemiBold" FontFamily="Segoe UI" FontSize="36" Foreground="LimeGreen"
                         HorizontalAlignment="Center"
-                        VerticalAlignment="Center" ></TextBlock>
-            </WrapPanel>
+                        VerticalAlignment="Center" />
+            </StackPanel>
         </StackPanel>
 
     </Grid>
