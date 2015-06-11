@@ -79,10 +79,14 @@
     <Compile Include="ViewModel\Draft.cs" />
     <Compile Include="ViewModel\DraftServer.cs" />
     <Compile Include="ViewModel\DraftSettings.cs" />
+    <Compile Include="ViewModel\DraftState.cs" />
     <Compile Include="ViewModel\DraftTeam.cs" />
     <Compile Include="ViewModel\PlayerList.cs" />
     <Compile Include="ViewModel\Player.cs" />
     <Compile Include="ViewModel\ValidatableBase.cs" />
+    <Compile Include="View\DraftTimerControl.xaml.cs">
+      <DependentUpon>DraftTimerControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\PlayerView.xaml.cs">
       <DependentUpon>PlayerView.xaml</DependentUpon>
     </Compile>
@@ -115,6 +119,10 @@
     <Page Include="Themes\Metro\Light\Theme.Colors.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\DraftTimerControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\FantasyRound.xaml">
       <SubType>Designer</SubType>

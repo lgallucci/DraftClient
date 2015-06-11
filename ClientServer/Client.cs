@@ -116,6 +116,7 @@
 
         private void HandleDisconnect(object sender, Guid e)
         {
+            //TODO: Handle Disconnect
         }
 
         public virtual void SendMessage(NetworkMessageType type, object payload)

@@ -12,13 +12,13 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
 
-                <!-- Dark Theme -->
+                <!-- Gray Theme -->
                 <ResourceDictionary Source="../Themes/Metro/Light/Metro.MSControls.Core.Implicit.xaml" />
                 <ResourceDictionary Source="../Themes/Metro/Light/Metro.MSControls.Toolkit.Implicit.xaml" />
 
             </ResourceDictionary.MergedDictionaries>
 
-            <!-- Dark Theme -->
+            <!-- Gray Theme -->
             <SolidColorBrush x:Key="BackgroundKey" Color="{StaticResource Color_009}" />
 
         </ResourceDictionary>

@@ -86,7 +86,8 @@
 
         private void SetupGrid(DraftSettings settings)
         {
-            //TODO: Add Fantasy Timer
+            this.DraftTimerControl.PopulateState(_draftController.CurrentDraft.State);
+
             for (int i = 0; i < settings.NumberOfTeams + 1; i++)
             {
                 PicksGrid.ColumnDefinitions.Add(new ColumnDefinition
@@ -150,8 +151,8 @@
                         newRound.MakePick += (adp, row, column) => _draftController.MakeMove(new DraftPick
                         {
                             AverageDraftPosition = adp,
-                            Row = row-1,
-                            Column = column-1
+                            Row = row - 1,
+                            Column = column - 1
                         });
                     }
                     PicksGrid.Children.Add(newRound);
@@ -186,7 +187,7 @@
         {
             _draftController.Settings.DraftTeams[team.Index].InjectFrom(team);
 
-            var teamControl = (FantasyTeam) PicksGrid.Children.Cast<UIElement>().
+            var teamControl = (FantasyTeam)PicksGrid.Children.Cast<UIElement>().
                 FirstOrDefault(e => Grid.GetColumn(e) == team.Index + 1 && Grid.GetRow(e) == 0);
 
             if (teamControl != null)

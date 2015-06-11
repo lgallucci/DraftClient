@@ -124,10 +124,10 @@
         private void PickMade(DraftPick pick)
         {
             ViewModel.Player player =
-                MainWindow.PlayerList.Players.First(p => p.AverageDraftPosition == pick.AverageDraftPosition);
+                MainWindow.PlayerList.Players.FirstOrDefault(p => p.AverageDraftPosition == pick.AverageDraftPosition);
 
             CurrentDraft.Picks[pick.Row, pick.Column].DraftedPlayer = player;
-            CurrentDraft.Picks[pick.Row, pick.Column].Name = player.Name;
+            CurrentDraft.Picks[pick.Row, pick.Column].Name = (player != null) ? player.Name : "";
         }
 
         private void TeamUpdated(DraftTeam team)

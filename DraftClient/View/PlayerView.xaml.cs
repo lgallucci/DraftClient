@@ -41,64 +41,22 @@
                 switch (player.Position)
                 {
                     case PlayerPosition.QB:
-                        if (cbQB.IsChecked.Value)
-                        {
-                            e.Accepted = true;
-                        }
-                        else
-                        {
-                            e.Accepted = false;
-                        }
+                        e.Accepted = cbQB.IsChecked.Value;
                         break;
                     case PlayerPosition.WR:
-                        if (cbWR.IsChecked.Value)
-                        {
-                            e.Accepted = true;
-                        }
-                        else
-                        {
-                            e.Accepted = false;
-                        }
+                        e.Accepted = cbWR.IsChecked.Value;
                         break;
                     case PlayerPosition.RB:
-                        if (cbRB.IsChecked.Value)
-                        {
-                            e.Accepted = true;
-                        }
-                        else
-                        {
-                            e.Accepted = false;
-                        }
+                        e.Accepted = cbRB.IsChecked.Value;
                         break;
                     case PlayerPosition.TE:
-                        if (cbTE.IsChecked.Value)
-                        {
-                            e.Accepted = true;
-                        }
-                        else
-                        {
-                            e.Accepted = false;
-                        }
+                        e.Accepted = cbTE.IsChecked.Value;
                         break;
                     case PlayerPosition.K:
-                        if (cbK.IsChecked.Value)
-                        {
-                            e.Accepted = true;
-                        }
-                        else
-                        {
-                            e.Accepted = false;
-                        }
+                        e.Accepted = cbK.IsChecked.Value;
                         break;
                     case PlayerPosition.DEF:
-                        if (cbDEF.IsChecked.Value)
-                        {
-                            e.Accepted = true;
-                        }
-                        else
-                        {
-                            e.Accepted = false;
-                        }
+                        e.Accepted = cbDEF.IsChecked.Value;
                         break;
                 }
             }
