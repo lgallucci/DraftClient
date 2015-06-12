@@ -36,14 +36,12 @@
         private readonly string _leagueName;
         private readonly int _numberOfTeams;
         private readonly int _port;
-        private readonly Timer _timKeepAlive;
 
         public Server(string leagueName, int numberOfTeams)
         {
             _leagueName = leagueName;
             _numberOfTeams = numberOfTeams;
             Connections = new Collection<ConnectedClient>();
-            _timKeepAlive = new Timer();
 
             _port = Port;
         }
@@ -61,10 +59,6 @@
                 _listener.Start();
                 WaitForClientConnect();
             });
-
-            _timKeepAlive.Elapsed += KeepSocketsAlive;
-            _timKeepAlive.Interval = 5000;
-            _timKeepAlive.Enabled = true;
 
             Task.Run(() =>
             {
@@ -88,7 +82,7 @@
                     {
                         formatter.Serialize(memoryStream, new NetworkMessage
                         {
-                            MessageType = NetworkMessageType.BroadcastMessage,
+                            MessageType = NetworkMessageType.ServerBroadcast,
                             MessageContent = draftServer
                         });
                         requestData = memoryStream.ToArray();
@@ -120,7 +114,7 @@
         {
             BroadcastMessage(new NetworkMessage
             {
-                Id = ClientId,
+                SenderId = ClientId,
                 MessageType = type,
                 MessageContent = payload
             });
@@ -153,17 +147,6 @@
             WaitForClientConnect();
         }
 
-        private void KeepSocketsAlive(object sender, ElapsedEventArgs e)
-        {
-            foreach (ConnectedClient connection in Connections)
-            {
-                connection.Client.SendMessage(new NetworkMessage
-                {
-                    MessageType = NetworkMessageType.KeepAliveMessage
-                });
-            }
-        }
-
         #region Event Handlers
 
         private void HandleMessage(object sender, NetworkMessage networkMessage)
@@ -182,7 +165,7 @@
                     }
                     SendMessage(connection, new NetworkMessage
                     {
-                        Id = ClientId,
+                        SenderId = ClientId,
                         MessageType = NetworkMessageType.HandShakeMessage
                     });
                     break;
@@ -193,7 +176,7 @@
                     Draft draft = OnSendDraft();
                     SendMessage(connection, new NetworkMessage
                     {
-                        Id = ClientId,
+                        SenderId = ClientId,
                         MessageContent = draft,
                         MessageType = NetworkMessageType.RetrieveDraftMessage
                     });
@@ -202,7 +185,7 @@
                     DraftSettings draftSettings = OnSendDraftSettings();
                     SendMessage(connection, new NetworkMessage
                     {
-                        Id = ClientId,
+                        SenderId = ClientId,
                         MessageContent = draftSettings,
                         MessageType = NetworkMessageType.RetrieveDraftSettingsMessage
                     });
@@ -230,7 +213,7 @@
         {
             BroadcastMessage(new NetworkMessage
             {
-                Id = ClientId,
+                SenderId = ClientId,
                 MessageContent = payload,
                 MessageType = type
             });
@@ -240,7 +223,7 @@
         {
             lock (ConnectionLock)
             {
-                foreach (ConnectedClient connection in Connections.Where(c => c.Id != networkMessage.Id))
+                foreach (ConnectedClient connection in Connections.Where(c => c.Id != networkMessage.SenderId))
                 {
                     connection.Client.SendMessage(networkMessage);
                 }
@@ -272,7 +255,7 @@
 
                 BroadcastMessage(new NetworkMessage
                 {
-                    Id = connection.Id,
+                    SenderId = connection.Id,
                     MessageType = NetworkMessageType.LogoutMessage
                 });
                 lock (ConnectionLock)

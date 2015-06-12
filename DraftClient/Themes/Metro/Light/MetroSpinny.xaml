@@ -5,7 +5,7 @@
     <Grid>
         <Grid.Resources>
             <!-- Particle Styling -->
-            <SolidColorBrush x:Key="ParticleColor" Color="#9CFFFFFF" />
+            <SolidColorBrush x:Key="ParticleColor" Color="#44FFFFFF" />
             <SolidColorBrush x:Key="ParticleBackgroundColor" Color="Transparent" />
             <system:Double x:Key="ParticleOpacity">1</system:Double>
             <system:Double x:Key="ParticleRadius">5</system:Double>

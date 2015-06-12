@@ -6,6 +6,7 @@
     using System.Net.Sockets;
     using System.Runtime.Serialization.Formatters.Binary;
     using System.Threading.Tasks;
+    using System.Timers;
     using DraftEntities;
 
     public class Client
@@ -14,11 +15,13 @@
         public Task ServerListener;
         private SocketClient _client;
         private UdpClient _updClient;
+        private readonly Timer _timKeepAlive;
 
         public Client()
         {
             IsRunning = true;
             ClientId = Guid.NewGuid();
+            _timKeepAlive = new Timer();
         }
 
         public Guid ClientId { get; set; }
@@ -56,7 +59,7 @@
                     var formatter = new BinaryFormatter();
                     var networkMessage = (NetworkMessage) formatter.Deserialize(new MemoryStream(serverBroadcastData));
 
-                    if (networkMessage.MessageType == NetworkMessageType.BroadcastMessage && networkMessage.MessageContent is DraftServer)
+                    if (networkMessage.MessageType == NetworkMessageType.ServerBroadcast && networkMessage.MessageContent is DraftServer)
                     {
                         serverPingCallback((DraftServer) networkMessage.MessageContent);
                     }
@@ -89,28 +92,39 @@
 
         private void HandleMessage(object sender, NetworkMessage networkMessage)
         {
-            switch (networkMessage.MessageType)
+            try
             {
-                case NetworkMessageType.LoginMessage:
-                    break;
-                case NetworkMessageType.LogoutMessage:
-                    OnUserDisconnect(networkMessage.Id);
-                    break;
-                case NetworkMessageType.HandShakeMessage:
-                    OnServerHandshake();
-                    break;
-                case NetworkMessageType.RetrieveDraftMessage:
-                    OnRetrieveDraft(networkMessage.MessageContent as Draft);
-                    break;
-                case NetworkMessageType.RetrieveDraftSettingsMessage:
-                    OnRetrieveDraftSettings(networkMessage.MessageContent as DraftSettings);
-                    break;
-                case NetworkMessageType.UpdateTeamMessage:
-                    OnTeamUpdated(networkMessage.MessageContent as DraftTeam);
-                    break;
-                case NetworkMessageType.PickMessage:
-                    OnPickMade(networkMessage.MessageContent as DraftPick);
-                    break;
+                switch (networkMessage.MessageType)
+                {
+                    case NetworkMessageType.LogoutMessage:
+                        OnUserDisconnect(networkMessage.SenderId);
+                        break;
+                    case NetworkMessageType.HandShakeMessage:
+                        
+                        _timKeepAlive.Elapsed += (o, args) => SendMessage(NetworkMessageType.KeepAliveMessage, null);
+                        _timKeepAlive.Interval = 5000;
+                        _timKeepAlive.Enabled = true;
+                        _timKeepAlive.Start();
+
+                        OnServerHandshake();
+                        break;
+                    case NetworkMessageType.RetrieveDraftMessage:
+                        OnRetrieveDraft(networkMessage.MessageContent as Draft);
+                        break;
+                    case NetworkMessageType.RetrieveDraftSettingsMessage:
+                        OnRetrieveDraftSettings(networkMessage.MessageContent as DraftSettings);
+                        break;
+                    case NetworkMessageType.UpdateTeamMessage:
+                        OnTeamUpdated(networkMessage.MessageContent as DraftTeam);
+                        break;
+                    case NetworkMessageType.PickMessage:
+                        OnPickMade(networkMessage.MessageContent as DraftPick);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                //TODO: Handle exceptions on network handling
             }
         }
 
@@ -125,7 +139,7 @@
             {
                 _client.SendMessage(new NetworkMessage
                 {
-                    Id = ClientId,
+                    SenderId = ClientId,
                     MessageType = type,
                     MessageContent = payload
                 });

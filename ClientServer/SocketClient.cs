@@ -29,7 +29,6 @@
             _networkStream = _clientSocket.GetStream();
             ListenForMessages();
         }
-        //TODO: Switch keepalive to the client
         private void ListenForMessages()
         {
             Task.Run(async () =>

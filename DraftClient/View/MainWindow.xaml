@@ -5,7 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
     x:Class="DraftClient.View.MainWindow"
     xmlns:local="clr-namespace:DraftClient.View"
-    Title="Fantasy Football Draft Tool" Width="1725" Height="950" Closing="OnClosing" ResizeMode="NoResize">
+    Title="Fantasy Football Draft Tool" Width="1725" Height="950" Closing="OnClosing" ResizeMode="CanMinimize">
 
     <Window.Resources>
         <ResourceDictionary>

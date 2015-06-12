@@ -5,7 +5,14 @@
     [Serializable]
     public class NetworkMessage
     {
-        public Guid Id { get; set; }
+        public NetworkMessage()
+        {
+            MessageId = new Guid();
+        }
+
+        public Guid SenderId { get; set; }
+
+        public Guid MessageId { get; set; }
 
         public NetworkMessageType MessageType { get; set; }
 
@@ -15,28 +22,31 @@
     [Serializable]
     public enum NetworkMessageType
     {
+        //Server discovery
+        ServerBroadcast,
         //Background health
-        BroadcastMessage = 0,
-        KeepAliveMessage = 1,
-        LoginMessage = 2,
-        LogoutMessage = 3,
-        HandShakeMessage = 4,
+        Ackgnowledge,
+        KeepAliveMessage,
+
+        //Login/out messages
+        LoginMessage,
+        LogoutMessage,
+        HandShakeMessage,
 
         //Draft Action
-        PickMessage = 5,
+        PickMessage,
 
         //Draft & Timer 
-        DraftStartMessage = 6,
-        DraftStopMessage = 7,
+        DraftStartMessage,
+        DraftStopMessage,
 
         //Teams
-        UpdateTeamMessage = 8,
+        UpdateTeamMessage,
 
         //Draft Setup
-        SendDraftMessage = 9,
-        RetrieveDraftMessage = 10,
-
-        SendDraftSettingsMessage = 11,
-        RetrieveDraftSettingsMessage = 12
+        SendDraftMessage,
+        RetrieveDraftMessage,
+        SendDraftSettingsMessage,
+        RetrieveDraftSettingsMessage
     }
 }

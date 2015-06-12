@@ -40,11 +40,20 @@
 
         private void OnClosing(object sender, CancelEventArgs e)
         {
-            Hide();
-            if (Owner != null)
+            MessageBoxResult messageBoxResult = MessageBox.Show(string.Format("Are you sure?{0}This will {1} the draft", Environment.NewLine,
+                _draftController.IsServer ? "close" : "leave"), "Close Confirmation", System.Windows.MessageBoxButton.YesNo);
+
+            if (messageBoxResult == MessageBoxResult.Yes)
+            {
+                if (Owner != null)
+                {
+                    ((Setup) Owner).Reset();
+                    Owner.Show();
+                }
+            }
+            else
             {
                 e.Cancel = true;
-                Owner.Show();
             }
         }
 
@@ -86,7 +95,7 @@
 
         private void SetupGrid(DraftSettings settings)
         {
-            this.DraftTimerControl.PopulateState(_draftController.CurrentDraft.State);
+            DraftTimerControl.PopulateState(_draftController.CurrentDraft.State);
 
             for (int i = 0; i < settings.NumberOfTeams + 1; i++)
             {

@@ -2,8 +2,6 @@
 {
     using System;
     using System.ComponentModel;
-    using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Controls;
@@ -16,7 +14,6 @@
     public partial class Setup
     {
         private readonly SetupController _setupController;
-        public AutoResetEvent SettingsResetEvent;
         private MainWindow _draftWindow;
         //TODO: Allow Client to resume draft
         public Setup()
@@ -38,7 +35,6 @@
 
         private void StartDraft_Click(object sender, RoutedEventArgs e)
         {
-            LoadingIndicatorCreate.Visibility = Visibility.Visible;
 
             SelectTeam(true);
         }
@@ -54,9 +50,6 @@
                     _draftWindow.Owner = this;
                     Hide();
                     _draftWindow.Show();
-                    StartButton.Visibility = Visibility.Collapsed;
-                    ContinueButton.Visibility = Visibility.Visible;
-                    LoadingIndicatorCreate.Visibility = Visibility.Collapsed;
                 }
             }
             catch (TimeoutException ex)
@@ -101,48 +94,26 @@
             }
         }
 
-        private void ContinueDraft_Click(object sender, RoutedEventArgs e)
-        {
-            Hide();
-            _draftWindow.Show();
-        }
-
         private void CreateDraft_Click(object sender, RoutedEventArgs e)
         {
             Startup_Viewer.Visibility = Visibility.Collapsed;
             ServerSetup_Viewer.Visibility = Visibility.Visible;
-            LoadingIndicatorCreate.Visibility = Visibility.Collapsed;
         }
 
-        private void CancelDraft_Click(object sender, RoutedEventArgs e)
+        private async void JoinDraft_Click(object sender, RoutedEventArgs e) // TODO: Better streamline connecting to server to make it less Jarring (WPF Toolkit Busy Indicator ?
         {
-            DraftSettings.Servers.Remove(DraftSettings.Servers.FirstOrDefault(s => s.FantasyDraft == DraftSettings.LeagueName));
-
-            _setupController.CancelDraft();
-
-            Startup_Viewer.Visibility = Visibility.Visible;
-            ServerSetup_Viewer.Visibility = Visibility.Collapsed;
-
-            StartButton.Visibility = Visibility.Visible;
-            ContinueButton.Visibility = Visibility.Collapsed;
-        }
-
-        private void JoinDraft_Click(object sender, RoutedEventArgs e)
-        {
-            LoadingIndicatorJoin.Visibility = Visibility.Visible;
-
             var lbi = ServerListBox.SelectedItem as DraftServer;
             if (lbi != null)
             {
                 try
                 {
                     _setupController.ConnectToDraftServer(lbi.IpAddress, lbi.IpPort);
-                    SettingsResetEvent = new AutoResetEvent(false);
-                    _setupController.GetDraftSettings();
-                    if (SettingsResetEvent.WaitOne(5000)) //TODO: WaitOne holds up the UI thread
+                    
+                    if (!await _setupController.GetDraftSettings())
                     {
                         throw new TimeoutException("Didn't recieve draft settings");
                     }
+                    SelectTeam(false);
                 }
                 catch (Exception ex)
                 {
@@ -168,6 +139,11 @@
         {
             object lbi = ServerListBox.SelectedItem;
             JoinDraftButton.IsEnabled = lbi != null;
+        }
+
+        public void Reset()
+        {
+            //TODO: Reset all variables!
         }
     }
 }
