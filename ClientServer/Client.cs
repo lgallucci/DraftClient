@@ -1,6 +1,7 @@
 ﻿namespace ClientServer
 {
     using System;
+    using System.Collections.Concurrent;
     using System.IO;
     using System.Net;
     using System.Net.Sockets;
@@ -16,12 +17,18 @@
         private SocketClient _client;
         private UdpClient _updClient;
         private readonly Timer _timKeepAlive;
+        private readonly Timer _timAcknowledgeReturn;
+
+        internal ConcurrentDictionary<DateTime, NetworkMessage> SentMessages;
 
         public Client()
         {
             IsRunning = true;
             ClientId = Guid.NewGuid();
             _timKeepAlive = new Timer();
+            SentMessages = new ConcurrentDictionary<DateTime, NetworkMessage>();
+
+            _timAcknowledgeReturn = new Timer();
         }
 
         public Guid ClientId { get; set; }
@@ -67,15 +74,11 @@
             });
         }
 
-        //Listen for Draft Messages
-
-        //Send Messages on Draft Picks
-
         public void ConnectToDraftServer(string ipAddress, int port)
         {
-            var _tcpClient = new TcpClient();
-            _tcpClient.Connect(new IPEndPoint(IPAddress.Parse(ipAddress), port));
-            _client = new SocketClient(_tcpClient)
+            var tcpClient = new TcpClient();
+            tcpClient.Connect(new IPEndPoint(IPAddress.Parse(ipAddress), port));
+            _client = new SocketClient(tcpClient)
             {
                 Id = ClientId
             };
@@ -96,6 +99,8 @@
             {
                 switch (networkMessage.MessageType)
                 {
+                    case NetworkMessageType.Ackgnowledge:
+
                     case NetworkMessageType.LogoutMessage:
                         OnUserDisconnect(networkMessage.SenderId);
                         break;
@@ -137,12 +142,19 @@
         {
             if (_client != null)
             {
-                _client.SendMessage(new NetworkMessage
+                var networkMessage = new NetworkMessage
                 {
                     SenderId = ClientId,
                     MessageType = type,
                     MessageContent = payload
-                });
+                };
+
+                if (type != NetworkMessageType.Ackgnowledge)
+                {
+                    SentMessages.TryAdd(networkMessage.MessageId, DateTime.Now.AddMinutes(1));
+                }
+
+                _client.SendMessage(networkMessage);
             }
         }
 

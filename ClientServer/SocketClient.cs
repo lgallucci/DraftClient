@@ -43,7 +43,7 @@
                         var formatter = new BinaryFormatter();
                         networkMessage = (NetworkMessage)formatter.Deserialize(new MemoryStream(message));
 
-                        if (networkMessage != null && networkMessage.MessageType != NetworkMessageType.KeepAliveMessage)
+                        if (networkMessage.MessageType != NetworkMessageType.KeepAliveMessage)
                         {
                             Task.Run(() => ClientMessage(this, networkMessage));
                         }

@@ -44,10 +44,10 @@
 
         public Task<bool> GetDraft()
         {
-            DraftReset = new AutoResetEvent(false);
+            _draftReset = new AutoResetEvent(false);
             _connectionServer.SendMessage(NetworkMessageType.SendDraftMessage, null);
 
-            return Task.Run(() => DraftReset.WaitOne(5000));
+            return Task.Run(() => _draftReset.WaitOne(5000));
         }
 
         private void RetrieveDraft(Draft draft)
@@ -77,7 +77,7 @@
                 CurrentDraft = draftModel;
             });
 
-            DraftReset.Set();
+            _draftReset.Set();
         }
 
         private Draft SendDraft()
@@ -151,7 +151,7 @@
         public bool IsServer { get; set; }
         public ViewModel.Draft CurrentDraft { get; set; }
         public ViewModel.DraftSettings Settings { get; set; }
-        public AutoResetEvent DraftReset { get; set; }
+        private AutoResetEvent _draftReset;
 
         public void MakeMove(DraftPick pick)
         {

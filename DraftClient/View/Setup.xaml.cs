@@ -15,7 +15,6 @@
     {
         private readonly SetupController _setupController;
         private MainWindow _draftWindow;
-        //TODO: Allow Client to resume draft
         public Setup()
         {
             InitializeComponent();
@@ -35,8 +34,7 @@
 
         private void StartDraft_Click(object sender, RoutedEventArgs e)
         {
-
-            SelectTeam(true);
+            OpenDraft(true);
         }
 
         public async Task CreateDraftWindow(bool isServer, int totalRounds, int numberOfTeams)
@@ -59,39 +57,16 @@
             }
         }
 
-        public void SelectTeam(bool isServer)
+        public void OpenDraft(bool isServer)
         {
             if (!isServer && !_setupController.IsConnected)
             {
-                return;
+                throw new Exception("Didn't successfully connect to the draft");
             }
 
-            var teamSelect = new TeamSelect
-            {
-                IsServer = isServer,
-                Teams = DraftSettings.DraftTeams
-            };
+            if (isServer) _setupController.StartServer(DraftSettings.LeagueName, DraftSettings.NumberOfTeams);
 
-            teamSelect.ShowDialog();
-
-            if (teamSelect.DialogResult == true)
-            {
-                if (isServer)
-                {
-                    teamSelect.Team.ConnectedUser = _setupController.GetClientId();
-                    _setupController.StartServer(DraftSettings.LeagueName, DraftSettings.NumberOfTeams);
-                    CreateDraftWindow(true, DraftSettings.TotalRounds, DraftSettings.NumberOfTeams);
-                }
-                else
-                {
-                    _setupController.UpdateTeamInfo(teamSelect.Team);
-                    CreateDraftWindow(false, DraftSettings.TotalRounds, DraftSettings.NumberOfTeams);
-                }
-            }
-            else
-            {
-                _setupController.DisconnectFromDraftServer();
-            }
+            CreateDraftWindow(isServer, DraftSettings.TotalRounds, DraftSettings.NumberOfTeams);
         }
 
         private void CreateDraft_Click(object sender, RoutedEventArgs e)
@@ -108,12 +83,12 @@
                 try
                 {
                     _setupController.ConnectToDraftServer(lbi.IpAddress, lbi.IpPort);
-                    
+
                     if (!await _setupController.GetDraftSettings())
                     {
                         throw new TimeoutException("Didn't recieve draft settings");
                     }
-                    SelectTeam(false);
+                    OpenDraft(false);
                 }
                 catch (Exception ex)
                 {

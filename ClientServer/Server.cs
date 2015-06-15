@@ -10,9 +10,7 @@
     using System.Runtime.Serialization.Formatters.Binary;
     using System.Threading;
     using System.Threading.Tasks;
-    using System.Timers;
     using DraftEntities;
-    using Timer = System.Timers.Timer;
 
     public class ConnectedClient
     {
@@ -27,15 +25,15 @@
     //TODO: Robust Acknowledge & retry
     public class Server : Client
     {
-        private static TcpListener _listener;
-
         public static int Port = 11000;
         public static string MulticastAddress = "239.0.0.222";
-        private readonly object ConnectionLock = new object();
         public readonly Collection<ConnectedClient> Connections;
+
+        private readonly object _connectionLock = new object();
         private readonly string _leagueName;
         private readonly int _numberOfTeams;
         private readonly int _port;
+        private static TcpListener _listener;
 
         public Server(string leagueName, int numberOfTeams)
         {
@@ -68,10 +66,16 @@
 
                 while (IsRunning)
                 {
+                    int connectionCount;
+                    lock (_connectionLock)
+                    {
+                        connectionCount = Connections.Count() + 1;
+                    }
+
                     var draftServer = new DraftServer
                     {
                         FantasyDraft = _leagueName,
-                        ConnectedPlayers = Connections.Count() + 1,
+                        ConnectedPlayers = connectionCount,
                         MaxPlayers = _numberOfTeams,
                         IpAddress = ipAddress,
                         IpPort = _port
@@ -98,15 +102,18 @@
         public override void Close()
         {
             IsRunning = false;
-            foreach (ConnectedClient connection in Connections)
+            lock (_connectionLock)
             {
-                connection.Client.SendMessage(new NetworkMessage
+                foreach (ConnectedClient connection in Connections)
                 {
-                    MessageType = NetworkMessageType.DraftStopMessage
-                });
-                connection.Client.ClientMessage -= HandleMessage;
-                connection.Client.ClientDisconnect -= HandleDisconnect;
-                connection.Client.Close();
+                    connection.Client.SendMessage(new NetworkMessage
+                    {
+                        MessageType = NetworkMessageType.DraftStopMessage
+                    });
+                    connection.Client.ClientMessage -= HandleMessage;
+                    connection.Client.ClientDisconnect -= HandleDisconnect;
+                    connection.Client.Close();
+                }
             }
         }
 
@@ -134,7 +141,7 @@
             socketClient.ClientMessage += HandleMessage;
             socketClient.ClientDisconnect += HandleDisconnect;
 
-            lock (ConnectionLock)
+            lock (_connectionLock)
             {
                 Connections.Add(new ConnectedClient
                 {
@@ -152,12 +159,16 @@
         private void HandleMessage(object sender, NetworkMessage networkMessage)
         {
             ConnectedClient connection;
-            lock (ConnectionLock)
+            lock (_connectionLock)
             {
-                connection = Connections.FirstOrDefault(c => c.Client == (SocketClient) sender);
+                connection = Connections.FirstOrDefault(c => c.Client == (SocketClient)sender);
             }
             switch (networkMessage.MessageType)
             {
+                case NetworkMessageType.Ackgnowledge:
+                    DateTime expired;
+                    SentMessages.TryRemove((Guid)networkMessage.MessageContent, out expired);
+                    break;
                 case NetworkMessageType.LoginMessage:
                     if (connection != null)
                     {
@@ -207,6 +218,12 @@
                     BroadcastMessage(networkMessage);
                     break;
             }
+
+            SendMessage(connection, new NetworkMessage
+            {
+                MessageType = NetworkMessageType.Ackgnowledge,
+                MessageContent = networkMessage.MessageId
+            });
         }
 
         public void BroadcastMessage(NetworkMessageType type, object payload)
@@ -221,10 +238,15 @@
 
         private void BroadcastMessage(NetworkMessage networkMessage)
         {
-            lock (ConnectionLock)
+            lock (_connectionLock)
             {
                 foreach (ConnectedClient connection in Connections.Where(c => c.Id != networkMessage.SenderId))
                 {
+                    if (networkMessage.MessageType != NetworkMessageType.Ackgnowledge)
+                    {
+                        SentMessages.TryAdd(networkMessage.MessageId, DateTime.Now.AddMinutes(1));
+                    }
+
                     connection.Client.SendMessage(networkMessage);
                 }
             }
@@ -234,13 +256,18 @@
         {
             if (client != null)
             {
+                if (networkMessage.MessageType != NetworkMessageType.Ackgnowledge)
+                {
+                    SentMessages.TryAdd(networkMessage.MessageId, DateTime.Now.AddMinutes(1));
+                }
+                
                 client.Client.SendMessage(networkMessage);
             }
         }
 
         private void HandleDisconnect(object sender, Guid id)
         {
-            lock (ConnectionLock)
+            lock (_connectionLock)
             {
                 ConnectedClient connection = Connections.FirstOrDefault(c => c.Client == sender);
                 Logout(connection);
@@ -258,7 +285,7 @@
                     SenderId = connection.Id,
                     MessageType = NetworkMessageType.LogoutMessage
                 });
-                lock (ConnectionLock)
+                lock (_connectionLock)
                 {
                     Connections.Remove(connection);
                 }

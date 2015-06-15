@@ -18,7 +18,7 @@
     {
         private readonly ConnectionServer _connectionServer;
         private readonly Setup _setupWindow;
-        private AutoResetEvent SettingsResetEvent;
+        private AutoResetEvent _settingsResetEvent;
 
         public SetupController(Setup setupWindow)
         {
@@ -86,10 +86,10 @@
 
         public Task<bool> GetDraftSettings()
         {
-            SettingsResetEvent = new AutoResetEvent(false);
+            _settingsResetEvent = new AutoResetEvent(false);
             _connectionServer.SendMessage(NetworkMessageType.SendDraftSettingsMessage, null);
 
-            return Task.Run(() => SettingsResetEvent.WaitOne(5000));
+            return Task.Run(() => _settingsResetEvent.WaitOne(5000));
         }
 
         private void RetrieveDraftSettings(DraftSettings settings)
@@ -103,7 +103,7 @@
                     _setupWindow.DraftSettings.DraftTeams.Add(Mapper.Map<DraftTeam>(draftTeam));
                 }
             });
-            SettingsResetEvent.Set();
+            _settingsResetEvent.Set();
         }
 
         public void ConnectToDraftServer(string ipAddress, int ipPort)

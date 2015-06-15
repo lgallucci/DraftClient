@@ -93,9 +93,6 @@
     <Compile Include="View\Setup.xaml.cs">
       <DependentUpon>Setup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\TeamSelect.xaml.cs">
-      <DependentUpon>TeamSelect.xaml</DependentUpon>
-    </Compile>
     <Page Include="Themes\Metro\Light\Metro.MSControls.Core.Implicit.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -156,10 +153,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Setup.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\TeamSelect.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
