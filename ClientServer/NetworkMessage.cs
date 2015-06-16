@@ -7,7 +7,7 @@
     {
         public NetworkMessage()
         {
-            MessageId = new Guid();
+            MessageId = Guid.NewGuid();
         }
 
         public Guid SenderId { get; set; }

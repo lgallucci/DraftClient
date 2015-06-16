@@ -25,6 +25,9 @@
         private Client _client;
         private AutoResetEvent _reset;
 
+        private bool recievedDraft = false;
+        private bool recievedDraftSettings = false;
+
         public void RunClient()
         {
             var servers = new Collection<DraftServer>();
@@ -77,8 +80,16 @@
 
                         while (true)
                         {
+                            Thread.Sleep(5000);
+                            recievedDraftSettings = false;
+                            recievedDraft = false;
                             GetDraftSettings();
                             Thread.Sleep(5000);
+                            while (!recievedDraftSettings || !recievedDraft)
+                            {
+                                Thread.Sleep(1000);
+                            }
+                            continue;
                             GetDraft();
                             Thread.Sleep(5000);
                         }
@@ -105,6 +116,7 @@
 
         private void RetrieveDraftSettings(DraftSettings settings)
         {
+            recievedDraftSettings = true;
             Console.WriteLine("Recieved DraftSettings!");
         }
 
@@ -116,6 +128,7 @@
 
         private void RetrieveDraft(Draft draft)
         {
+            recievedDraft = true;
             Console.WriteLine("Recieved Draft!");
         }
     }

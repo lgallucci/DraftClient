@@ -12,16 +12,6 @@
     using System.Threading.Tasks;
     using DraftEntities;
 
-    public class ConnectedClient
-    {
-        public SocketClient Client { get; set; }
-
-        public Guid Id
-        {
-            get { return Client.Id; }
-            set { Client.Id = value; }
-        }
-    }
     //TODO: Robust Acknowledge & retry
     public class Server : Client
     {
@@ -158,72 +148,81 @@
 
         private void HandleMessage(object sender, NetworkMessage networkMessage)
         {
-            ConnectedClient connection;
-            lock (_connectionLock)
+            Console.WriteLine("Recieve Msg Type: {0}, Id: {1}", networkMessage.MessageType.ToString(), networkMessage.MessageId);
+            try
             {
-                connection = Connections.FirstOrDefault(c => c.Client == (SocketClient)sender);
-            }
-            switch (networkMessage.MessageType)
-            {
-                case NetworkMessageType.Ackgnowledge:
-                    DateTime expired;
-                    SentMessages.TryRemove((Guid)networkMessage.MessageContent, out expired);
-                    break;
-                case NetworkMessageType.LoginMessage:
-                    if (connection != null)
-                    {
-                        connection.Id = new Guid(networkMessage.MessageContent.ToString());
-                    }
-                    SendMessage(connection, new NetworkMessage
-                    {
-                        SenderId = ClientId,
-                        MessageType = NetworkMessageType.HandShakeMessage
-                    });
-                    break;
-                case NetworkMessageType.LogoutMessage:
-                    Logout(connection);
-                    break;
-                case NetworkMessageType.SendDraftMessage:
-                    Draft draft = OnSendDraft();
-                    SendMessage(connection, new NetworkMessage
-                    {
-                        SenderId = ClientId,
-                        MessageContent = draft,
-                        MessageType = NetworkMessageType.RetrieveDraftMessage
-                    });
-                    break;
-                case NetworkMessageType.SendDraftSettingsMessage:
-                    DraftSettings draftSettings = OnSendDraftSettings();
-                    SendMessage(connection, new NetworkMessage
-                    {
-                        SenderId = ClientId,
-                        MessageContent = draftSettings,
-                        MessageType = NetworkMessageType.RetrieveDraftSettingsMessage
-                    });
-                    break;
-                case NetworkMessageType.UpdateTeamMessage:
-                    var draftTeam = networkMessage.MessageContent as DraftTeam;
-                    if (draftTeam != null)
-                    {
-                        OnTeamUpdated(draftTeam);
-                    }
-                    BroadcastMessage(networkMessage);
-                    break;
-                case NetworkMessageType.PickMessage:
-                    var pick = networkMessage.MessageContent as DraftPick;
-                    if (pick != null)
-                    {
-                        OnPickMade(pick);
-                    }
-                    BroadcastMessage(networkMessage);
-                    break;
-            }
+                ConnectedClient connection;
+                lock (_connectionLock)
+                {
+                    connection = Connections.FirstOrDefault(c => c.Client == (SocketClient)sender);
+                }
+                switch (networkMessage.MessageType)
+                {
+                    case NetworkMessageType.Ackgnowledge:
+                        TimeoutMessage ackedMessage;
+                        SentMessages.TryRemove((Guid)networkMessage.MessageContent, out ackedMessage);
+                        return;
+                    case NetworkMessageType.LoginMessage:
+                        if (connection != null)
+                        {
+                            connection.Id = new Guid(networkMessage.MessageContent.ToString());
+                        }
+                        SendMessage(connection, new NetworkMessage
+                        {
+                            SenderId = ClientId,
+                            MessageType = NetworkMessageType.HandShakeMessage
+                        });
+                        break;
+                    case NetworkMessageType.LogoutMessage:
+                        Logout(connection);
+                        break;
+                    case NetworkMessageType.SendDraftMessage:
+                        Draft draft = OnSendDraft();
+                        SendMessage(connection, new NetworkMessage
+                        {
+                            SenderId = ClientId,
+                            MessageContent = draft,
+                            MessageType = NetworkMessageType.RetrieveDraftMessage
+                        });
+                        break;
+                    case NetworkMessageType.SendDraftSettingsMessage:
+                        DraftSettings draftSettings = OnSendDraftSettings();
+                        SendMessage(connection, new NetworkMessage
+                        {
+                            SenderId = ClientId,
+                            MessageContent = draftSettings,
+                            MessageType = NetworkMessageType.RetrieveDraftSettingsMessage
+                        });
+                        break;
+                    case NetworkMessageType.UpdateTeamMessage:
+                        var draftTeam = networkMessage.MessageContent as DraftTeam;
+                        if (draftTeam != null)
+                        {
+                            OnTeamUpdated(draftTeam);
+                        }
+                        BroadcastMessage(networkMessage);
+                        break;
+                    case NetworkMessageType.PickMessage:
+                        var pick = networkMessage.MessageContent as DraftPick;
+                        if (pick != null)
+                        {
+                            OnPickMade(pick);
+                        }
+                        BroadcastMessage(networkMessage);
+                        break;
+                }
 
-            SendMessage(connection, new NetworkMessage
+                Console.WriteLine("Sent Ack Type: {0}, Id: {1}", networkMessage.MessageType.ToString(), networkMessage.MessageId);
+                SendMessage(connection, new NetworkMessage
+                {
+                    MessageType = NetworkMessageType.Ackgnowledge,
+                    MessageContent = networkMessage.MessageId
+                });
+            }
+            catch (Exception ex)
             {
-                MessageType = NetworkMessageType.Ackgnowledge,
-                MessageContent = networkMessage.MessageId
-            });
+                //TODO: Handle exceptions on network handling
+            }
         }
 
         public void BroadcastMessage(NetworkMessageType type, object payload)
@@ -242,26 +241,26 @@
             {
                 foreach (ConnectedClient connection in Connections.Where(c => c.Id != networkMessage.SenderId))
                 {
-                    if (networkMessage.MessageType != NetworkMessageType.Ackgnowledge)
-                    {
-                        SentMessages.TryAdd(networkMessage.MessageId, DateTime.Now.AddMinutes(1));
-                    }
-
-                    connection.Client.SendMessage(networkMessage);
+                    SendMessage(connection, networkMessage);
                 }
             }
         }
 
-        private void SendMessage(ConnectedClient client, NetworkMessage networkMessage)
+        internal override void SendMessage(ConnectedClient connection, NetworkMessage networkMessage)
         {
-            if (client != null)
+            if (connection != null)
             {
                 if (networkMessage.MessageType != NetworkMessageType.Ackgnowledge)
                 {
-                    SentMessages.TryAdd(networkMessage.MessageId, DateTime.Now.AddMinutes(1));
+                    SentMessages.TryAdd(networkMessage.MessageId, new TimeoutMessage
+                    {
+                        ConnectedClient = connection,
+                        Message = networkMessage,
+                        Timeout = DateTime.Now.AddSeconds(10)
+                    });
                 }
-                
-                client.Client.SendMessage(networkMessage);
+
+                connection.Client.SendMessage(networkMessage);
             }
         }
 

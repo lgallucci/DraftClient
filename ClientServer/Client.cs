@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Concurrent;
     using System.IO;
+    using System.Linq;
     using System.Net;
     using System.Net.Sockets;
     using System.Runtime.Serialization.Formatters.Binary;
@@ -14,28 +15,50 @@
     {
         protected bool IsRunning;
         public Task ServerListener;
-        private SocketClient _client;
+        private ConnectedClient _client;
         private UdpClient _updClient;
         private readonly Timer _timKeepAlive;
         private readonly Timer _timAcknowledgeReturn;
 
-        internal ConcurrentDictionary<DateTime, NetworkMessage> SentMessages;
+
+        internal sealed class TimeoutMessage
+        {
+            public DateTime Timeout { get; set; }
+            public ConnectedClient ConnectedClient { get; set; }
+            public NetworkMessage Message { get; set; }
+        }
+        internal ConcurrentDictionary<Guid, TimeoutMessage> SentMessages;
 
         public Client()
         {
             IsRunning = true;
             ClientId = Guid.NewGuid();
             _timKeepAlive = new Timer();
-            SentMessages = new ConcurrentDictionary<DateTime, NetworkMessage>();
+            SentMessages = new ConcurrentDictionary<Guid, TimeoutMessage>();
 
-            _timAcknowledgeReturn = new Timer();
+            _timAcknowledgeReturn = new Timer
+            {
+                Interval = 250,
+                Enabled = true
+            };
+            _timAcknowledgeReturn.Elapsed += (sender, args) =>
+            {
+                foreach (var message in SentMessages.Where(sm => sm.Value.Timeout < DateTime.Now).ToList())
+                {
+                    Console.WriteLine("MessageCount:{0}", SentMessages.Count);
+                    TimeoutMessage missedMessage;
+                    SentMessages.TryRemove(message.Value.Message.MessageId, out missedMessage);
+                    SendMessage(missedMessage.ConnectedClient, missedMessage.Message);
+                }
+            };
+            _timAcknowledgeReturn.Start();
         }
 
         public Guid ClientId { get; set; }
 
         public bool IsConnected
         {
-            get { return _client.Connected; }
+            get { return _client.Client.Connected; }
         }
 
         #region Network Methods
@@ -78,15 +101,18 @@
         {
             var tcpClient = new TcpClient();
             tcpClient.Connect(new IPEndPoint(IPAddress.Parse(ipAddress), port));
-            _client = new SocketClient(tcpClient)
+            _client = new ConnectedClient
             {
-                Id = ClientId
+                Client = new SocketClient(tcpClient)
+                {
+                    Id = ClientId
+                }
             };
 
-            _client.ClientMessage += HandleMessage;
-            _client.ClientDisconnect += HandleDisconnect;
+            _client.Client.ClientMessage += HandleMessage;
+            _client.Client.ClientDisconnect += HandleDisconnect;
 
-            _client.StartClient();
+            _client.Client.StartClient();
         }
 
         #endregion
@@ -95,12 +121,15 @@
 
         private void HandleMessage(object sender, NetworkMessage networkMessage)
         {
+            Console.WriteLine("Recieve Msg Type: {0}, Id: {1}", networkMessage.MessageType.ToString(), networkMessage.MessageId);
             try
             {
                 switch (networkMessage.MessageType)
                 {
                     case NetworkMessageType.Ackgnowledge:
-
+                        TimeoutMessage ackedMessage;
+                        SentMessages.TryRemove((Guid)networkMessage.MessageContent, out ackedMessage);
+                        return;
                     case NetworkMessageType.LogoutMessage:
                         OnUserDisconnect(networkMessage.SenderId);
                         break;
@@ -126,6 +155,9 @@
                         OnPickMade(networkMessage.MessageContent as DraftPick);
                         break;
                 }
+
+                Console.WriteLine("Sent Ack Type: {0}, Id: {1}", networkMessage.MessageType.ToString(), networkMessage.MessageId);
+                SendMessage(NetworkMessageType.Ackgnowledge,networkMessage.MessageId);
             }
             catch (Exception ex)
             {
@@ -149,13 +181,23 @@
                     MessageContent = payload
                 };
 
-                if (type != NetworkMessageType.Ackgnowledge)
-                {
-                    SentMessages.TryAdd(networkMessage.MessageId, DateTime.Now.AddMinutes(1));
-                }
-
-                _client.SendMessage(networkMessage);
+                SendMessage(_client, networkMessage);
             }
+        }
+
+        internal virtual void SendMessage(ConnectedClient connection, NetworkMessage message)
+        {
+            if (message.MessageType != NetworkMessageType.Ackgnowledge && message.MessageType != NetworkMessageType.KeepAliveMessage)
+            {
+                SentMessages.TryAdd(message.MessageId, new TimeoutMessage
+                {
+                    ConnectedClient = connection,
+                    Message = message,
+                    Timeout = DateTime.Now.AddSeconds(20)
+                });
+            }
+
+            connection.Client.SendMessage(message);
         }
 
         #endregion
@@ -281,9 +323,9 @@
 
             if (_client != null)
             {
-                _client.ClientMessage -= HandleMessage;
-                _client.ClientDisconnect -= HandleDisconnect;
-                _client.Close();
+                _client.Client.ClientMessage -= HandleMessage;
+                _client.Client.ClientDisconnect -= HandleDisconnect;
+                _client.Client.Close();
             }
         }
     }

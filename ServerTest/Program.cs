@@ -23,10 +23,10 @@
 
             while (true)
             {
-                Console.Clear();
-                Console.WriteLine(server.GetFirstIpAddress());
-                Console.WriteLine("Users Connected: " + server.Connections.Count(c => c.Client.Connected));
-                Console.WriteLine("Users:" + server.Connections.Select(c => c.Id.ToString()).DefaultIfEmpty().Aggregate((a, x) => a + ", " + x));
+                //Console.Clear();
+                //Console.WriteLine(server.GetFirstIpAddress());
+                //Console.WriteLine("Users Connected: " + server.Connections.Count(c => c.Client.Connected));
+                //Console.WriteLine("Users:" + server.Connections.Select(c => c.Id.ToString()).DefaultIfEmpty().Aggregate((a, x) => a + ", " + x));
                 Thread.Sleep(2000);
             }
         }

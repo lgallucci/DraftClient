@@ -11,6 +11,9 @@
     {
         private readonly TcpClient _clientSocket;
         private NetworkStream _networkStream;
+        //TODO: Incomplete buffer
+        //TODO: End of file marker
+        //TODO: Read multiple messages in one stream
 
         public SocketClient(TcpClient client)
         {
@@ -35,6 +38,10 @@
             {
                 while (Connected)
                 {
+                    if (_clientSocket.Available > 0)
+                    {
+                        //TODO: NEW READ METHOD WITH EOF AND NEW NETWORKSTREAM AND EVERYTHING
+                    }
                     if (_networkStream.CanRead && _networkStream.DataAvailable)
                     {
                         byte[] message = await ReadMessage();
