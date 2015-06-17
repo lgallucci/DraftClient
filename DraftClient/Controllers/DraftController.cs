@@ -172,6 +172,13 @@
             _connectionServer.SendMessage(NetworkMessageType.UpdateTeamMessage, Mapper.Map<DraftTeam>(team));
         }
 
+        public void JoinTeam(int teamNumber)
+        {
+            var team = Settings.DraftTeams[teamNumber-1];
+            team.ConnectedUser = GetClientId();
+            team.IsConnected = true;
+            _connectionServer.SendMessage(NetworkMessageType.UpdateTeamMessage, Mapper.Map<DraftTeam>(team));
+        }
 
     }
 }

@@ -117,9 +117,11 @@
             JoinDraftButton.IsEnabled = lbi != null;
         }
 
-        public void Reset()
+        public void Reset(bool isServer)
         {
-            //TODO: Reset all variables!
+            if (!isServer)
+                _setupController.DisconnectFromDraftServer();
+            _setupController.ResetConnection();
         }
     }
 }

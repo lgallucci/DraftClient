@@ -41,6 +41,7 @@
         public void ResetConnection()
         {
             RemoveHandlers();
+            _connection.Close();
             _connection = new Client();
             AddHandlers();
         }
@@ -100,7 +101,7 @@
                 _connection.SendMessage(sendDraftMessage, payload);
             }
         }
-
+  
         public Guid GetClientId()
         {
             return _connection.ClientId;

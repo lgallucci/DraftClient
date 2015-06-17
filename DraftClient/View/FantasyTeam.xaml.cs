@@ -138,6 +138,11 @@
             }
         }
 
+        private void JoinButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            OnTeamJoined(TeamNumber);
+        }
+
         #region events
 
         public delegate void TeamChangedHandler(int teamNumber, string name);
@@ -152,7 +157,18 @@
             }
         }
 
-        #endregion
+        public delegate void TeamJoinedHandler(int teamNumber);
+        public event TeamJoinedHandler TeamJoined;
 
+        public void OnTeamJoined(int teamNumber)
+        {
+            TeamJoinedHandler handler = TeamJoined;
+            if (handler != null)
+            {
+                handler(teamNumber);
+            }
+        }
+
+        #endregion
     }
 }

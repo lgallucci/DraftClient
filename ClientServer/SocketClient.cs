@@ -170,19 +170,14 @@
                         }
                         else
                         {
-                            if (ClientDisconnect != null)
-                            {
-                                ClientDisconnect(this, Id);
-                            }
+
+                            OnClientDisconnect(this, Id);
                             Close();
                         }
                     }
                     catch (IOException)
                     {
-                        if (ClientDisconnect != null)
-                        {
-                            ClientDisconnect(this, Id);
-                        }
+                        OnClientDisconnect(this, Id);
                         Close();
                     }
                 }
@@ -223,6 +218,15 @@
         }
 
         public event HandleClientDisconnect ClientDisconnect;
+
+        public void OnClientDisconnect(object sender, Guid id)
+        {
+            var handler = ClientDisconnect;
+            if (handler != null)
+            {
+                handler(sender, id);
+            }
+        }
 
         #endregion
     }

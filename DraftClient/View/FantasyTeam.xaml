@@ -18,8 +18,20 @@
     <WrapPanel>
         <WrapPanel Name="TeamPanel" HorizontalAlignment="Center" />
         <Image Width="17" Height="12.5" Margin="5 0 0 0" x:Name="ConnectedImage" />
-        <Button x:Name="JoinButton" Width="17" Height="12.5" Padding="-5" Style="{StaticResource JoinButtonStyle}">
-            <Image Width="17" Height="12.5"  x:Name="JoinImage" Source="pack://application:,,,/Resources/JoinImage.png"/>
+        <Button x:Name="JoinButton" Width="25.5" Height="12.5" Margin="5 0 0 0" Padding="-5" Style="{StaticResource JoinButtonStyle}" Click="JoinButton_OnClick">
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Image Width="25.5" Height="12.5"  x:Name="JoinImage" Source="pack://application:,,,/Resources/JoinImage.png"/>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver"
+                                 Value="true">
+                            <Setter TargetName="JoinImage"
+                                    Property="Source"
+                                    Value="pack://application:,,,/Resources/JoinImage_dark.png" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Button.Template>
         </Button>
     </WrapPanel>
 </UserControl>

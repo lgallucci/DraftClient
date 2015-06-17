@@ -42,13 +42,13 @@
         private void OnClosing(object sender, CancelEventArgs e)
         {
             MessageBoxResult messageBoxResult = MessageBox.Show(string.Format("Are you sure?{0}This will {1} the draft", Environment.NewLine,
-                _draftController.IsServer ? "close" : "leave"), "Close Confirmation", System.Windows.MessageBoxButton.YesNo);
+                _draftController.IsServer ? "close" : "leave"), "Close Confirmation", MessageBoxButton.YesNo);
 
             if (messageBoxResult == MessageBoxResult.Yes)
             {
                 if (Owner != null)
                 {
-                    ((Setup) Owner).Reset();
+                    ((Setup)Owner).Reset(_draftController.IsServer);
                     Owner.Show();
                 }
             }
@@ -142,6 +142,21 @@
                     IsMyTeam = (_myTeamIndex == i),
                 };
                 teamBlock.TeamChanged += (number, name) => _draftController.UpdateTeam(number, name);
+                teamBlock.TeamJoined += number =>
+                {
+                    _draftController.JoinTeam(number);
+                    _myTeamIndex = number;
+                    for (int j = 0; j < PicksGrid.ColumnDefinitions.Count; j++)
+                    {
+                        var teamControl = (FantasyTeam)PicksGrid.Children.Cast<UIElement>().
+                            FirstOrDefault(e => Grid.GetColumn(e) == j + 1 && Grid.GetRow(e) == 0);
+                        if (teamControl != null)
+                        {
+                            teamControl.SetConnected(settings.DraftTeams[j].IsConnected, _myTeamIndex > 0);
+                            teamControl.IsMyTeam = (_myTeamIndex == j+1);
+                        }
+                    }
+                };
                 teamBlock.SetText(settings.DraftTeams[i - 1].Name);
                 teamBlock.SetConnected(settings.DraftTeams[i - 1].IsConnected, _myTeamIndex > 0);
                 PicksGrid.Children.Add(teamBlock);

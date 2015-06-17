@@ -121,12 +121,6 @@
             _connectionServer.StartServer(leagueName, numberOfTeams);
         }
 
-        public void UpdateTeamInfo(DraftTeam team)
-        {
-            team.ConnectedUser = _connectionServer.GetClientId();
-            _connectionServer.SendMessage(NetworkMessageType.UpdateTeamMessage, Mapper.Map<DraftTeam, DraftEntities.DraftTeam>(team));
-        }
-
         public void DisconnectFromDraftServer()
         {
             _connectionServer.SendMessage(NetworkMessageType.LogoutMessage, null);
@@ -135,6 +129,11 @@
         public Guid GetClientId()
         {
             return _connectionServer.GetClientId();
+        }
+
+        public void ResetConnection()
+        {
+            _connectionServer.ResetConnection();
         }
     }
 }
