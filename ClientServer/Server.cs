@@ -12,7 +12,6 @@
     using System.Threading.Tasks;
     using DraftEntities;
 
-    //TODO: Robust Acknowledge & retry
     public class Server : Client
     {
         public static int Port = 11000;
@@ -148,7 +147,7 @@
 
         private void HandleMessage(object sender, NetworkMessage networkMessage)
         {
-            Console.WriteLine("Recieve Msg Type: {0}, Id: {1}", networkMessage.MessageType.ToString(), networkMessage.MessageId);
+            //Console.WriteLine("Recieve Msg Type: {0}, Id: {1}", networkMessage.MessageType.ToString(), networkMessage.MessageId);
             try
             {
                 ConnectedClient connection;
@@ -212,7 +211,7 @@
                         break;
                 }
 
-                Console.WriteLine("Sent Ack Type: {0}, Id: {1}", networkMessage.MessageType.ToString(), networkMessage.MessageId);
+                //Console.WriteLine("Sent Ack Type: {0}, Id: {1}", networkMessage.MessageType.ToString(), networkMessage.MessageId);
                 SendMessage(connection, new NetworkMessage
                 {
                     MessageType = NetworkMessageType.Ackgnowledge,

@@ -45,7 +45,7 @@
             {
                 foreach (var message in SentMessages.Where(sm => sm.Value.Timeout < DateTime.Now).ToList())
                 {
-                    Console.WriteLine("MessageCount:{0}", SentMessages.Count);
+                    //Console.WriteLine("MessageCount:{0}", SentMessages.Count);
                     TimeoutMessage missedMessage;
                     SentMessages.TryRemove(message.Value.Message.MessageId, out missedMessage);
                     SendMessage(missedMessage.ConnectedClient, missedMessage.Message);
@@ -121,7 +121,7 @@
 
         private void HandleMessage(object sender, NetworkMessage networkMessage)
         {
-            Console.WriteLine("Recieve Msg Type: {0}, Id: {1}", networkMessage.MessageType.ToString(), networkMessage.MessageId);
+            //Console.WriteLine("Recieve Msg Type: {0}, Id: {1}", networkMessage.MessageType.ToString(), networkMessage.MessageId);
             try
             {
                 switch (networkMessage.MessageType)
@@ -156,7 +156,7 @@
                         break;
                 }
 
-                Console.WriteLine("Sent Ack Type: {0}, Id: {1}", networkMessage.MessageType.ToString(), networkMessage.MessageId);
+                //Console.WriteLine("Sent Ack Type: {0}, Id: {1}", networkMessage.MessageType.ToString(), networkMessage.MessageId);
                 SendMessage(NetworkMessageType.Ackgnowledge,networkMessage.MessageId);
             }
             catch (Exception ex)
@@ -193,7 +193,7 @@
                 {
                     ConnectedClient = connection,
                     Message = message,
-                    Timeout = DateTime.Now.AddSeconds(20)
+                    Timeout = DateTime.Now.AddSeconds(10)
                 });
             }
 

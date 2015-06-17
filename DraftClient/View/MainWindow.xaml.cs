@@ -28,6 +28,7 @@
         public static PlayerList PlayerList = new PlayerList();
         private readonly DraftController _draftController;
         public AutoResetEvent DraftReset;
+        private int _myTeamIndex = -1;
 
         public MainWindow(bool isServer)
         {
@@ -127,6 +128,9 @@
                 Grid.SetRow(roundBlock, i);
             }
 
+            var myTeam = settings.DraftTeams.FirstOrDefault(d => d.ConnectedUser == _draftController.GetClientId());
+            _myTeamIndex = myTeam != null ? myTeam.Index : -1;
+
             for (int i = 1; i < PicksGrid.ColumnDefinitions.Count; i++)
             {
                 var teamBlock = new FantasyTeam
@@ -135,11 +139,11 @@
                     HorizontalAlignment = HorizontalAlignment.Center,
                     TeamNumber = i,
                     IsServer = _draftController.IsServer,
-                    IsMyTeam = (settings.DraftTeams[i - 1].ConnectedUser == _draftController.GetClientId()),
+                    IsMyTeam = (_myTeamIndex == i),
                 };
                 teamBlock.TeamChanged += (number, name) => _draftController.UpdateTeam(number, name);
                 teamBlock.SetText(settings.DraftTeams[i - 1].Name);
-                teamBlock.SetConnected(settings.DraftTeams[i - 1].IsConnected);
+                teamBlock.SetConnected(settings.DraftTeams[i - 1].IsConnected, _myTeamIndex > 0);
                 PicksGrid.Children.Add(teamBlock);
                 Grid.SetColumn(teamBlock, i);
                 Grid.SetRow(teamBlock, 0);
@@ -205,7 +209,7 @@
                 {
                     teamControl.SetText(team.Name);
                 }
-                teamControl.SetConnected(team.IsConnected);
+                teamControl.SetConnected(team.IsConnected, _myTeamIndex > 0);
             }
         }
     }

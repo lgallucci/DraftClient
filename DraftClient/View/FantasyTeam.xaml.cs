@@ -121,11 +121,21 @@
         }
 
 
-        public void SetConnected(bool isConnected)
+        public void SetConnected(bool isConnected, bool isJoined)
         {
-            ConnectedImage.Source = isConnected ?
-                new BitmapImage(new Uri("pack://application:,,,/Resources/Connected.png"))
-                : new BitmapImage(new Uri("pack://application:,,,/Resources/Disconnected.png"));
+            if (!isJoined && !isConnected)
+            {
+                ConnectedImage.Visibility = Visibility.Collapsed;
+                JoinButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                ConnectedImage.Visibility = Visibility.Visible;
+                ConnectedImage.Source = isConnected
+                    ? new BitmapImage(new Uri("pack://application:,,,/Resources/Connected.png"))
+                    : new BitmapImage(new Uri("pack://application:,,,/Resources/Disconnected.png"));
+                JoinButton.Visibility = Visibility.Collapsed;
+            }
         }
 
         #region events

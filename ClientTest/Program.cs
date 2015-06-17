@@ -85,13 +85,13 @@
                             recievedDraft = false;
                             GetDraftSettings();
                             Thread.Sleep(5000);
+                            GetDraft();
+                            Thread.Sleep(5000); 
+
                             while (!recievedDraftSettings || !recievedDraft)
                             {
                                 Thread.Sleep(1000);
                             }
-                            continue;
-                            GetDraft();
-                            Thread.Sleep(5000);
                         }
                     }
                 }

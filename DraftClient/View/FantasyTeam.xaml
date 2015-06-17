@@ -6,8 +6,20 @@
              mc:Ignorable="d"
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        
+        <Style x:Key="JoinButtonStyle" TargetType="Button">
+            <Setter Property="FontSize" Value="10" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="MinHeight" Value="12" />
+            <Setter Property="MinWidth" Value="12" />
+        </Style>
+    </UserControl.Resources>
     <WrapPanel>
         <WrapPanel Name="TeamPanel" HorizontalAlignment="Center" />
         <Image Width="17" Height="12.5" Margin="5 0 0 0" x:Name="ConnectedImage" />
+        <Button x:Name="JoinButton" Width="17" Height="12.5" Padding="-5" Style="{StaticResource JoinButtonStyle}">
+            <Image Width="17" Height="12.5"  x:Name="JoinImage" Source="pack://application:,,,/Resources/JoinImage.png"/>
+        </Button>
     </WrapPanel>
 </UserControl>

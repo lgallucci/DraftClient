@@ -75,7 +75,8 @@
             ServerSetup_Viewer.Visibility = Visibility.Visible;
         }
 
-        private async void JoinDraft_Click(object sender, RoutedEventArgs e) // TODO: Better streamline connecting to server to make it less Jarring (WPF Toolkit Busy Indicator ?
+        private async void JoinDraft_Click(object sender, RoutedEventArgs e) 
+            // TODO: Better streamline connecting to server to make it less Jarring (WPF Toolkit Busy Indicator ?
         {
             var lbi = ServerListBox.SelectedItem as DraftServer;
             if (lbi != null)
