@@ -57,7 +57,7 @@
                 <Setter Property="Opacity" Value="{StaticResource ParticleOpacity}" />
             </Style>
         </Grid.Resources>
-        <Canvas Width="25" Height="25">
+        <Canvas>
             <Canvas.Triggers>
                 <EventTrigger RoutedEvent="Canvas.Loaded">
                     <EventTrigger.Actions>

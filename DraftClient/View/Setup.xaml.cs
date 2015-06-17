@@ -6,6 +6,7 @@
     using System.Windows;
     using System.Windows.Controls;
     using DraftClient.Controllers;
+    using DraftClient.Extensions;
     using DraftClient.ViewModel;
 
     /// <summary>
@@ -66,11 +67,13 @@
 
             if (isServer) _setupController.StartServer(DraftSettings.LeagueName, DraftSettings.NumberOfTeams);
 
-            CreateDraftWindow(isServer, DraftSettings.TotalRounds, DraftSettings.NumberOfTeams);
+            CreateDraftWindow(isServer, DraftSettings.TotalRounds, DraftSettings.NumberOfTeams).DoNotAwait();
         }
 
         private void CreateDraft_Click(object sender, RoutedEventArgs e)
         {
+            var spinny = new SpinnyWindow();
+            spinny.ShowDialog();
             Startup_Viewer.Visibility = Visibility.Collapsed;
             ServerSetup_Viewer.Visibility = Visibility.Visible;
         }
@@ -122,6 +125,7 @@
             if (!isServer)
                 _setupController.DisconnectFromDraftServer();
             _setupController.ResetConnection();
+            DraftSettings.Reset();
         }
     }
 }

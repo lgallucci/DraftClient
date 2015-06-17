@@ -89,7 +89,10 @@
                 Name = "TeamName",
                 FontFamily = new FontFamily("Franklin Gothic Medium"),
                 FontSize = 16,
-                Text = text
+                Text = text,
+                FontWeight = IsMyTeam ? FontWeights.Bold : FontWeights.Normal,
+                FontStyle = IsMyTeam ? FontStyles.Italic : FontStyles.Normal
+
             };
             textBlock.MouseUp += TeamName_MouseUp;
             TeamPanel.Children.Add(textBlock);

@@ -26,15 +26,7 @@
 
         private DraftSettings()
         {
-            for (int i = 0; i < _numberOfTeams; i++)
-            {
-                DraftTeams.Add(new DraftTeam
-                {
-                    Index = i,
-                    IsConnected = false,
-                    Name = string.Format("Team{0}", i + 1)
-                });
-            }
+            Reset();
         }
 
         public string LeagueName
@@ -49,16 +41,7 @@
             set
             {
                 SetProperty(ref _numberOfTeams, value);
-                DraftTeams.Clear();
-                for (int i = 0; i < _numberOfTeams; i++)
-                {
-                    DraftTeams.Add(new DraftTeam
-                    {
-                        Index = i,
-                        IsConnected = false,
-                        Name = string.Format("Team{0}", i + 1)
-                    });
-                }
+                Reset();
             }
         }
 
@@ -138,6 +121,20 @@
             return _leagueName.Length > 0
                    && _numberOfTeams > 0
                    && _numberOfTeams < 15;
+        }
+
+        public void Reset()
+        {
+            DraftTeams.Clear();
+            for (int i = 0; i < _numberOfTeams; i++)
+            {
+                DraftTeams.Add(new DraftTeam
+                {
+                    Index = i,
+                    IsConnected = false,
+                    Name = string.Format("Team{0}", i + 1)
+                });
+            }
         }
     }
 }
