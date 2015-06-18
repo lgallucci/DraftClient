@@ -1,21 +1,13 @@
-﻿<Window x:Class="DraftClient.View.SpinnyWindow"
+﻿<Controls:MetroWindow x:Class="DraftClient.View.SpinnyWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Height="200" Width="200" ResizeMode="NoResize" 
-        WindowStartupLocation="CenterScreen">
-    <Window.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-
-                <!-- Gray Theme -->
-
-            </ResourceDictionary.MergedDictionaries>
-
-        </ResourceDictionary>
-    </Window.Resources>
+        xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+        Height="150" Width="150" ResizeMode="NoResize" 
+        WindowStartupLocation="CenterScreen" ShowTitleBar="False" ShowCloseButton="False">
     <Grid>
         <StackPanel>
-            <TextBlock HorizontalAlignment="Center">Connecting to Draft...</TextBlock>
+            <Controls:ProgressRing Margin="0 20 0 20" IsActive="True" />
+            <TextBlock x:Name="LoadingMessage" HorizontalAlignment="Center" FontFamily="Segoe UI">Connecting to Draft...</TextBlock>
         </StackPanel>
     </Grid>
-</Window>
+</Controls:MetroWindow>

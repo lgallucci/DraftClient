@@ -120,7 +120,7 @@
                 {
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Center,
-                    Text = "Round " + i,
+                    Text = "ROUND " + i,
                     Name = "Round" + i
                 };
                 PicksGrid.Children.Add(roundBlock);

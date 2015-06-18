@@ -13,9 +13,11 @@
     ///     Interaction logic for Setup.xaml
     /// </summary>
     public partial class Setup
+        //TODO: Create Theme chooser
     {
         private readonly SetupController _setupController;
         private MainWindow _draftWindow;
+
         public Setup()
         {
             InitializeComponent();
@@ -32,9 +34,11 @@
         }
 
         public DraftSettings DraftSettings { get; set; }
+        public SpinnyWindow ConnectingWindow = new SpinnyWindow();
 
         private void StartDraft_Click(object sender, RoutedEventArgs e)
         {
+            ConnectingWindow.ShowWithText(string.Format("Starting {0}...", DraftSettings.LeagueName));
             OpenDraft(true);
         }
 
@@ -49,6 +53,7 @@
                     _draftWindow.Owner = this;
                     Hide();
                     _draftWindow.Show();
+                    ConnectingWindow.Close();
                 }
             }
             catch (TimeoutException ex)
@@ -72,20 +77,18 @@
 
         private void CreateDraft_Click(object sender, RoutedEventArgs e)
         {
-            var spinny = new SpinnyWindow();
-            spinny.ShowDialog();
             Startup_Viewer.Visibility = Visibility.Collapsed;
             ServerSetup_Viewer.Visibility = Visibility.Visible;
         }
 
         private async void JoinDraft_Click(object sender, RoutedEventArgs e) 
-            // TODO: Better streamline connecting to server to make it less Jarring (WPF Toolkit Busy Indicator ?
         {
             var lbi = ServerListBox.SelectedItem as DraftServer;
             if (lbi != null)
             {
                 try
                 {
+                    ConnectingWindow.ShowWithText(string.Format("Connecting to {0}...", lbi.FantasyDraft));
                     _setupController.ConnectToDraftServer(lbi.IpAddress, lbi.IpPort);
 
                     if (!await _setupController.GetDraftSettings())

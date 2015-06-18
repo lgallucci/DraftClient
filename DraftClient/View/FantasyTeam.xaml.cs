@@ -65,7 +65,7 @@
             var textBox = new TextBox
             {
                 Name = "TeamNameEdit",
-                FontFamily = new FontFamily("Franklin Gothic Medium"),
+                FontFamily = new FontFamily("Segoe UI"),
                 FontSize = 16,
                 Text = text
             };
@@ -87,9 +87,9 @@
             var textBlock = new TextBlock
             {
                 Name = "TeamName",
-                FontFamily = new FontFamily("Franklin Gothic Medium"),
+                FontFamily = new FontFamily("Segoe UI"),
                 FontSize = 16,
-                Text = text,
+                Text = text.ToUpper(),
                 FontWeight = IsMyTeam ? FontWeights.Bold : FontWeights.Normal,
                 FontStyle = IsMyTeam ? FontStyles.Italic : FontStyles.Normal
 

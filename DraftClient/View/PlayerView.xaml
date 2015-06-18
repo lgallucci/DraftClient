@@ -5,11 +5,6 @@
              Loaded="UserControl_Loaded">
     <UserControl.Resources>
         <ResourceDictionary>
-
-            <ResourceDictionary.MergedDictionaries>
-
-            </ResourceDictionary.MergedDictionaries>
-
             <!--Create an instance of the converter for Email-->
             <c:EnumConverter x:Key="EnumConverter" />
             <CollectionViewSource x:Key="cvsPlayers" Source="{Binding Players}" Filter="CollectionViewSource_Filter" />
@@ -21,19 +16,13 @@
             <RowDefinition Height="30" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <WrapPanel Grid.Row="0" Margin="5" HorizontalAlignment="Center">
-            <TextBlock Text="QBs" FontSize="12" />
-            <CheckBox Height="15" Width="25" Name="cbQB" IsChecked="True" />
-            <TextBlock Text=" WRs" FontSize="12" />
-            <CheckBox Height="15" Width="25" Name="cbWR" IsChecked="True" />
-            <TextBlock Text=" RBs" FontSize="12" />
-            <CheckBox Height="15" Width="25" Name="cbRB" IsChecked="True" />
-            <TextBlock Text=" TEs" FontSize="12" />
-            <CheckBox Height="15" Width="25" Name="cbTE" IsChecked="True" />
-            <TextBlock Text=" Ks" FontSize="12" />
-            <CheckBox Height="15" Width="25" Name="cbK" IsChecked="True" />
-            <TextBlock Text=" DEFs" FontSize="12" />
-            <CheckBox Height="15" Width="25" Name="cbDEF" IsChecked="True" />
+        <WrapPanel Height="25" Grid.Row="0" Margin="5" HorizontalAlignment="Center">
+            <CheckBox Name="cbQB" IsChecked="True" Content="QBs" />
+            <CheckBox Name="cbWR" IsChecked="True" Content="WRs" />
+            <CheckBox Name="cbRB" IsChecked="True" Content="RBs" />
+            <CheckBox Name="cbTE" IsChecked="True" Content="TEs" />
+            <CheckBox Name="cbK" IsChecked="True" Content="Ks" />
+            <CheckBox Name="cbDEF" IsChecked="True" Content="DEFs"/>
         </WrapPanel>
         <DataGrid Grid.Row="1" Name="dataGrid1" ItemsSource="{Binding Source={StaticResource cvsPlayers}}"
                   AutoGenerateColumns="False"
@@ -50,7 +39,7 @@
                                     Width="2*" />
             </DataGrid.Columns>
             <DataGrid.RowStyle>
-                <Style TargetType="{x:Type DataGridRow}">
+                <Style TargetType="{x:Type DataGridRow}" BasedOn="{StaticResource MetroDataGridRow}">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding IsPicked}" Value="True">
                             <Setter Property="Visibility" Value="Collapsed" />

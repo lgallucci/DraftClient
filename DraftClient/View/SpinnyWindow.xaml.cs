@@ -1,27 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-
-namespace DraftClient.View
+﻿namespace DraftClient.View
 {
+    using System;
+    using System.Runtime.InteropServices;
+    using System.Windows;
+
     /// <summary>
     /// Interaction logic for SpinnyWindow.xaml
     /// </summary>
-    public partial class SpinnyWindow : Window
+    public partial class SpinnyWindow
     {
+
         public SpinnyWindow()
         {
             InitializeComponent();
+        }
+
+        public void ShowWithText(string loadingMessage)
+        {
+            LoadingMessage.Text = loadingMessage;
+            Show();
         }
     }
 }
