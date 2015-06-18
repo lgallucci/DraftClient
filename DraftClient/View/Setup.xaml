@@ -1,8 +1,9 @@
-﻿<Window x:Class="DraftClient.View.Setup"
+﻿<Controls:MetroWindow x:Class="DraftClient.View.Setup"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         mc:Ignorable="d" Title="Setup Draft"
         DataContext="DraftClient.ViewModel.DraftSettings" Closing="Window_Closing" ResizeMode="NoResize" Height="400"
         Width="700">
@@ -10,21 +11,15 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
 
-                <!-- Gray Theme -->
-                <ResourceDictionary Source="../Themes/Metro/Light/Metro.MSControls.Core.Implicit.xaml" />
-                <ResourceDictionary Source="../Themes/Metro/Light/Metro.MSControls.Toolkit.Implicit.xaml" />
 
             </ResourceDictionary.MergedDictionaries>
-
-            <!-- Gray Theme -->
-            <SolidColorBrush x:Key="BackgroundKey" Color="{StaticResource Color_009}" />
 
         </ResourceDictionary>
     </Window.Resources>
 
     <Grid>
         <ScrollViewer Name="ServerSetup_Viewer" Visibility="Collapsed">
-            <Grid Background="{StaticResource BackgroundKey}">
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
@@ -111,7 +106,7 @@
             </Grid>
         </ScrollViewer>
         <ScrollViewer Name="Startup_Viewer" Visibility="Visible">
-            <Grid Background="{StaticResource BackgroundKey}">
+            <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="3*" />
@@ -147,4 +142,4 @@
             </Grid>
         </ScrollViewer>
     </Grid>
-</Window>
+</Controls:MetroWindow>

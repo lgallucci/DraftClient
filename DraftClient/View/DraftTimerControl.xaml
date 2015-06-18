@@ -9,13 +9,9 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
 
-                <!-- Gray Theme -->
-                <ResourceDictionary Source="../Themes/Metro/Light/Metro.MSControls.Toolkit.Implicit.xaml" />
-
             </ResourceDictionary.MergedDictionaries>
 
             <!-- Gray Theme -->
-            <SolidColorBrush x:Key="BackgroundKey" Color="{StaticResource Color_009}" />
 
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <c:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />

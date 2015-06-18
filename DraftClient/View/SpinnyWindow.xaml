@@ -11,12 +11,9 @@
 
             </ResourceDictionary.MergedDictionaries>
 
-            <!-- Gray Theme -->
-            <SolidColorBrush x:Key="BackgroundKey" Color="{StaticResource Color_009}" />
-
         </ResourceDictionary>
     </Window.Resources>
-    <Grid Background="{StaticResource BackgroundKey}">
+    <Grid>
         <StackPanel>
             <TextBlock HorizontalAlignment="Center">Connecting to Draft...</TextBlock>
         </StackPanel>

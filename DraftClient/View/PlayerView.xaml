@@ -8,18 +8,12 @@
 
             <ResourceDictionary.MergedDictionaries>
 
-                <!-- Gray Theme -->
-                <ResourceDictionary Source="../Themes/Metro/Light/Metro.MSControls.Core.Implicit.xaml" />
-                <ResourceDictionary Source="../Themes/Metro/Light/Metro.MSControls.Toolkit.Implicit.xaml" />
-
             </ResourceDictionary.MergedDictionaries>
 
             <!--Create an instance of the converter for Email-->
             <c:EnumConverter x:Key="EnumConverter" />
             <CollectionViewSource x:Key="cvsPlayers" Source="{Binding Players}" Filter="CollectionViewSource_Filter" />
             <!-- Gray Theme -->
-            <SolidColorBrush x:Key="BackgroundKey" Color="{StaticResource Color_009}" />
-            <SolidColorBrush x:Key="ForegroundKey" Color="{StaticResource Color_009}" />
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
