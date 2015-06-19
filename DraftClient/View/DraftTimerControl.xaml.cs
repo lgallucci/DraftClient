@@ -76,6 +76,12 @@
 
         private DraftState State { get; set; }
 
+
+        private void ResetDraftButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
         private void StartDraftButton_OnClick(object sender, RoutedEventArgs e)
         {
             State.Drafting = true;

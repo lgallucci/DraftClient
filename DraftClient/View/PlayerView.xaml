@@ -28,14 +28,14 @@
                   AutoGenerateColumns="False"
                   IsReadOnly="True" HorizontalScrollBarVisibility="Hidden">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="AverageDraftPosition" FontSize="12"
+                <DataGridTextColumn Header="ADP" FontSize="12"
                                     Binding="{Binding AverageDraftPosition}" Width="*" />
-                <DataGridTextColumn Header="Player Name" FontSize="12" Binding="{Binding Name}" Width="2*" />
-                <DataGridTextColumn Header="Position" FontSize="12"
+                <DataGridTextColumn Header="Name" FontSize="12" Binding="{Binding Name}" Width="2*" />
+                <DataGridTextColumn Header="POS" FontSize="12"
                                     Binding="{Binding Position, Converter={StaticResource EnumConverter}}" Width="*" />
                 <DataGridTextColumn Header="Team" FontSize="12" Binding="{Binding Team}" Width="*" />
-                <DataGridTextColumn Header="Bye Week" FontSize="12" Binding="{Binding ByeWeek}" Width="*" />
-                <DataGridTextColumn Header="Projected Points" FontSize="12" Binding="{Binding ProjectedPoints}"
+                <DataGridTextColumn Header="Bye" FontSize="12" Binding="{Binding ByeWeek}" Width="*" />
+                <DataGridTextColumn Header="Proj Pts" FontSize="12" Binding="{Binding ProjectedPoints}"
                                     Width="2*" />
             </DataGrid.Columns>
             <DataGrid.RowStyle>

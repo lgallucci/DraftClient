@@ -4,12 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:c="clr-namespace:DraftClient.Converters"
+             xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d"  d:DesignWidth="400">
     <UserControl.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-
-            </ResourceDictionary.MergedDictionaries>
 
             <!-- Gray Theme -->
 
@@ -20,29 +18,27 @@
     </UserControl.Resources>
     <Grid>
         <StackPanel>
-            <StackPanel Name="StartDraftPanel" Orientation="Horizontal" HorizontalAlignment="Center" Visibility="{Binding Path=Drafting, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Height="100">
-                <Button Background="LimeGreen" 
-                        Foreground="White" 
-                        Content="Start Draft"
-                        Height="50"
-                        Width="200"
-                        FontFamily="Segoe UI"
-                        FontSize="16"
-                        FontWeight="DemiBold"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center" 
-                        Name="StartDraftButton"
-                        Click="StartDraftButton_OnClick" />
-            </StackPanel>
             <StackPanel Name="TimeDraftPanel" Orientation="Horizontal" HorizontalAlignment="Center" Visibility="{Binding Path=Drafting, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <Button Background="#DD0000" Visibility="{Binding Path=CanPause, Converter={StaticResource BooleanToVisibilityConverter}}"
-                        Foreground="Black"
+                <Button Style="{StaticResource AccentedSquareButtonStyle}" Visibility="{Binding Path=IsRunning, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        controls:ButtonHelper.PreserveTextCase ="True"
+                        FontWeight="DemiBold" Height="50" Width="100" Content="Start" FontFamily="Segoe UI" FontSize="16"
+                        Click="StartDraftButton_OnClick"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                <Button Style="{StaticResource AccentedSquareButtonStyle}" Visibility="{Binding Path=IsRunning, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        controls:ButtonHelper.PreserveTextCase ="True"
+                        FontWeight="DemiBold" Height="50" Width="100" Content="Reset" FontFamily="Segoe UI" FontSize="16"
+                        Click="ResetDraftButton_OnClick"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                <Button Style="{StaticResource AccentedSquareButtonStyle}" Visibility="{Binding Path=CanPause, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        controls:ButtonHelper.PreserveTextCase ="True"
                         FontWeight="DemiBold" Height="50" Width="100" Content="Pause" FontFamily="Segoe UI" FontSize="16"
                         Click="PauseDraftButton_OnClick"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center" />
-                <Button Background="LimeGreen" Visibility="{Binding Path=CanResume, Converter={StaticResource BooleanToVisibilityConverter}}"
-                        Foreground="White"
+                <Button Style="{StaticResource AccentedSquareButtonStyle}" Visibility="{Binding Path=CanResume, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        controls:ButtonHelper.PreserveTextCase ="True"
                         FontWeight="DemiBold" Height="50" Width="100" Content="Resume" FontFamily="Segoe UI" FontSize="16"
                         Click="ResumeDraftButton_OnClick"
                         HorizontalAlignment="Center"

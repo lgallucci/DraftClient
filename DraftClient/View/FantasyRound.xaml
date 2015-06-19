@@ -45,7 +45,7 @@
                 VerticalAlignment="Top"
                 Height="20"
                 DisplayMember="Name"
-                ForegroundColor="{StaticResource IdealForegroundColorBrush}"
+                ForegroundColor="{StaticResource HighlightBrush}"
                 Foreground="{StaticResource IdealForegroundColorBrush}"
                 FontSize="10"
                 Background="{StaticResource WindowBackgroundBrush}"
