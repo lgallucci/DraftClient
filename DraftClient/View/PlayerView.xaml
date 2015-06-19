@@ -36,7 +36,7 @@
                 <DataGridTextColumn Header="Team" FontSize="12" Binding="{Binding Team}" Width="*" />
                 <DataGridTextColumn Header="Bye Week" FontSize="12" Binding="{Binding ByeWeek}" Width="*" />
                 <DataGridTextColumn Header="Projected Points" FontSize="12" Binding="{Binding ProjectedPoints}"
-                                    Width="2*" />
+                                    Width="*" />
             </DataGrid.Columns>
             <DataGrid.RowStyle>
                 <Style TargetType="{x:Type DataGridRow}" BasedOn="{StaticResource MetroDataGridRow}">
