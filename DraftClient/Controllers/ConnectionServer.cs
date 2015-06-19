@@ -1,7 +1,12 @@
 ﻿namespace DraftClient.Controllers
 {
     using System;
+    using System.IO;
+    using System.Net;
+    using System.Net.Sockets;
+    using System.Runtime.Serialization.Formatters.Binary;
     using System.Threading;
+    using System.Threading.Tasks;
     using ClientServer;
     using DraftEntities;
 
@@ -10,6 +15,9 @@
         private static readonly ConnectionServer instance = new ConnectionServer();
         private AutoResetEvent _connectionReset;
         private Client _connection;
+        protected readonly bool IsRunning;
+        public Task ServerListener;
+        private UdpClient _updClient;
 
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
@@ -20,7 +28,42 @@
         private ConnectionServer()
         {
             _connection = new Client();
+            IsRunning = true;
             AddHandlers();
+        }
+
+        public void ListenForServers(Action<DraftServer> serverPingCallback)
+        {
+            ServerListener = Task.Run(() =>
+            {
+                _updClient = new UdpClient
+                {
+                    ExclusiveAddressUse = false
+                };
+
+                var localEp = new IPEndPoint(IPAddress.Any, Server.Port);
+
+                _updClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                _updClient.ExclusiveAddressUse = false;
+
+                _updClient.Client.Bind(localEp);
+
+                IPAddress multicastaddress = IPAddress.Parse(Server.MulticastAddress);
+                _updClient.JoinMulticastGroup(multicastaddress);
+
+                while (IsRunning)
+                {
+                    byte[] serverBroadcastData = _updClient.Receive(ref localEp);
+
+                    var formatter = new BinaryFormatter();
+                    var networkMessage = (NetworkMessage)formatter.Deserialize(new MemoryStream(serverBroadcastData));
+
+                    if (networkMessage.MessageType == NetworkMessageType.ServerBroadcast && networkMessage.MessageContent is DraftServer)
+                    {
+                        serverPingCallback((DraftServer)networkMessage.MessageContent);
+                    }
+                }
+            });
         }
 
         public static ConnectionServer Instance
@@ -42,6 +85,7 @@
         {
             RemoveHandlers();
             _connection.Close();
+            _connection = null;
             _connection = new Client();
             AddHandlers();
         }
@@ -106,12 +150,6 @@
         {
             return _connection.ClientId;
         }
-
-        public void ListenForServers(Action<DraftEntities.DraftServer> action)
-        {
-            _connection.ListenForServers(action);
-        }
-
 
         #region Events
 

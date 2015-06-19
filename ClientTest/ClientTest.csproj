@@ -48,6 +48,10 @@
       <Project>{C76D12D3-58A2-4EF5-A2F1-436E7E12EFBC}</Project>
       <Name>ClientServer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DraftClient\DraftClient.csproj">
+      <Project>{48F75AA8-1885-49B6-808F-7751D68AB756}</Project>
+      <Name>DraftClient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DraftEntities\DraftEntities.csproj">
       <Project>{65184F9C-4E20-4E4A-8F1C-0F61C4F1D5C9}</Project>
       <Name>DraftEntities</Name>

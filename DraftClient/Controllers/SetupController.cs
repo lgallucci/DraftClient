@@ -94,6 +94,8 @@
 
         private void RetrieveDraftSettings(DraftSettings settings)
         {
+            if (settings == null) return;
+
             Application.Current.Dispatcher.Invoke(() =>
             {
                 _setupWindow.DraftSettings.InjectFrom(settings);

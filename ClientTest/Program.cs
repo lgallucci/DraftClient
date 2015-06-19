@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Threading;
     using ClientServer;
+    using DraftClient.Controllers;
     using DraftEntities;
 
     internal class Program
@@ -22,7 +23,7 @@
 
     internal class ClientRunner
     {
-        private Client _client;
+        private ConnectionServer _connection;
         private AutoResetEvent _reset;
 
         private bool recievedDraft = false;
@@ -32,8 +33,8 @@
         {
             var servers = new Collection<DraftServer>();
 
-            _client = new Client();
-            _client.ListenForServers(server =>
+            _connection = ConnectionServer.Instance;
+            _connection.ListenForServers(server =>
             {
                 if (server != null)
                 {
@@ -67,16 +68,15 @@
                     {
                         _reset = new AutoResetEvent(false);
 
-                        _client.ConnectToDraftServer(servers[0].IpAddress, servers[0].IpPort);
-                        _client.ServerHandshake += ServerHandshake;
-                        _client.SendMessage(NetworkMessageType.LoginMessage, Guid.NewGuid().ToString());
+                        _connection.ConnectToDraft(servers[0].IpAddress, servers[0].IpPort);
+                        _connection.SendMessage(NetworkMessageType.LoginMessage, Guid.NewGuid().ToString());
 
                         _reset.WaitOne(5000);
 
                         Console.WriteLine("Connected to {0} as {1}", servers[0].FantasyDraft, name);
 
-                        _client.RetrieveDraft += RetrieveDraft;
-                        _client.RetrieveDraftSettings += RetrieveDraftSettings;
+                        _connection.RetrieveDraft += RetrieveDraft;
+                        _connection.RetrieveDraftSettings += RetrieveDraftSettings;
 
                         while (true)
                         {
@@ -102,16 +102,10 @@
             }
         }
 
-        private void ServerHandshake()
-        {
-            Console.WriteLine("Recieved Login Handshake");
-            _reset.Set();
-        }
-
         private void GetDraftSettings()
         {
             Console.WriteLine("Getting DraftSettings!");
-            _client.SendMessage(NetworkMessageType.SendDraftSettingsMessage, null);
+            _connection.SendMessage(NetworkMessageType.SendDraftSettingsMessage, null);
         }
 
         private void RetrieveDraftSettings(DraftSettings settings)
@@ -123,7 +117,7 @@
         private void GetDraft()
         {
             Console.WriteLine("Getting Draft!");
-            _client.SendMessage(NetworkMessageType.SendDraftMessage, null);
+            _connection.SendMessage(NetworkMessageType.SendDraftMessage, null);
         }
 
         private void RetrieveDraft(Draft draft)

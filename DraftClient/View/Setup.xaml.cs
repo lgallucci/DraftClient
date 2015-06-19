@@ -63,6 +63,7 @@
             {
                 MessageBox.Show(ex.Message);
                 _setupController.DisconnectFromDraftServer();
+                ConnectingWindow.Hide();
             }
         }
 
