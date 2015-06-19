@@ -17,12 +17,12 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <WrapPanel Height="25" Grid.Row="0" Margin="5" HorizontalAlignment="Center">
-            <CheckBox Name="cbQB" IsChecked="True" Content="QBs" />
-            <CheckBox Name="cbWR" IsChecked="True" Content="WRs" />
-            <CheckBox Name="cbRB" IsChecked="True" Content="RBs" />
-            <CheckBox Name="cbTE" IsChecked="True" Content="TEs" />
-            <CheckBox Name="cbK" IsChecked="True" Content="Ks" />
-            <CheckBox Name="cbDEF" IsChecked="True" Content="DEFs"/>
+            <CheckBox Name="cbQB" IsChecked="True" Content="QBs" Margin="5 0 5 0" />
+            <CheckBox Name="cbWR" IsChecked="True" Content="WRs" Margin="5 0 5 0" />
+            <CheckBox Name="cbRB" IsChecked="True" Content="RBs" Margin="5 0 5 0" />
+            <CheckBox Name="cbTE" IsChecked="True" Content="TEs" Margin="5 0 5 0" />
+            <CheckBox Name="cbK" IsChecked="True" Content="Ks" Margin="5 0 5 0" />
+            <CheckBox Name="cbDEF" IsChecked="True" Content="DEFs" Margin="5 0 5 0"/>
         </WrapPanel>
         <DataGrid Grid.Row="1" Name="dataGrid1" ItemsSource="{Binding Source={StaticResource cvsPlayers}}"
                   AutoGenerateColumns="False"

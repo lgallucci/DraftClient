@@ -153,7 +153,8 @@
                         if (teamControl != null)
                         {
                             teamControl.SetConnected(settings.DraftTeams[j].IsConnected, _myTeamIndex > 0);
-                            teamControl.IsMyTeam = (_myTeamIndex == j+1);
+                            teamControl.IsMyTeam = (_myTeamIndex == j + 1);
+                            teamControl.SetText(settings.DraftTeams[j].Name);
                         }
                     }
                 };

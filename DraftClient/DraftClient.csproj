@@ -62,9 +62,6 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="WpfControls">
-      <HintPath>Controls\WpfControls.dll</HintPath>
-    </Reference>
     <Reference Include="WpfToolkit">
       <HintPath>..\packages\WPFToolkit.3.5.50211.1\lib\WpfToolkit.dll</HintPath>
     </Reference>
@@ -192,6 +189,10 @@
     <ProjectReference Include="..\FileReader\FileReader.csproj">
       <Project>{5d8786f4-b2d3-4e26-9279-a30624dc485c}</Project>
       <Name>FileReader</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WpfControls\WpfControls.vbproj">
+      <Project>{d010f52c-140c-410d-b897-c1091b81aa13}</Project>
+      <Name>WpfControls</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

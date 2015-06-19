@@ -8,6 +8,8 @@
     using DraftClient.Controllers;
     using DraftClient.Extensions;
     using DraftClient.ViewModel;
+    using MahApps.Metro;
+    using MahApps.Metro.Controls;
 
     /// <summary>
     ///     Interaction logic for Setup.xaml
@@ -52,8 +54,9 @@
                 {
                     _draftWindow.Owner = this;
                     Hide();
+                    _draftWindow.Title = string.Format("Fantasy Draft - {0}", DraftSettings.LeagueName);
                     _draftWindow.Show();
-                    ConnectingWindow.Close();
+                    ConnectingWindow.Hide();
                 }
             }
             catch (TimeoutException ex)
@@ -77,8 +80,10 @@
 
         private void CreateDraft_Click(object sender, RoutedEventArgs e)
         {
-            Startup_Viewer.Visibility = Visibility.Collapsed;
-            ServerSetup_Viewer.Visibility = Visibility.Visible;
+            ServerSetupViewer.Visibility = Visibility.Visible;
+            ThemeViewer.Visibility = Visibility.Collapsed;
+            StartupViewer.Visibility = Visibility.Collapsed;
+            Title = "Create Draft";
         }
 
         private async void JoinDraft_Click(object sender, RoutedEventArgs e) 
@@ -129,6 +134,48 @@
                 _setupController.DisconnectFromDraftServer();
             _setupController.ResetConnection();
             DraftSettings.Reset();
+        }
+
+        private void ThemeButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            ServerSetupViewer.Visibility = Visibility.Collapsed;
+            ThemeViewer.Visibility = Visibility.Visible;
+            StartupViewer.Visibility = Visibility.Collapsed;
+            Title = "Choose Theme";
+        }
+
+        private void CancelDraft_Click(object sender, RoutedEventArgs e)
+        {
+            ServerSetupViewer.Visibility = Visibility.Collapsed;
+            ThemeViewer.Visibility = Visibility.Collapsed;
+            StartupViewer.Visibility = Visibility.Visible;
+            Title = "Join Draft";
+        }
+
+        private void ChangeTheme_OnClick(object sender, RoutedEventArgs e)
+        {
+            var themeName = ((DockPanel)((Button)sender).Parent.GetParentObject()).Tag.ToString();
+            var theme = ThemeManager.DetectAppStyle(Application.Current);
+            var themeAccent = ThemeManager.GetAccent(themeName);
+            ThemeManager.ChangeAppStyle(Application.Current, themeAccent, theme.Item1);
+
+            ServerSetupViewer.Visibility = Visibility.Collapsed;
+            ThemeViewer.Visibility = Visibility.Collapsed;
+            StartupViewer.Visibility = Visibility.Visible;
+            Title = "Join Draft";
+        }
+
+        private void ChangeBaseTheme_OnClick(object sender, RoutedEventArgs e)
+        {
+            var themeName = ((DockPanel)((Button)sender).Parent.GetParentObject()).Tag.ToString();
+            var theme = ThemeManager.DetectAppStyle(Application.Current);
+            var themeApp = ThemeManager.GetAppTheme(themeName);
+            ThemeManager.ChangeAppStyle(Application.Current, theme.Item2, themeApp);
+
+            ServerSetupViewer.Visibility = Visibility.Collapsed;
+            ThemeViewer.Visibility = Visibility.Visible;
+            ThemeLightDarkViewer.Visibility = Visibility.Collapsed;
+            StartupViewer.Visibility = Visibility.Collapsed;
         }
     }
 }

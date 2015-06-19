@@ -9,11 +9,6 @@
              mc:Ignorable="d" Loaded="UserControl_Loaded">
     <UserControl.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-
-
-            </ResourceDictionary.MergedDictionaries>
-
             <!-- Gray Theme -->
 
             <c:StringLengthToVisibilityConverter x:Key="StringLengthToVisibilityConverter" />
@@ -23,8 +18,9 @@
 
             <prov:PlayerListProvider x:Key="plp" />
             <DataTemplate x:Key="plTemplate">
-                <Border>
+                <Border x:Name="ItemBorder" BorderBrush="{StaticResource HighlightBrush}">
                     <StackPanel Orientation="Vertical">
+                        
                         <TextBlock Text="{Binding Path=Name}" FontWeight="Bold" FontSize="10" />
                         <WrapPanel>
                             <TextBlock Text="{Binding Path=Team, StringFormat=' {0} -'}" FontSize="10" />
@@ -39,29 +35,28 @@
                     </StackPanel>
                 </Border>
             </DataTemplate>
-
         </ResourceDictionary>
-
     </UserControl.Resources>
     <Border Background="{Binding DraftedPlayer.Position, Converter={StaticResource PositionToColorConverter}}"
-            BorderBrush="Brown" BorderThickness="1" HorizontalAlignment="Stretch">
+            BorderBrush="{StaticResource HighlightBrush}" BorderThickness="1" HorizontalAlignment="Stretch">
         <StackPanel HorizontalAlignment="Stretch">
             <wpf:AutoCompleteTextBox
                 Visibility="{Binding Path=CanEdit, Converter={StaticResource BooleanToVisibilityConverter}}"
                 VerticalAlignment="Top"
                 Height="20"
-                Grid.Column="1"
                 DisplayMember="Name"
-                ForegroundColor="Black"
+                ForegroundColor="{StaticResource IdealForegroundColorBrush}"
+                Foreground="{StaticResource IdealForegroundColorBrush}"
                 FontSize="10"
-                Background="White"
+                Background="{StaticResource WindowBackgroundBrush}"
                 Text="{Binding Name, Mode=TwoWay}"
                 SelectedItem="{Binding Path=DraftedPlayer, Mode=TwoWay}"
                 ItemTemplate="{StaticResource ResourceKey=plTemplate}"
                 Provider="{StaticResource ResourceKey=plp}">
                 <wpf:AutoCompleteTextBox.LoadingContent>
                     <TextBlock Text="Loading..."
-                               Foreground="Black"
+                               Background="{StaticResource WindowBackgroundBrush}"
+                               Foreground="{StaticResource IdealForegroundColorBrush}"
                                Margin="5"
                                FontSize="10" />
                 </wpf:AutoCompleteTextBox.LoadingContent>
@@ -69,7 +64,8 @@
                     <Border Width="10"
                             Height="10">
                         <TextBlock Text="🔍"
-                                   Foreground="Black"
+                                   Background="{StaticResource WindowBackgroundBrush}"
+                                   Foreground="{StaticResource IdealForegroundColorBrush}"
                                    FontSize="8"
                                    FontFamily="Segoe UI Symbol"
                                    HorizontalAlignment="Center"
@@ -83,8 +79,7 @@
                        HorizontalAlignment="Stretch" VerticalAlignment="Center">
                 <StackPanel DockPanel.Dock="Left">
                     <TextBlock Text="ADP" FontSize="10" Margin="2" Foreground="Black" />
-                    <TextBlock Text="{Binding Path=DraftedPlayer.AverageDraftPosition}" FontSize="20"
-                               Foreground="Black" />
+                    <TextBlock Text="{Binding Path=DraftedPlayer.AverageDraftPosition}" FontSize="20" Foreground="Black" />
                 </StackPanel>
                 <StackPanel DockPanel.Dock="Right" Margin="2">
                     <TextBlock Text="Bye" FontSize="10" Foreground="Black" />

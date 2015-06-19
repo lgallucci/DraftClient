@@ -4,11 +4,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-        mc:Ignorable="d" Title="Setup Draft"
+        mc:Ignorable="d" Title="Choose Theme"
         DataContext="DraftClient.ViewModel.DraftSettings" Closing="Window_Closing" ResizeMode="NoResize" Height="400"
         Width="700">
     <Grid>
-        <ScrollViewer Name="ServerSetup_Viewer" Visibility="Collapsed">
+        <ScrollViewer Name="ServerSetupViewer" Visibility="Collapsed">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
@@ -89,13 +89,14 @@
                     </WrapPanel>
                 </WrapPanel>
                 <WrapPanel Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right">
-                    <Button Grid.Column="0" Grid.Row="4" Content="Start Draft" Name="StartButton"
-                            HorizontalAlignment="Right" Margin="5 15 5 0" Width="125" Height="30"
+                    <Button Margin="0 20 15 0" Width="125" Height="30" Name="CancelDraftButton" Content="Cancel Draft"
+                            Click="CancelDraft_Click" />
+                    <Button Content="Start Draft" Name="StartButton" Margin="5 15 5 0" Width="125" Height="30"
                             Click="StartDraft_Click" IsEnabled="{Binding IsValid}" />
                 </WrapPanel>
             </Grid>
         </ScrollViewer>
-        <ScrollViewer Name="Startup_Viewer" Visibility="Visible">
+        <ScrollViewer Name="StartupViewer" Visibility="Collapsed">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
@@ -123,12 +124,425 @@
                         </ListBox.ItemTemplate>
                     </ListBox>
                 </StackPanel>
-                <WrapPanel Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right">
-                    <Button FontSize="18" Margin="0 20 45 0" IsEnabled="False" Name="JoinDraftButton"
-                            Click="JoinDraft_Click">
-                        Join Draft
+                <WrapPanel Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left">
+                    <Button x:Name="ThemeButton" Margin="45 35 0 0" Content="Choose Theme" Cursor="Hand" Click="ThemeButton_OnClick">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <TextBlock TextDecorations="Underline">
+                                    <ContentPresenter />
+                                </TextBlock>
+                            </ControlTemplate>
+                        </Button.Template>
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Foreground" Value="Blue" />
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="true">
+                                        <Setter Property="Foreground" Value="Red" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
                     </Button>
                 </WrapPanel>
+                <WrapPanel Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right">
+                    <Button FontSize="18" Margin="0 20 45 0" IsEnabled="False" Name="JoinDraftButton" Content="Join Draft"
+                            Click="JoinDraft_Click" />
+                </WrapPanel>
+            </Grid>
+        </ScrollViewer>
+        <ScrollViewer Name="ThemeViewer" Visibility="Collapsed">
+            <ScrollViewer.Resources>
+                <ResourceDictionary>
+                    <Style x:Key="LinkButton" TargetType="Button">
+                        <Setter Property="HorizontalAlignment" Value="Center" />
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="Margin" Value="0 20 0 0" />
+                        <Setter Property="Cursor" Value="Hand" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <TextBlock TextDecorations="Underline">
+                                        <ContentPresenter />
+                                    </TextBlock>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ResourceDictionary>
+            </ScrollViewer.Resources>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <DockPanel Tag="Red" Grid.Row="0" Grid.Column="0">
+                    <DockPanel.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Red.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </DockPanel.Resources>
+                    <StackPanel Background="{StaticResource HighlightBrush}">
+                        <Button Click="ChangeTheme_OnClick" Style="{StaticResource LinkButton}" Foreground="{StaticResource IdealForegroundColorBrush}" Content="RED" />
+                    </StackPanel>
+                </DockPanel>
+                <DockPanel Tag="Green" Grid.Row="0" Grid.Column="1">
+                    <DockPanel.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Green.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </DockPanel.Resources>
+                    <StackPanel Background="{StaticResource HighlightBrush}">
+                        <Button Click="ChangeTheme_OnClick" Style="{StaticResource LinkButton}" Foreground="{StaticResource IdealForegroundColorBrush}" Content="GREEN" />
+                    </StackPanel>
+                </DockPanel>
+                <DockPanel Tag="Blue" Grid.Row="0" Grid.Column="2">
+                    <DockPanel.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </DockPanel.Resources>
+                    <StackPanel Background="{StaticResource HighlightBrush}">
+                        <Button Click="ChangeTheme_OnClick" Style="{StaticResource LinkButton}" Foreground="{StaticResource IdealForegroundColorBrush}" Content="BLUE" />
+                    </StackPanel>
+                </DockPanel>
+                <DockPanel Tag="Purple" Grid.Row="0" Grid.Column="3" >
+                    <DockPanel.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Purple.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </DockPanel.Resources>
+                    <StackPanel Background="{StaticResource HighlightBrush}">
+                        <Button Click="ChangeTheme_OnClick" Style="{StaticResource LinkButton}" Foreground="{StaticResource IdealForegroundColorBrush}" Content="PURPLE" />
+                    </StackPanel>
+                </DockPanel>
+                <DockPanel Tag="Orange" Grid.Row="1" Grid.Column="0">
+                    <DockPanel.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Orange.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </DockPanel.Resources>
+                    <StackPanel Background="{StaticResource HighlightBrush}">
+                        <Button Click="ChangeTheme_OnClick" Style="{StaticResource LinkButton}" Foreground="{StaticResource IdealForegroundColorBrush}" Content="ORANGE" />
+                    </StackPanel>
+                </DockPanel>
+                <DockPanel Tag="Lime" Grid.Row="1" Grid.Column="1">
+                    <DockPanel.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Lime.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </DockPanel.Resources>
+                    <StackPanel Background="{StaticResource HighlightBrush}">
+                        <Button Click="ChangeTheme_OnClick" Style="{StaticResource LinkButton}" Foreground="{StaticResource IdealForegroundColorBrush}" Content="LIME" />
+                    </StackPanel>
+                </DockPanel>
+                <DockPanel Tag="Emerald" Grid.Row="1" Grid.Column="2">
+                    <DockPanel.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Emerald.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </DockPanel.Resources>
+                    <StackPanel Background="{StaticResource HighlightBrush}">
+                        <Button Click="ChangeTheme_OnClick" Style="{StaticResource LinkButton}" Foreground="{StaticResource IdealForegroundColorBrush}" Content="EMERALD" />
+                    </StackPanel>
+                </DockPanel>
+                <DockPanel Tag="Teal" Grid.Row="1" Grid.Column="3">
+                    <DockPanel.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Teal.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </DockPanel.Resources>
+                    <StackPanel Background="{StaticResource HighlightBrush}">
+                        <Button Click="ChangeTheme_OnClick" Style="{StaticResource LinkButton}" Foreground="{StaticResource IdealForegroundColorBrush}" Content="TEAL" />
+                    </StackPanel>
+                </DockPanel>
+                <DockPanel Tag="Cyan" Grid.Row="2" Grid.Column="0">
+                    <DockPanel.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Cyan.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </DockPanel.Resources>
+                    <StackPanel Background="{StaticResource HighlightBrush}">
+                        <Button Click="ChangeTheme_OnClick" Style="{StaticResource LinkButton}" Foreground="{StaticResource IdealForegroundColorBrush}" Content="CYAN" />
+                    </StackPanel>
+                </DockPanel>
+                <DockPanel Tag="Cobalt" Grid.Row="2" Grid.Column="1">
+                    <DockPanel.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Cobalt.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </DockPanel.Resources>
+                    <StackPanel Background="{StaticResource HighlightBrush}">
+                        <Button Click="ChangeTheme_OnClick" Style="{StaticResource LinkButton}" Foreground="{StaticResource IdealForegroundColorBrush}" Content="COBALT" />
+                    </StackPanel>
+                </DockPanel>
+                <DockPanel Tag="Indigo" Grid.Row="2" Grid.Column="2">
+                    <DockPanel.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Indigo.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </DockPanel.Resources>
+                    <StackPanel Background="{StaticResource HighlightBrush}">
+                        <Button Click="ChangeTheme_OnClick" Style="{StaticResource LinkButton}" Foreground="{StaticResource IdealForegroundColorBrush}" Content="INDIGO" />
+                    </StackPanel>
+                </DockPanel>
+                <DockPanel Tag="Violet" Grid.Row="2" Grid.Column="3">
+                    <DockPanel.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Violet.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </DockPanel.Resources>
+                    <StackPanel Background="{StaticResource HighlightBrush}">
+                        <Button Click="ChangeTheme_OnClick" Style="{StaticResource LinkButton}" Foreground="{StaticResource IdealForegroundColorBrush}" Content="VIOLET" />
+                    </StackPanel>
+                </DockPanel>
+                <DockPanel Tag="Pink" Grid.Row="3" Grid.Column="0">
+                    <DockPanel.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Pink.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </DockPanel.Resources>
+                    <StackPanel Background="{StaticResource HighlightBrush}">
+                        <Button Click="ChangeTheme_OnClick" Style="{StaticResource LinkButton}" Foreground="{StaticResource IdealForegroundColorBrush}" Content="PINK" />
+                    </StackPanel>
+                </DockPanel>
+                <DockPanel Tag="Magenta" Grid.Row="3" Grid.Column="1">
+                    <DockPanel.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Magenta.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </DockPanel.Resources>
+                    <StackPanel Background="{StaticResource HighlightBrush}">
+                        <Button Click="ChangeTheme_OnClick" Style="{StaticResource LinkButton}" Foreground="{StaticResource IdealForegroundColorBrush}" Content="MAGENTA" />
+                    </StackPanel>
+                </DockPanel>
+                <DockPanel Tag="Crimson" Grid.Row="3" Grid.Column="2">
+                    <DockPanel.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Crimson.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </DockPanel.Resources>
+                    <StackPanel Background="{StaticResource HighlightBrush}">
+                        <Button Click="ChangeTheme_OnClick" Style="{StaticResource LinkButton}" Foreground="{StaticResource IdealForegroundColorBrush}" Content="CRIMSON" />
+                    </StackPanel>
+                </DockPanel>
+                <DockPanel Tag="Amber" Grid.Row="3" Grid.Column="3">
+                    <DockPanel.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Amber.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </DockPanel.Resources>
+                    <StackPanel Background="{StaticResource HighlightBrush}">
+                        <Button Click="ChangeTheme_OnClick" Style="{StaticResource LinkButton}" Foreground="{StaticResource IdealForegroundColorBrush}" Content="AMBER" />
+                    </StackPanel>
+                </DockPanel>
+                <DockPanel Tag="Yellow" Grid.Row="4" Grid.Column="0">
+                    <DockPanel.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Yellow.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </DockPanel.Resources>
+                    <StackPanel Background="{StaticResource HighlightBrush}">
+                        <Button Click="ChangeTheme_OnClick" Style="{StaticResource LinkButton}" Foreground="{StaticResource IdealForegroundColorBrush}" Content="YELLOW" />
+                    </StackPanel>
+                </DockPanel>
+                <DockPanel Tag="Brown" Grid.Row="4" Grid.Column="1">
+                    <DockPanel.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Brown.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </DockPanel.Resources>
+                    <StackPanel Background="{StaticResource HighlightBrush}">
+                        <Button Click="ChangeTheme_OnClick" Style="{StaticResource LinkButton}" Foreground="{StaticResource IdealForegroundColorBrush}" Content="BROWN" />
+                    </StackPanel>
+                </DockPanel>
+                <DockPanel Tag="Olive" Grid.Row="4" Grid.Column="2">
+                    <DockPanel.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Olive.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </DockPanel.Resources>
+                    <StackPanel Background="{StaticResource HighlightBrush}">
+                        <Button Click="ChangeTheme_OnClick" Style="{StaticResource LinkButton}" Foreground="{StaticResource IdealForegroundColorBrush}" Content="OLIVE" />
+                    </StackPanel>
+                </DockPanel>
+                <DockPanel Tag="Steel" Grid.Row="4" Grid.Column="3">
+                    <DockPanel.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Steel.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </DockPanel.Resources>
+                    <StackPanel Background="{StaticResource HighlightBrush}">
+                        <Button Click="ChangeTheme_OnClick" Style="{StaticResource LinkButton}" Foreground="{StaticResource IdealForegroundColorBrush}" Content="STEEL" />
+                    </StackPanel>
+                </DockPanel>
+                <DockPanel Tag="Mauve" Grid.Row="5" Grid.Column="0">
+                    <DockPanel.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Mauve.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </DockPanel.Resources>
+                    <StackPanel Background="{StaticResource HighlightBrush}">
+                        <Button Click="ChangeTheme_OnClick" Style="{StaticResource LinkButton}" Foreground="{StaticResource IdealForegroundColorBrush}" Content="MAUVE" />
+                    </StackPanel>
+                </DockPanel>
+                <DockPanel Tag="Taupe" Grid.Row="5" Grid.Column="1">
+                    <DockPanel.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Taupe.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </DockPanel.Resources>
+                    <StackPanel Background="{StaticResource HighlightBrush}">
+                        <Button Click="ChangeTheme_OnClick" Style="{StaticResource LinkButton}" Foreground="{StaticResource IdealForegroundColorBrush}" Content="TAUPE" />
+                    </StackPanel>
+                </DockPanel>
+                <DockPanel Tag="Sienna" Grid.Row="5" Grid.Column="2">
+                    <DockPanel.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Sienna.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </DockPanel.Resources>
+                    <StackPanel Background="{StaticResource HighlightBrush}">
+                        <Button Click="ChangeTheme_OnClick" Style="{StaticResource LinkButton}" Foreground="{StaticResource IdealForegroundColorBrush}" Content="SIENNA" />
+                    </StackPanel>
+                </DockPanel>
+                <DockPanel Grid.Row="5" Grid.Column="3">
+                    <DockPanel Tag="BaseLight" Dock="Top" Height="31">
+                        <DockPanel.Resources>
+                            <ResourceDictionary>
+                                <ResourceDictionary.MergedDictionaries>
+                                    <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
+                                </ResourceDictionary.MergedDictionaries>
+                            </ResourceDictionary>
+                        </DockPanel.Resources>
+                        <StackPanel Background="{StaticResource WindowBackgroundBrush}">
+                            <Button Click="ChangeBaseTheme_OnClick" Style="{StaticResource LinkButton}" Margin="0 7 0 7" Content="LIGHT" />
+                        </StackPanel>
+                    </DockPanel>
+                    <DockPanel Tag="BaseDark" Dock="Bottom" Height="30">
+                        <DockPanel.Resources>
+                            <ResourceDictionary>
+                                <ResourceDictionary.MergedDictionaries>
+                                    <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseDark.xaml" />
+                                </ResourceDictionary.MergedDictionaries>
+                            </ResourceDictionary>
+                        </DockPanel.Resources>
+                        <StackPanel Background="{StaticResource WindowBackgroundBrush}">
+                            <Button Click="ChangeBaseTheme_OnClick" Style="{StaticResource LinkButton}" Margin="0 5 0 5" Content="DARK" />
+                        </StackPanel>
+                    </DockPanel>
+                </DockPanel>
+            </Grid>
+        </ScrollViewer>
+        <ScrollViewer Name="ThemeLightDarkViewer" Visibility="Visible">
+            <ScrollViewer.Resources>
+                <ResourceDictionary>
+                    <Style x:Key="LinkButton" TargetType="Button">
+                        <Setter Property="HorizontalAlignment" Value="Center" />
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="Margin" Value="0 150 0 0" />
+                        <Setter Property="FontSize" Value="30"></Setter>
+                        <Setter Property="Cursor" Value="Hand" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <TextBlock TextDecorations="Underline">
+                                        <ContentPresenter />
+                                    </TextBlock>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ResourceDictionary>
+            </ScrollViewer.Resources>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <DockPanel Tag="BaseLight" Grid.Row="0" Grid.Column="0">
+                    <DockPanel.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </DockPanel.Resources>
+                    <StackPanel Background="{StaticResource WindowBackgroundBrush}">
+                        <Button Click="ChangeBaseTheme_OnClick" Style="{StaticResource LinkButton}" Content="LIGHT" />
+                    </StackPanel>
+                </DockPanel>
+                <DockPanel Tag="BaseDark" Grid.Row="0" Grid.Column="1">
+                    <DockPanel.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseDark.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </DockPanel.Resources>
+                    <StackPanel Background="{StaticResource WindowBackgroundBrush}">
+                        <Button Click="ChangeBaseTheme_OnClick" Style="{StaticResource LinkButton}" Content="DARK" />
+                    </StackPanel>
+                </DockPanel>
             </Grid>
         </ScrollViewer>
     </Grid>

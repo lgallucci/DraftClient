@@ -24,20 +24,21 @@
 
         public bool Connected
         {
-            get { return _clientSocket.Connected; }
+            get { return _clientSocket != null && _clientSocket.Connected; }
         }
 
         public void StartClient()
         {
             ListenForMessages();
         }
+
         private void ListenForMessages()
         {
             Task.Run(() =>
             {
                 while (Connected)
                 {
-                    if (_clientSocket.Connected && _clientSocket.Available > 0)
+                    if (_clientSocket.Available > 0)
                     {
                         var messages = ReadMessages();
                         foreach (var message in messages)
@@ -170,7 +171,6 @@
                         }
                         else
                         {
-
                             OnClientDisconnect(this, Id);
                             Close();
                         }
