@@ -190,9 +190,9 @@
       <Project>{65184f9c-4e20-4e4a-8f1c-0f61c4f1d5c9}</Project>
       <Name>DraftEntities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FileReader\FileReader.csproj">
+    <ProjectReference Include="..\FileReader\FileHandler.csproj">
       <Project>{5d8786f4-b2d3-4e26-9279-a30624dc485c}</Project>
-      <Name>FileReader</Name>
+      <Name>FileHandler</Name>
     </ProjectReference>
     <ProjectReference Include="..\WpfControls\WpfControls.vbproj">
       <Project>{d010f52c-140c-410d-b897-c1091b81aa13}</Project>

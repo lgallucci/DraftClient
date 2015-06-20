@@ -8,7 +8,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DraftClient", "DraftClient\
 		{D010F52C-140C-410D-B897-C1091B81AA13} = {D010F52C-140C-410D-B897-C1091B81AA13}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileReader", "FileReader\FileReader.csproj", "{5D8786F4-B2D3-4E26-9279-A30624DC485C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileHandler", "FileReader\FileHandler.csproj", "{5D8786F4-B2D3-4E26-9279-A30624DC485C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DraftEntities", "DraftEntities\DraftEntities.csproj", "{65184F9C-4E20-4E4A-8F1C-0F61C4F1D5C9}"
 EndProject
