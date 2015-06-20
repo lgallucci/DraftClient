@@ -5,49 +5,49 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:c="clr-namespace:DraftClient.Converters"
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
-             mc:Ignorable="d"  d:DesignWidth="400">
+             mc:Ignorable="d"  d:DesignWidth="600">
     <UserControl.Resources>
         <ResourceDictionary>
 
             <!-- Gray Theme -->
-
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <c:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
 
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
-        <StackPanel>
-            <StackPanel Name="TimeDraftPanel" Orientation="Horizontal" HorizontalAlignment="Center" Visibility="{Binding Path=Drafting, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <Button Style="{StaticResource AccentedSquareButtonStyle}" Visibility="{Binding Path=IsRunning, Converter={StaticResource BooleanToVisibilityConverter}}"
+        <StackPanel HorizontalAlignment="Center" >
+            <StackPanel Name="TimeDraftPanel" Orientation="Horizontal">
+                <Button Style="{StaticResource AccentedSquareButtonStyle}" Visibility="{Binding Path=IsRunning, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
                         controls:ButtonHelper.PreserveTextCase ="True"
-                        FontWeight="DemiBold" Height="50" Width="100" Content="Start" FontFamily="Segoe UI" FontSize="16"
+                        FontWeight="DemiBold" Height="50" Width="75" Content="Start" FontFamily="Segoe UI" FontSize="16" Margin="5 0 0 0"
                         Click="StartDraftButton_OnClick"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center" />
                 <Button Style="{StaticResource AccentedSquareButtonStyle}" Visibility="{Binding Path=IsRunning, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Background="{StaticResource AccentColorBrush2}"
                         controls:ButtonHelper.PreserveTextCase ="True"
-                        FontWeight="DemiBold" Height="50" Width="100" Content="Reset" FontFamily="Segoe UI" FontSize="16"
+                        FontWeight="DemiBold" Height="50" Width="75" Content="Reset" FontFamily="Segoe UI" FontSize="16" Margin="5 0 0 0"
                         Click="ResetDraftButton_OnClick"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center" />
                 <Button Style="{StaticResource AccentedSquareButtonStyle}" Visibility="{Binding Path=CanPause, Converter={StaticResource BooleanToVisibilityConverter}}"
                         controls:ButtonHelper.PreserveTextCase ="True"
-                        FontWeight="DemiBold" Height="50" Width="100" Content="Pause" FontFamily="Segoe UI" FontSize="16"
+                        FontWeight="DemiBold" Height="50" Width="75" Content="Pause" FontFamily="Segoe UI" FontSize="16" Margin="5 0 0 0"
                         Click="PauseDraftButton_OnClick"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center" />
                 <Button Style="{StaticResource AccentedSquareButtonStyle}" Visibility="{Binding Path=CanResume, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Background="{StaticResource AccentColorBrush2}"
                         controls:ButtonHelper.PreserveTextCase ="True"
-                        FontWeight="DemiBold" Height="50" Width="100" Content="Resume" FontFamily="Segoe UI" FontSize="16"
+                        FontWeight="DemiBold" Height="50" Width="75" Content="Resume" FontFamily="Segoe UI" FontSize="16" Margin="5 0 0 0"
                         Click="ResumeDraftButton_OnClick"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center" />
-                <TextBlock Name="CountdownTextBlock" Margin="5 0 0 0" Text="00:00:00" FontWeight="DemiBold" FontFamily="Segoe UI" FontSize="36" Foreground="LimeGreen"
+                <TextBlock Name="CountdownTextBlock" Margin="5 0 0 0" Text="00:00:00" FontWeight="DemiBold" FontFamily="Segoe UI" FontSize="42" Foreground="{StaticResource AccentColorBrush}"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center" />
             </StackPanel>
         </StackPanel>
-
     </Grid>
 </UserControl>

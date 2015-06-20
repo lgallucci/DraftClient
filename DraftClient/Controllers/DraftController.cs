@@ -26,6 +26,8 @@
             _connectionServer.SendDraftSettings += SendDraftSettings;
             _connectionServer.UserDisconnect += UserDisconnect;
             _connectionServer.RetrieveDraft += RetrieveDraft;
+            _connectionServer.DraftStop += DraftStop;
+            _connectionServer.DraftStateChanged += DraftStateChanged;
             _mainWindow.Closed += RemoveHandlers;
         }
 
@@ -39,6 +41,8 @@
             _connectionServer.SendDraftSettings -= SendDraftSettings;
             _connectionServer.UserDisconnect -= UserDisconnect;
             _connectionServer.RetrieveDraft -= RetrieveDraft;
+            _connectionServer.DraftStop -= DraftStop;
+            _connectionServer.DraftStateChanged -= DraftStateChanged;
             _mainWindow.Closed -= RemoveHandlers;
         }
 
@@ -55,7 +59,7 @@
             if (draft == null) return;
             Application.Current.Dispatcher.Invoke(() =>
             {
-                var draftModel = new ViewModel.Draft(draft.MaxRound, draft.MaxTeam, false);
+                var draftModel = new ViewModel.Draft(draft.MaxRound, draft.MaxTeam, Settings.NumberOfSeconds, false);
                 draftModel.InjectFrom(draft);
                 for (int i = 0; i < draft.MaxRound; i++)
                 {
@@ -181,5 +185,19 @@
             _connectionServer.SendMessage(NetworkMessageType.UpdateTeamMessage, Mapper.Map<DraftTeam>(team));
         }
 
+        public void UpdateDraftState(ViewModel.DraftState state)
+        {
+            _connectionServer.SendMessage(NetworkMessageType.UpdateDraftState, Mapper.Map<DraftState>(state));
+        }
+
+        public void DraftStateChanged(DraftState state)
+        {
+            Application.Current.Dispatcher.Invoke(() => _mainWindow.UpdateDraftState(Mapper.Map<ViewModel.DraftState>(state)));
+        }
+
+        public void DraftStop()
+        {
+            Application.Current.Dispatcher.Invoke(() => _mainWindow.CloseWindow("Draft Closed by Server"));
+        }
     }
 }

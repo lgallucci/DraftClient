@@ -1,18 +1,12 @@
-﻿<Controls:MetroWindow
+﻿<controls:MetroWindow
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
     x:Class="DraftClient.View.MainWindow"
-    xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+    xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     xmlns:local="clr-namespace:DraftClient.View"
     Title="Fantasy Football Draft Tool" Width="1725" Height="950" Closing="OnClosing" ResizeMode="CanMinimize">
-
-    <Window.Resources>
-        <ResourceDictionary>
-        </ResourceDictionary>
-
-    </Window.Resources>
     <Grid  Name="MainGrid" HorizontalAlignment="Stretch"
           VerticalAlignment="Stretch">
         <Grid.ColumnDefinitions>
@@ -26,18 +20,12 @@
                     <RowDefinition Height="100" />
                 </Grid.RowDefinitions>
                 <local:PlayerView Grid.Row="0"></local:PlayerView>
-                <local:DraftTimerControl Grid.Row="1" x:Name="DraftTimerControl"></local:DraftTimerControl>
+                <local:DraftTimerControl x:Name="DraftTimerControl" Grid.Row="1" VerticalAlignment="Center"></local:DraftTimerControl>
             </Grid>
-
         </Grid>
         <Grid Grid.Column="1" Name="PicksGrid">
             <Grid.Resources>
                 <ResourceDictionary>
-                    <ResourceDictionary.MergedDictionaries>
-
-
-                    </ResourceDictionary.MergedDictionaries>
-
                     <Style TargetType="TextBlock">
                         <Setter Property="FontSize" Value="16" />
                         <Setter Property="FontFamily" Value="Segoe UI" />
@@ -49,4 +37,4 @@
             </Grid.Resources>
         </Grid>
     </Grid>
-</Controls:MetroWindow>
+</controls:MetroWindow>

@@ -37,8 +37,8 @@
         PickMessage,
 
         //Draft & Timer 
-        DraftStartMessage,
         DraftStopMessage,
+        UpdateDraftState,
 
         //Teams
         UpdateTeamMessage,

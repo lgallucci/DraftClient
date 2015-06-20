@@ -4,17 +4,20 @@
 
     public class DraftState : BindableBase
     {
-        private bool _isServer = false;
+        private readonly bool _isServer;
         private DateTime _pickEndTime;
         private DateTime _pickPauseTime;
         private bool _drafting;
+        private int _draftSeconds;
 
-        public DraftState(bool isServer)
+        public DraftState(bool isServer, int numberOfSeconds)
         {
-            PickEndTime = (DateTime.UtcNow + new TimeSpan(0, 0, 30));
+            PickEndTime = DateTime.UtcNow;
             PickPauseTime = DateTime.MinValue;
             _isServer = isServer;
+            DraftSeconds = numberOfSeconds;
         }
+
         public DateTime PickEndTime
         {
             get { return _pickEndTime; }
@@ -23,8 +26,10 @@
                 SetProperty(ref _pickEndTime, value);
                 OnPropertyChanged("CanPause");
                 OnPropertyChanged("CanResume");
+                OnPropertyChanged("IsRunning");
             }
         }
+
         public DateTime PickPauseTime
         {
             get { return _pickPauseTime; }
@@ -33,6 +38,7 @@
                 SetProperty(ref _pickPauseTime, value);
                 OnPropertyChanged("CanPause");
                 OnPropertyChanged("CanResume");
+                OnPropertyChanged("IsRunning");
             }
         }
 
@@ -44,6 +50,11 @@
             set { SetProperty(ref _drafting, value); }
         }
 
+        public bool IsRunning
+        {
+            get { return _drafting && _isServer; }
+        }
+
         public bool CanPause
         {
             get { return _isServer && _pickPauseTime == DateTime.MinValue; }
@@ -52,6 +63,12 @@
         public bool CanResume
         {
             get { return _isServer && _pickPauseTime > DateTime.MinValue; }
+        }
+
+        public int DraftSeconds
+        {
+            get { return _draftSeconds; }
+            set { SetProperty(ref _draftSeconds, value); }
         }
     }
 }

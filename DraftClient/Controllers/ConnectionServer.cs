@@ -15,7 +15,7 @@
         private static readonly ConnectionServer instance = new ConnectionServer();
         private AutoResetEvent _connectionReset;
         private Client _connection;
-        protected readonly bool IsRunning;
+        private readonly bool _isRunning;
         public Task ServerListener;
         private UdpClient _updClient;
 
@@ -28,7 +28,7 @@
         private ConnectionServer()
         {
             _connection = new Client();
-            IsRunning = true;
+            _isRunning = true;
             AddHandlers();
         }
 
@@ -51,7 +51,7 @@
                 IPAddress multicastaddress = IPAddress.Parse(Server.MulticastAddress);
                 _updClient.JoinMulticastGroup(multicastaddress);
 
-                while (IsRunning)
+                while (_isRunning)
                 {
                     byte[] serverBroadcastData = _updClient.Receive(ref localEp);
 
@@ -101,6 +101,7 @@
             _connection.SendDraftSettings += OnSendDraftSettings;
             _connection.UserDisconnect += OnUserDisconnect;
             _connection.RetrieveDraft += OnRetrieveDraft;
+            _connection.DraftStop += OnDraftStop;
         }
 
         private void RemoveHandlers()
@@ -114,6 +115,7 @@
             _connection.SendDraftSettings -= OnSendDraftSettings;
             _connection.UserDisconnect -= OnUserDisconnect;
             _connection.RetrieveDraft -= OnRetrieveDraft;
+            _connection.DraftStop -= OnDraftStop;
         }
 
         public void ConnectToDraft(string ipAddress, int ipPort)
@@ -166,6 +168,10 @@
         public delegate void TeamUpdatedHandler(DraftTeam team);
 
         public delegate void UserDisconnectHandler(Guid connectedUser);
+
+        public delegate void DraftStopHandler();
+
+        public delegate void DraftStateChangedHandler(DraftState state);
 
         public event RetrieveDraftHandler RetrieveDraft;
 
@@ -243,6 +249,28 @@
             if (handler != null)
             {
                 handler(connectedUser);
+            }
+        }
+
+        public event DraftStopHandler DraftStop;
+
+        public void OnDraftStop()
+        {
+            DraftStopHandler handler = DraftStop;
+            if (handler != null)
+            {
+                handler();
+            }
+        }
+
+        public event DraftStateChangedHandler DraftStateChanged;
+
+        public void OnDraftStateChanged(DraftState state)
+        {
+            DraftStateChangedHandler handler = DraftStateChanged;
+            if (handler != null)
+            {
+                handler(state);
             }
         }
 

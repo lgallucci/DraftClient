@@ -17,6 +17,7 @@
         private ObservableCollection<DraftServer> _servers;
         private int _tightEnds = 1;
         private int _wideRecievers = 2;
+        private int _numberOfSeconds = 150;
 
         private static DraftSettings _instance;
         public static DraftSettings Instance
@@ -91,6 +92,12 @@
         {
             get { return _benchPlayers; }
             set { SetProperty(ref _benchPlayers, value); }
+        }
+
+        public int NumberOfSeconds
+        {
+            get { return _numberOfSeconds; }
+            set { SetProperty(ref _numberOfSeconds, value); }
         }
 
         public string PlayerFile

@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Windows;
-    using System.Windows.Controls;
     using System.Windows.Media;
     using System.Windows.Threading;
     using DraftClient.ViewModel;
@@ -11,14 +10,14 @@
     /// <summary>
     /// Interaction logic for DraftController.xaml
     /// </summary>
-    public partial class DraftTimerControl : UserControl
+    public partial class DraftTimerControl
     {
         private Dictionary<int, string> SoundFiles = new Dictionary<int, string>
         {
         };
 
-        private DispatcherTimer _timer;
-        
+        private readonly DispatcherTimer _timer;
+
         //TODO: Send timer info over wire
         //TODO: Play sounds
         public DraftTimerControl()
@@ -37,11 +36,11 @@
 
                 if (timeLeft.TotalSeconds < 10 && timeLeft.Seconds % 2 == 1)
                 {
-                    CountdownTextBlock.Foreground = (SolidColorBrush) (new BrushConverter().ConvertFrom("#DD0000"));
+                    CountdownTextBlock.Foreground = (Brush)FindResource("AccentColorBrush3");
                 }
                 else
                 {
-                    CountdownTextBlock.Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("LimeGreen"));
+                    CountdownTextBlock.Foreground = (Brush)FindResource("AccentColorBrush");
                 }
 
                 if (timeLeft.TotalSeconds >= 1)
@@ -51,16 +50,16 @@
                 else
                 {
                     if (timeLeft.TotalDays > 0)
-                    CountdownTextBlock.Foreground = (SolidColorBrush) (new BrushConverter().ConvertFrom("#DD0000"));
+                        CountdownTextBlock.Foreground = (Brush)FindResource("AccentColorBrush3");
                     CountdownTextBlock.Text = "00:00";
+                    PlaySound("");
                 }
             };
         }
-
-
+        
         private void PlaySound(string uriPath)
         {
-            Uri uri = new Uri(@"pack://application:,,,/Resources/movepoint.wav");
+            Uri uri = new Uri(@"pack://application:,,,/Resources/buzzer.mp3");
             var player = new MediaPlayer();
             player.Open(uri);
             player.Play();
@@ -76,16 +75,16 @@
 
         private DraftState State { get; set; }
 
-
         private void ResetDraftButton_OnClick(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            ResetDraftTimer();
+            OnDraftStateChanged(State);
         }
 
         private void StartDraftButton_OnClick(object sender, RoutedEventArgs e)
         {
             State.Drafting = true;
-            State.PickEndTime = DateTime.UtcNow + new TimeSpan(0, 0, 180);
+            State.PickEndTime = DateTime.UtcNow + new TimeSpan(0, 0, State.DraftSeconds);
             State.PickPauseTime = DateTime.MinValue;
             OnDraftStateChanged(State);
         }
@@ -105,8 +104,9 @@
 
         public void ResetDraftTimer()
         {
+            State.Drafting = false;
             State.PickPauseTime = DateTime.MinValue;
-            State.PickEndTime = DateTime.UtcNow + new TimeSpan(0, 3, 0);
+            State.PickEndTime = DateTime.UtcNow + new TimeSpan(0, 0, State.DraftSeconds);
         }
 
         #region Events

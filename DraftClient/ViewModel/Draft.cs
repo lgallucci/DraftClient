@@ -4,7 +4,7 @@
 
     public class Draft
     {
-        public Draft(int rounds, int teams, bool server)
+        public Draft(int rounds, int teams, int numberOfSeconds, bool server)
         {
             MaxRound = rounds;
             MaxTeam = teams;
@@ -19,7 +19,7 @@
                     };
                 }
             }
-            State = new DraftState(server);
+            State = new DraftState(server, numberOfSeconds);
         }
 
         public int Round { get; set; }

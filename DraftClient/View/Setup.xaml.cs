@@ -2,14 +2,17 @@
 {
     using System;
     using System.ComponentModel;
+    using System.IO;
     using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Controls;
     using DraftClient.Controllers;
     using DraftClient.Extensions;
-    using DraftClient.ViewModel;
+    using DraftEntities;
     using MahApps.Metro;
     using MahApps.Metro.Controls;
+    using DraftServer = ViewModel.DraftServer;
+    using DraftSettings = ViewModel.DraftSettings;
 
     /// <summary>
     ///     Interaction logic for Setup.xaml
@@ -129,12 +132,25 @@
             JoinDraftButton.IsEnabled = lbi != null;
         }
 
-        public void Reset(bool isServer)
+        public void Reset(bool isServer, string resetMessage)
         {
             if (!isServer)
                 _setupController.DisconnectFromDraftServer();
             _setupController.ResetConnection();
             DraftSettings.Reset();
+            ServerSetupViewer.Visibility = Visibility.Collapsed;
+            ThemeViewer.Visibility = Visibility.Collapsed;
+            StartupViewer.Visibility = Visibility.Visible;
+            Title = "Join Draft";
+            if (!string.IsNullOrWhiteSpace(resetMessage))
+            {
+                ResetMessageBox.Visibility = Visibility.Visible;
+                ResetMessageText.Text = resetMessage;
+            }
+            else
+            {
+                ResetMessageBox.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void ThemeButton_OnClick(object sender, RoutedEventArgs e)
@@ -158,7 +174,7 @@
             var themeName = ((DockPanel)((Button)sender).Parent.GetParentObject()).Tag.ToString();
             var theme = ThemeManager.DetectAppStyle(Application.Current);
             var themeAccent = ThemeManager.GetAccent(themeName);
-            ThemeManager.ChangeAppStyle(Application.Current, themeAccent, theme.Item1);
+            ChangeTheme(themeAccent, theme.Item1);
 
             ServerSetupViewer.Visibility = Visibility.Collapsed;
             ThemeViewer.Visibility = Visibility.Collapsed;
@@ -166,17 +182,60 @@
             Title = "Join Draft";
         }
 
+        private void ReadTheme()
+        {
+            try
+            {
+                var theme = FileHandler.DraftFileHandler.ReadThemeFile("SavedTheme.xml");
+                
+                ChangeTheme(ThemeManager.GetAccent(theme.Accent) ,ThemeManager.GetAppTheme(theme.BaseTheme));
+
+                ServerSetupViewer.Visibility = Visibility.Collapsed;
+                ThemeViewer.Visibility = Visibility.Collapsed;
+                ThemeLightDarkViewer.Visibility = Visibility.Collapsed;
+                StartupViewer.Visibility = Visibility.Visible;
+            }
+            catch (IOException)
+            {
+                ServerSetupViewer.Visibility = Visibility.Collapsed;
+                ThemeViewer.Visibility = Visibility.Collapsed;
+                ThemeLightDarkViewer.Visibility = Visibility.Visible;
+                StartupViewer.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void ChangeTheme(Accent accent, AppTheme baseTheme)
+        {
+            ThemeManager.ChangeAppStyle(Application.Current, accent, baseTheme);
+
+            FileHandler.DraftFileHandler.WriteThemeFile(new Theme
+            {
+                Accent = accent.Name,
+                BaseTheme = baseTheme.Name
+            }, "SavedTheme.xml");
+        }
+
         private void ChangeBaseTheme_OnClick(object sender, RoutedEventArgs e)
         {
             var themeName = ((DockPanel)((Button)sender).Parent.GetParentObject()).Tag.ToString();
             var theme = ThemeManager.DetectAppStyle(Application.Current);
             var themeApp = ThemeManager.GetAppTheme(themeName);
-            ThemeManager.ChangeAppStyle(Application.Current, theme.Item2, themeApp);
+            ChangeTheme(theme.Item2, themeApp);
 
             ServerSetupViewer.Visibility = Visibility.Collapsed;
             ThemeViewer.Visibility = Visibility.Visible;
             ThemeLightDarkViewer.Visibility = Visibility.Collapsed;
             StartupViewer.Visibility = Visibility.Collapsed;
+        }
+
+        private void ResetMessageBoxClose(object sender, RoutedEventArgs e)
+        {
+            ResetMessageBox.Visibility = Visibility.Collapsed;
+        }
+
+        private void SetupLoaded(object sender, RoutedEventArgs e)
+        {
+            ReadTheme();
         }
     }
 }

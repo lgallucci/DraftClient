@@ -112,6 +112,9 @@
                     case NetworkMessageType.PickMessage:
                         OnPickMade(networkMessage.MessageContent as DraftPick);
                         break;
+                    case NetworkMessageType.DraftStopMessage:
+                        OnDraftStop();
+                        break;
                 }
 
                 //Console.WriteLine("Sent Ack Type: {0}, Id: {1}", networkMessage.MessageType.ToString(), networkMessage.MessageId);
@@ -179,6 +182,10 @@
         public delegate void TeamUpdatedHandler(DraftTeam team);
 
         public delegate void UserDisconnectHandler(Guid connectedUser);
+
+        public delegate void DraftStopHandler();
+
+        public delegate void DraftStateChangedHandler(DraftState state);
 
         public event RetrieveDraftHandler RetrieveDraft;
 
@@ -267,6 +274,28 @@
             if (handler != null)
             {
                 handler();
+            }
+        }
+
+        public event DraftStopHandler DraftStop;
+
+        public void OnDraftStop()
+        {
+            DraftStopHandler handler = DraftStop;
+            if (handler != null)
+            {
+                handler();
+            }
+        }
+
+        public event DraftStateChangedHandler DraftStateChanged;
+
+        public void OnDraftStateChanged(DraftState state)
+        {
+            DraftStateChangedHandler handler = DraftStateChanged;
+            if (handler != null)
+            {
+                handler(state);
             }
         }
 

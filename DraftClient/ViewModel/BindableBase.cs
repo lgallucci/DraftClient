@@ -41,7 +41,7 @@
             }
             return true;
         }
-
+        
         /// <summary>
         ///     Notifies listeners that a property value has changed.
         /// </summary>
@@ -50,7 +50,7 @@
         ///     value is optional and can be provided automatically when invoked from compilers
         ///     that support <see cref="CallerMemberNameAttribute" />.
         /// </param>
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected void OnPropertyChanged(string propertyName = null)
         {
             PropertyChangedEventHandler eventHandler = PropertyChanged;
             if (eventHandler != null)

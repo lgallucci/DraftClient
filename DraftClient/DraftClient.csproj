@@ -102,6 +102,10 @@
     <Compile Include="View\SpinnyWindow.xaml.cs">
       <DependentUpon>SpinnyWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="Resources\Icons.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="View\DraftTimerControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -208,6 +212,7 @@
     <None Include="Resources\countdown_beep.mp3" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\Entypo.ttf" />
     <None Include="Resources\glass_ping.mp3" />
   </ItemGroup>
   <ItemGroup>
@@ -216,7 +221,12 @@
   <ItemGroup>
     <Resource Include="Resources\JoinImage_dark.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\WindowsIcons-license.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Entypo-license.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

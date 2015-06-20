@@ -12,10 +12,10 @@
     using System.Windows.Controls;
     using DraftClient.Controllers;
     using DraftEntities;
-    using FileReader;
     using Omu.ValueInjecter;
     using Draft = DraftClient.ViewModel.Draft;
     using DraftSettings = DraftClient.ViewModel.DraftSettings;
+    using DraftState = ViewModel.DraftState;
     using DraftTeam = DraftClient.ViewModel.DraftTeam;
     using Player = DraftEntities.Player;
     using PlayerList = DraftClient.ViewModel.PlayerList;
@@ -46,15 +46,20 @@
 
             if (messageBoxResult == MessageBoxResult.Yes)
             {
-                if (Owner != null)
-                {
-                    ((Setup)Owner).Reset(_draftController.IsServer);
-                    Owner.Show();
-                }
+                CloseWindow("Draft Closed");
             }
             else
             {
                 e.Cancel = true;
+            }
+        }
+
+        public void CloseWindow(string resetMessage)
+        {
+            if (Owner != null)
+            {
+                ((Setup)Owner).Reset(_draftController.IsServer, resetMessage);
+                Owner.Show();
             }
         }
 
@@ -83,7 +88,7 @@
         {
             if (_draftController.IsServer)
             {
-                _draftController.CurrentDraft = new Draft(_draftController.Settings.TotalRounds, _draftController.Settings.NumberOfTeams, true);
+                _draftController.CurrentDraft = new Draft(_draftController.Settings.TotalRounds, _draftController.Settings.NumberOfTeams, _draftController.Settings.NumberOfSeconds, true);
             }
             else
             {
@@ -97,6 +102,7 @@
         private void SetupGrid(DraftSettings settings)
         {
             DraftTimerControl.PopulateState(_draftController.CurrentDraft.State);
+            DraftTimerControl.DraftStateChanged += (state) => _draftController.UpdateDraftState(state);
 
             for (int i = 0; i < settings.NumberOfTeams + 1; i++)
             {
@@ -193,7 +199,7 @@
 
         private async void LoadPlayers(string playerFile)
         {
-            List<Player> players = DraftFileHandler.ReadFile(playerFile);
+            List<Player> players = FileHandler.DraftFileHandler.ReadPlayerFile(playerFile);
 
             PlayerList.Players = await Task.Run(() =>
             {
@@ -227,6 +233,11 @@
                 }
                 teamControl.SetConnected(team.IsConnected, _myTeamIndex > 0);
             }
+        }
+
+        public void UpdateDraftState(DraftState map)
+        {
+            throw new NotImplementedException();
         }
     }
 }
