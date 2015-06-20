@@ -52,6 +52,7 @@
 
         private void RetrieveDraft(Draft draft)
         {
+            if (draft == null) return;
             Application.Current.Dispatcher.Invoke(() =>
             {
                 var draftModel = new ViewModel.Draft(draft.MaxRound, draft.MaxTeam, false);

@@ -23,6 +23,7 @@
         private readonly int _numberOfTeams;
         private readonly int _port;
         private static TcpListener _listener;
+        private bool _isRunning;
 
         public Server(string leagueName, int numberOfTeams)
         {
@@ -36,7 +37,7 @@
         public void StartServer()
         {
             var udpclient = new UdpClient();
-            IsRunning = true;
+            _isRunning = true;
             var formatter = new BinaryFormatter();
             string ipAddress = GetFirstIpAddress();
 
@@ -53,7 +54,7 @@
                 udpclient.JoinMulticastGroup(multicastaddress);
                 var remoteep = new IPEndPoint(multicastaddress, _port);
 
-                while (IsRunning)
+                while (_isRunning)
                 {
                     int connectionCount;
                     lock (_connectionLock)
@@ -90,7 +91,7 @@
 
         public override void Close()
         {
-            IsRunning = false;
+            _isRunning = false;
             lock (_connectionLock)
             {
                 foreach (ConnectedClient connection in Connections)

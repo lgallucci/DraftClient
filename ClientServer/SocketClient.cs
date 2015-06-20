@@ -24,7 +24,7 @@
 
         public bool Connected
         {
-            get { return _clientSocket != null && _clientSocket.Connected; }
+            get { return _clientSocket != null && _clientSocket.Client != null && _clientSocket.Connected; }
         }
 
         public void StartClient()
@@ -155,10 +155,10 @@
         {
             await Task.Run(() =>
             {
-                using (var networkStream = new NetworkStream(_clientSocket.Client))
-                using (var memoryStream = new MemoryStream())
+                try
                 {
-                    try
+                    using (var networkStream = new NetworkStream(_clientSocket.Client))
+                    using (var memoryStream = new MemoryStream())
                     {
                         var formatter = new BinaryFormatter();
                         formatter.Serialize(memoryStream, message);
@@ -175,11 +175,11 @@
                             Close();
                         }
                     }
-                    catch (IOException)
-                    {
-                        OnClientDisconnect(this, Id);
-                        Close();
-                    }
+                }
+                catch (Exception)
+                {
+                    OnClientDisconnect(this, Id);
+                    Close();
                 }
             });
         }

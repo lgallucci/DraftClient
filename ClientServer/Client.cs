@@ -2,24 +2,17 @@
 {
     using System;
     using System.Collections.Concurrent;
-    using System.IO;
     using System.Linq;
     using System.Net;
     using System.Net.Sockets;
-    using System.Runtime.Serialization.Formatters.Binary;
-    using System.Threading.Tasks;
     using System.Timers;
     using DraftEntities;
 
     public class Client
     {
-        protected bool IsRunning;
-        public Task ServerListener;
         private ConnectedClient _client;
-        private UdpClient _updClient;
         private readonly Timer _timKeepAlive;
         private readonly Timer _timAcknowledgeReturn;
-
 
         internal sealed class TimeoutMessage
         {
@@ -31,7 +24,6 @@
 
         public Client()
         {
-            IsRunning = true;
             ClientId = Guid.NewGuid();
             _timKeepAlive = new Timer();
             SentMessages = new ConcurrentDictionary<Guid, TimeoutMessage>();
@@ -51,7 +43,6 @@
                     SendMessage(missedMessage.ConnectedClient, missedMessage.Message);
                 }
             };
-            _timAcknowledgeReturn.Start();
         }
 
         public Guid ClientId { get; set; }
@@ -62,40 +53,6 @@
         }
 
         #region Network Methods
-
-        public void ListenForServers(Action<DraftServer> serverPingCallback)
-        {
-            ServerListener = Task.Run(() =>
-            {
-                _updClient = new UdpClient
-                {
-                    ExclusiveAddressUse = false
-                };
-
-                var localEp = new IPEndPoint(IPAddress.Any, Server.Port);
-
-                _updClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-                _updClient.ExclusiveAddressUse = false;
-
-                _updClient.Client.Bind(localEp);
-
-                IPAddress multicastaddress = IPAddress.Parse(Server.MulticastAddress);
-                _updClient.JoinMulticastGroup(multicastaddress);
-
-                while (IsRunning)
-                {
-                    byte[] serverBroadcastData = _updClient.Receive(ref localEp);
-
-                    var formatter = new BinaryFormatter();
-                    var networkMessage = (NetworkMessage) formatter.Deserialize(new MemoryStream(serverBroadcastData));
-
-                    if (networkMessage.MessageType == NetworkMessageType.ServerBroadcast && networkMessage.MessageContent is DraftServer)
-                    {
-                        serverPingCallback((DraftServer) networkMessage.MessageContent);
-                    }
-                }
-            });
-        }
 
         public void ConnectToDraftServer(string ipAddress, int port)
         {
@@ -108,6 +65,7 @@
                     Id = ClientId
                 }
             };
+            _timAcknowledgeReturn.Start();
 
             _client.Client.ClientMessage += HandleMessage;
             _client.Client.ClientDisconnect += HandleDisconnect;
@@ -167,7 +125,9 @@
 
         private void HandleDisconnect(object sender, Guid e)
         {
-            //TODO: Handle Disconnect
+            SentMessages.Clear();
+            _timKeepAlive.Stop();
+            _timAcknowledgeReturn.Stop();
         }
 
         public virtual void SendMessage(NetworkMessageType type, object payload)
@@ -314,12 +274,9 @@
 
         public virtual void Close()
         {
-            IsRunning = false;
-            if (_updClient != null)
-            {
-                _updClient.Close();
-                _updClient = null;
-            }
+            SentMessages.Clear();
+            _timKeepAlive.Stop();
+            _timAcknowledgeReturn.Stop();
 
             if (_client != null)
             {
