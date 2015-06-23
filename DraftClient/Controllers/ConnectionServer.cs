@@ -102,6 +102,7 @@
             _connection.UserDisconnect += OnUserDisconnect;
             _connection.RetrieveDraft += OnRetrieveDraft;
             _connection.DraftStop += OnDraftStop;
+            _connection.DraftStateChanged += OnDraftStateChanged;
         }
 
         private void RemoveHandlers()
@@ -116,6 +117,7 @@
             _connection.UserDisconnect -= OnUserDisconnect;
             _connection.RetrieveDraft -= OnRetrieveDraft;
             _connection.DraftStop -= OnDraftStop;
+            _connection.DraftStateChanged += OnDraftStateChanged;
         }
 
         public void ConnectToDraft(string ipAddress, int ipPort)
@@ -138,16 +140,17 @@
 
         public void SendMessage(NetworkMessageType sendDraftMessage, object payload)
         {
-            if (_connection is Server)
+            var server = _connection as Server;
+            if (server != null)
             {
-                ((Server)_connection).BroadcastMessage(sendDraftMessage, payload);
+                server.BroadcastMessage(sendDraftMessage, payload);
             }
             else
             {
                 _connection.SendMessage(sendDraftMessage, payload);
             }
         }
-  
+
         public Guid GetClientId()
         {
             return _connection.ClientId;

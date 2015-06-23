@@ -56,7 +56,12 @@
             if (eventHandler != null)
             {
                 eventHandler(this, new PropertyChangedEventArgs(propertyName));
+                AfterPropertyChanged(propertyName);
             }
+        }
+
+        protected virtual void AfterPropertyChanged(string propertyName)
+        {
         }
     }
 }

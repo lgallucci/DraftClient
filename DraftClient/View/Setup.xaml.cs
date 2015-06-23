@@ -18,7 +18,6 @@
     ///     Interaction logic for Setup.xaml
     /// </summary>
     public partial class Setup
-        //TODO: Create Theme chooser
     {
         private readonly SetupController _setupController;
         private MainWindow _draftWindow;
@@ -64,9 +63,9 @@
             }
             catch (TimeoutException ex)
             {
+                ConnectingWindow.Hide();
                 MessageBox.Show(ex.Message);
                 _setupController.DisconnectFromDraftServer();
-                ConnectingWindow.Hide();
             }
         }
 
@@ -108,6 +107,7 @@
                 }
                 catch (Exception ex)
                 {
+                    ConnectingWindow.Hide();
                     MessageBox.Show(ex.Message);
                     _setupController.DisconnectFromDraftServer();
                 }

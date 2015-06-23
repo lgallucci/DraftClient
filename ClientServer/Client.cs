@@ -92,7 +92,7 @@
                         OnUserDisconnect(networkMessage.SenderId);
                         break;
                     case NetworkMessageType.HandShakeMessage:
-                        
+
                         _timKeepAlive.Elapsed += (o, args) => SendMessage(NetworkMessageType.KeepAliveMessage, null);
                         _timKeepAlive.Interval = 5000;
                         _timKeepAlive.Enabled = true;
@@ -115,10 +115,13 @@
                     case NetworkMessageType.DraftStopMessage:
                         OnDraftStop();
                         break;
+                    case NetworkMessageType.UpdateDraftState:
+                        OnDraftStateChanged(networkMessage.MessageContent as DraftState);
+                        break;
                 }
 
                 //Console.WriteLine("Sent Ack Type: {0}, Id: {1}", networkMessage.MessageType.ToString(), networkMessage.MessageId);
-                SendMessage(NetworkMessageType.Ackgnowledge,networkMessage.MessageId);
+                SendMessage(NetworkMessageType.Ackgnowledge, networkMessage.MessageId);
             }
             catch (Exception ex)
             {

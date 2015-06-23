@@ -17,6 +17,7 @@
         };
 
         private readonly DispatcherTimer _timer;
+        private DateTime _lastSoundPlayed;
 
         //TODO: Send timer info over wire
         //TODO: Play sounds
@@ -52,17 +53,24 @@
                     if (timeLeft.TotalDays > 0)
                         CountdownTextBlock.Foreground = (Brush)FindResource("AccentColorBrush3");
                     CountdownTextBlock.Text = "00:00";
-                    PlaySound("");
+                    PlaySound("buzzer");
                 }
             };
         }
         
-        private void PlaySound(string uriPath)
+        private void PlaySound(string soundName)
         {
-            Uri uri = new Uri(@"pack://application:,,,/Resources/buzzer.mp3");
+            if (_lastSoundPlayed.AddSeconds(1.1) > DateTime.UtcNow)
+            {
+                return;
+            }
+
+            Uri uri = new Uri(string.Format(@"pack://application:,,,/Resources/{0}.mp3", soundName));
             var player = new MediaPlayer();
             player.Open(uri);
             player.Play();
+
+            _lastSoundPlayed = DateTime.UtcNow;
         }
 
         public void PopulateState(DraftState state)
@@ -72,12 +80,31 @@
             DataContext = State;
             _timer.Start();
         }
+        
+        public void UpdateState(DateTime pickEndTime, DateTime pickPauseTime, bool drafting)
+        {
+            if (pickPauseTime == DateTime.MinValue && State.PickPauseTime > DateTime.MinValue)
+            {
+                State.PausedTime = State.PausedTime + (DateTime.UtcNow - State.PickPauseTime);
+            }
+
+            if (drafting && !State.Drafting)
+            {
+                State.PausedTime = new TimeSpan(0, 0, 0);
+            }
+
+            State.PickEndTime = pickEndTime;
+            State.PickPauseTime = pickPauseTime;
+            State.Drafting = drafting;
+        }
 
         private DraftState State { get; set; }
 
         private void ResetDraftButton_OnClick(object sender, RoutedEventArgs e)
         {
-            ResetDraftTimer();
+            State.Drafting = false;
+            State.PickPauseTime = DateTime.UtcNow;
+            State.PickEndTime = DateTime.UtcNow + new TimeSpan(0, 0, State.DraftSeconds);
             OnDraftStateChanged(State);
         }
 
@@ -86,6 +113,7 @@
             State.Drafting = true;
             State.PickEndTime = DateTime.UtcNow + new TimeSpan(0, 0, State.DraftSeconds);
             State.PickPauseTime = DateTime.MinValue;
+            State.PausedTime = new TimeSpan(0,0,0);
             OnDraftStateChanged(State);
         }
 
@@ -100,13 +128,6 @@
             State.PausedTime = State.PausedTime + (DateTime.UtcNow - State.PickPauseTime);
             State.PickPauseTime = DateTime.MinValue;
             OnDraftStateChanged(State);
-        }
-
-        public void ResetDraftTimer()
-        {
-            State.Drafting = false;
-            State.PickPauseTime = DateTime.MinValue;
-            State.PickEndTime = DateTime.UtcNow + new TimeSpan(0, 0, State.DraftSeconds);
         }
 
         #region Events

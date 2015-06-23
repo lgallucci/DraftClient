@@ -192,12 +192,12 @@
 
         public void DraftStateChanged(DraftState state)
         {
-            Application.Current.Dispatcher.Invoke(() => _mainWindow.UpdateDraftState(Mapper.Map<ViewModel.DraftState>(state)));
+            Application.Current.Dispatcher.Invoke(() => _mainWindow.UpdateDraftState(state));
         }
 
         public void DraftStop()
         {
-            Application.Current.Dispatcher.Invoke(() => _mainWindow.CloseWindow("Draft Closed by Server"));
+            Application.Current.Dispatcher.Invoke(() => _mainWindow.CloseWindow("Draft Closed by Server", true));
         }
     }
 }

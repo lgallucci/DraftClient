@@ -29,6 +29,7 @@
         private readonly DraftController _draftController;
         public AutoResetEvent DraftReset;
         private int _myTeamIndex = -1;
+        private bool _dontPrompt = false;
 
         public MainWindow(bool isServer)
         {
@@ -41,12 +42,14 @@
 
         private void OnClosing(object sender, CancelEventArgs e)
         {
+            if (_dontPrompt) return;
+
             MessageBoxResult messageBoxResult = MessageBox.Show(string.Format("Are you sure?{0}This will {1} the draft", Environment.NewLine,
                 _draftController.IsServer ? "close" : "leave"), "Close Confirmation", MessageBoxButton.YesNo);
 
             if (messageBoxResult == MessageBoxResult.Yes)
             {
-                CloseWindow("Draft Closed");
+                CloseWindow("Draft Closed", false);
             }
             else
             {
@@ -54,12 +57,18 @@
             }
         }
 
-        public void CloseWindow(string resetMessage)
+        public void CloseWindow(string resetMessage, bool closeWindow)
         {
             if (Owner != null)
             {
                 ((Setup)Owner).Reset(_draftController.IsServer, resetMessage);
                 Owner.Show();
+            }
+
+            if (closeWindow)
+            {
+                _dontPrompt = true; 
+                Close();
             }
         }
 
@@ -235,9 +244,9 @@
             }
         }
 
-        public void UpdateDraftState(DraftState map)
+        public void UpdateDraftState(DraftEntities.DraftState state)
         {
-            throw new NotImplementedException();
+            DraftTimerControl.UpdateState(state.PickEndTime, state.PickPauseTime, state.Drafting);
         }
     }
 }

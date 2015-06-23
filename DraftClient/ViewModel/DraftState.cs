@@ -10,6 +10,14 @@
         private bool _drafting;
         private int _draftSeconds;
 
+        public DraftState()
+        {
+            PickEndTime = DateTime.UtcNow;
+            PickPauseTime = DateTime.MinValue;
+            _isServer = false;
+            DraftSeconds = 0;
+        }
+
         public DraftState(bool isServer, int numberOfSeconds)
         {
             PickEndTime = DateTime.UtcNow;
@@ -21,24 +29,23 @@
         public DateTime PickEndTime
         {
             get { return _pickEndTime; }
-            set
-            {
-                SetProperty(ref _pickEndTime, value);
-                OnPropertyChanged("CanPause");
-                OnPropertyChanged("CanResume");
-                OnPropertyChanged("IsRunning");
-            }
+            set { SetProperty(ref _pickEndTime, value); }
         }
 
         public DateTime PickPauseTime
         {
             get { return _pickPauseTime; }
-            set
+            set { SetProperty(ref _pickPauseTime, value);}
+        }
+
+        protected override void AfterPropertyChanged(string propertyName)
+        {
+            if (propertyName == "PickPauseTime" || propertyName == "PickEndTime")
             {
-                SetProperty(ref _pickPauseTime, value);
+                OnPropertyChanged("CanStart");
+                OnPropertyChanged("CanReset");
                 OnPropertyChanged("CanPause");
                 OnPropertyChanged("CanResume");
-                OnPropertyChanged("IsRunning");
             }
         }
 
@@ -50,7 +57,12 @@
             set { SetProperty(ref _drafting, value); }
         }
 
-        public bool IsRunning
+        public bool CanStart
+        {
+            get { return !_drafting && _isServer; }
+        }
+
+        public bool CanReset
         {
             get { return _drafting && _isServer; }
         }

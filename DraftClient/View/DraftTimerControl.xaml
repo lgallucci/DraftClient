@@ -18,13 +18,13 @@
     <Grid>
         <StackPanel HorizontalAlignment="Center" >
             <StackPanel Name="TimeDraftPanel" Orientation="Horizontal">
-                <Button Style="{StaticResource AccentedSquareButtonStyle}" Visibility="{Binding Path=IsRunning, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
+                <Button Style="{StaticResource AccentedSquareButtonStyle}" Visibility="{Binding Path=CanStart, Converter={StaticResource BooleanToVisibilityConverter}}"
                         controls:ButtonHelper.PreserveTextCase ="True"
                         FontWeight="DemiBold" Height="50" Width="75" Content="Start" FontFamily="Segoe UI" FontSize="16" Margin="5 0 0 0"
                         Click="StartDraftButton_OnClick"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center" />
-                <Button Style="{StaticResource AccentedSquareButtonStyle}" Visibility="{Binding Path=IsRunning, Converter={StaticResource BooleanToVisibilityConverter}}"
+                <Button Style="{StaticResource AccentedSquareButtonStyle}" Visibility="{Binding Path=CanReset, Converter={StaticResource BooleanToVisibilityConverter}}"
                         Background="{StaticResource AccentColorBrush2}"
                         controls:ButtonHelper.PreserveTextCase ="True"
                         FontWeight="DemiBold" Height="50" Width="75" Content="Reset" FontFamily="Segoe UI" FontSize="16" Margin="5 0 0 0"
@@ -32,12 +32,14 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center" />
                 <Button Style="{StaticResource AccentedSquareButtonStyle}" Visibility="{Binding Path=CanPause, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        IsEnabled="{Binding Path=CanReset}"
                         controls:ButtonHelper.PreserveTextCase ="True"
                         FontWeight="DemiBold" Height="50" Width="75" Content="Pause" FontFamily="Segoe UI" FontSize="16" Margin="5 0 0 0"
                         Click="PauseDraftButton_OnClick"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center" />
                 <Button Style="{StaticResource AccentedSquareButtonStyle}" Visibility="{Binding Path=CanResume, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        IsEnabled="{Binding Path=CanReset}"
                         Background="{StaticResource AccentColorBrush2}"
                         controls:ButtonHelper.PreserveTextCase ="True"
                         FontWeight="DemiBold" Height="50" Width="75" Content="Resume" FontFamily="Segoe UI" FontSize="16" Margin="5 0 0 0"
