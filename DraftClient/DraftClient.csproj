@@ -87,8 +87,10 @@
     <Compile Include="ViewModel\DraftSettings.cs" />
     <Compile Include="ViewModel\DraftState.cs" />
     <Compile Include="ViewModel\DraftTeam.cs" />
+    <Compile Include="ViewModel\PlayerHistory.cs" />
     <Compile Include="ViewModel\PlayerList.cs" />
     <Compile Include="ViewModel\Player.cs" />
+    <Compile Include="ViewModel\TeamSchedule.cs" />
     <Compile Include="ViewModel\ValidatableBase.cs" />
     <Compile Include="View\DraftTimerControl.xaml.cs">
       <DependentUpon>DraftTimerControl.xaml</DependentUpon>
@@ -177,6 +179,9 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <None Include="Resources\TeamSchedules.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -213,6 +218,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Entypo.ttf" />
+    <None Include="Resources\FantasyPlayers.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\FantasyPlayersHistory.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\glass_ping.mp3" />
   </ItemGroup>
   <ItemGroup>

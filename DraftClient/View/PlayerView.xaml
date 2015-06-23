@@ -28,15 +28,19 @@
                   AutoGenerateColumns="False"
                   IsReadOnly="True" HorizontalScrollBarVisibility="Hidden">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ADP" FontSize="12"
-                                    Binding="{Binding AverageDraftPosition}" Width="*" />
-                <DataGridTextColumn Header="Name" FontSize="12" Binding="{Binding Name}" Width="2*" />
-                <DataGridTextColumn Header="POS" FontSize="12"
-                                    Binding="{Binding Position, Converter={StaticResource EnumConverter}}" Width="*" />
-                <DataGridTextColumn Header="Team" FontSize="12" Binding="{Binding Team}" Width="*" />
-                <DataGridTextColumn Header="Bye" FontSize="12" Binding="{Binding ByeWeek}" Width="*" />
-                <DataGridTextColumn Header="Proj Pts" FontSize="12" Binding="{Binding ProjectedPoints}"
-                                    Width="*" />
+                <DataGridTextColumn Header="ADP" FontSize="11" Binding="{Binding AverageDraftPosition}" Width="*" />
+                <DataGridTextColumn Header="Name" FontSize="11" Binding="{Binding Name}" Width="3*" />
+                <DataGridTextColumn Header="POS" FontSize="11" Binding="{Binding Position, Converter={StaticResource EnumConverter}}" Width="*" />
+                <DataGridTextColumn Header="Team" FontSize="11" Binding="{Binding Team}" Width="*" />
+                <DataGridTextColumn Header="Bye" FontSize="11" Binding="{Binding ByeWeek}" Width="*" />
+                <DataGridTextColumn Header="Proj Pts" FontSize="11" Binding="{Binding ProjectedPoints}" Width="*" />
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Style="{StaticResource AccentedSquareButtonStyle}" Content="🔍" Click="PlayerClick"></Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
             <DataGrid.RowStyle>
                 <Style TargetType="{x:Type DataGridRow}" BasedOn="{StaticResource MetroDataGridRow}">

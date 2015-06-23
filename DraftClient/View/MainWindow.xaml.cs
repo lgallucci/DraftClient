@@ -10,15 +10,9 @@
     using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Controls;
-    using DraftClient.Controllers;
-    using DraftEntities;
     using Omu.ValueInjecter;
-    using Draft = DraftClient.ViewModel.Draft;
-    using DraftSettings = DraftClient.ViewModel.DraftSettings;
-    using DraftState = ViewModel.DraftState;
-    using DraftTeam = DraftClient.ViewModel.DraftTeam;
-    using Player = DraftEntities.Player;
-    using PlayerList = DraftClient.ViewModel.PlayerList;
+    using Controllers;
+    using ViewModel;
 
     /// <summary>
     ///     Interaction logic for MainWindow.xaml
@@ -29,7 +23,8 @@
         private readonly DraftController _draftController;
         public AutoResetEvent DraftReset;
         private int _myTeamIndex = -1;
-        private bool _dontPrompt = false;
+        private bool _dontPrompt;
+        private readonly Player _displayPlayer = new Player();
 
         public MainWindow(bool isServer)
         {
@@ -37,6 +32,14 @@
             _draftController = new DraftController(this)
             {
                 IsServer = isServer
+            };
+
+            PlayerView.PlayerClicked += player =>
+            {
+                _displayPlayer.InjectFrom(player);
+
+                PlayerFlyout.Header = player.Name;
+                PlayerFlyout.IsOpen = true;
             };
         }
 
@@ -78,7 +81,7 @@
             {
                 _draftController.Settings = settings;
 
-                LoadPlayers(settings.PlayerFile);
+                LoadPlayers();
 
                 await RetrieveDraft();
 
@@ -111,7 +114,7 @@
         private void SetupGrid(DraftSettings settings)
         {
             DraftTimerControl.PopulateState(_draftController.CurrentDraft.State);
-            DraftTimerControl.DraftStateChanged += (state) => _draftController.UpdateDraftState(state);
+            DraftTimerControl.DraftStateChanged += state => _draftController.UpdateDraftState(state);
 
             for (int i = 0; i < settings.NumberOfTeams + 1; i++)
             {
@@ -192,7 +195,7 @@
                     };
                     if (_draftController.IsServer)
                     {
-                        newRound.MakePick += (adp, row, column) => _draftController.MakeMove(new DraftPick
+                        newRound.MakePick += (adp, row, column) => _draftController.MakeMove(new DraftEntities.DraftPick
                         {
                             AverageDraftPosition = adp,
                             Row = row - 1,
@@ -206,25 +209,13 @@
             }
         }
 
-        private async void LoadPlayers(string playerFile)
+        private void LoadPlayers()
         {
-            List<Player> players = FileHandler.DraftFileHandler.ReadPlayerFile(playerFile);
+            List<Player> players = FileHandler.DraftFileHandler.ReadCsvFile<Player>(_draftController.Settings.PlayerFile);
+            List<PlayerHistory> histories = FileHandler.DraftFileHandler.ReadCsvFile<PlayerHistory>(_draftController.Settings.PlayerFile);
 
-            PlayerList.Players = await Task.Run(() =>
-            {
-                List<ViewModel.Player> presentationPlayers = players.Select(player => new ViewModel.Player
-                {
-                    AverageDraftPosition = player.AverageDraftPosition,
-                    Name = player.Name,
-                    Position = player.Position,
-                    Team = player.Team,
-                    ByeWeek = player.ByeWeek,
-                    ProjectedPoints = player.ProjectedPoints,
-                    IsPicked = false
-                }).ToList();
-
-                return new ObservableCollection<ViewModel.Player>(presentationPlayers);
-            });
+            PlayerList.Players = new ObservableCollection<Player>(players);
+            PlayerList.Histories = new ObservableCollection<PlayerHistory>(histories);
         }
 
         public void UpdateTeam(DraftTeam team)
@@ -248,5 +239,11 @@
         {
             DraftTimerControl.UpdateState(state.PickEndTime, state.PickPauseTime, state.Drafting);
         }
+
+        #region PlayerFlyout
+
+
+
+        #endregion
     }
 }

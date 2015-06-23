@@ -11,6 +11,7 @@
         private PlayerPosition _position;
         private decimal _projectedPoints;
         private string _team;
+        private int _playerId;
 
         public int AverageDraftPosition
         {
@@ -46,6 +47,12 @@
         {
             get { return _projectedPoints; }
             set { SetProperty(ref _projectedPoints, value); }
+        }
+
+        public int PlayerId
+        {
+            get { return _playerId; }
+            set { SetProperty(ref _playerId, value); }
         }
 
         public bool IsPicked

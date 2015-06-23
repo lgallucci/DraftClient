@@ -1,6 +1,7 @@
 ﻿namespace DraftClient.View
 {
     using System.Windows;
+    using System.Windows.Controls;
     using System.Windows.Data;
     using DraftEntities;
     using Player = DraftClient.ViewModel.Player;
@@ -66,5 +67,33 @@
         {
             CollectionViewSource.GetDefaultView(dataGrid1.ItemsSource).Refresh();
         }
+
+        private void PlayerClick(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            if (button != null)
+            {
+                var viewPlayer = button.DataContext as Player;
+
+                OnPlayerClicked(viewPlayer);
+            }
+        }
+
+        #region Events
+
+        public delegate void PlayerClickedHandler(Player player);
+
+        public event PlayerClickedHandler PlayerClicked;
+
+        public void OnPlayerClicked(Player player)
+        {
+            PlayerClickedHandler handler = PlayerClicked;
+            if (handler != null)
+            {
+                handler(player);
+            }
+        }
+
+        #endregion
     }
 }
