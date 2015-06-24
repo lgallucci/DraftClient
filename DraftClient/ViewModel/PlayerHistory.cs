@@ -8,21 +8,15 @@
         private int _team;
         private int _gamesPlayed;
         private int _passingYards;
-        private decimal _week3Points;
-        private decimal _week4Points;
-        private decimal _week5Points;
-        private decimal _week6Points;
-        private decimal _week7Points;
-        private decimal _week8Points;
-        private decimal _week9Points;
-        private decimal _week10Points;
-        private decimal _week11Points;
-        private decimal _week12Points;
-        private decimal _week13Points;
-        private decimal _week14Points;
-        private decimal _week15Points;
-        private decimal _week16Points;
-        private decimal _week17Points;
+        private int _passingTouchdowns;
+        private int _passingInterceptions;
+        private int _rushingAttempts;
+        private int _rushingYards;
+        private int _rushingTouchdowns;
+        private int _receptions;
+        private int _receivingYards;
+        private int _receivingTouchdowns;
+        private decimal _fantasyPoints;
 
         public int PlayerId
         {
@@ -54,80 +48,49 @@
             get { return _passingYards; }
             set { SetProperty(ref _passingYards, value); }
         }
-        public decimal Week3Points
+        public int PassingTouchdowns
         {
-            get { return _week3Points; }
-            set { SetProperty(ref _week3Points, value); }
+            get { return _passingTouchdowns; }
+            set { SetProperty(ref _passingTouchdowns, value); }
         }
-        public decimal Week4Points
+        public int PassingInterceptions
         {
-            get { return _week4Points; }
-            set { SetProperty(ref _week4Points, value); }
+            get { return _passingInterceptions; }
+            set { SetProperty(ref _passingInterceptions, value); }
         }
-        public decimal Week5Points
+        public int RushingAttempts
         {
-            get { return _week5Points; }
-            set { SetProperty(ref _week5Points, value); }
+            get { return _rushingAttempts; }
+            set { SetProperty(ref _rushingAttempts, value); }
         }
-        public decimal Week6Points
+        public int RushingYards
         {
-            get { return _week6Points; }
-            set { SetProperty(ref _week6Points, value); }
+            get { return _rushingYards; }
+            set { SetProperty(ref _rushingYards, value); }
         }
-        public decimal Week7Points
+        public int RushingTouchdowns
         {
-            get { return _week7Points; }
-            set { SetProperty(ref _week7Points, value); }
+            get { return _rushingTouchdowns; }
+            set { SetProperty(ref _rushingTouchdowns, value); }
         }
-        public decimal Week8Points
+        public int Receptions
         {
-            get { return _week8Points; }
-            set { SetProperty(ref _week8Points, value); }
+            get { return _receptions; }
+            set { SetProperty(ref _receptions, value); }
         }
-        public decimal Week9Points
+        public int ReceivingYards
         {
-            get { return _week9Points; }
-            set { SetProperty(ref _week9Points, value); }
+            get { return _receivingYards; }
+            set { SetProperty(ref _receivingYards, value); }
         }
-        public decimal Week10Points
+        public int ReceivingTouchdowns
         {
-            get { return _week10Points; }
-            set { SetProperty(ref _week10Points, value); }
+            get { return _receivingTouchdowns; }
+            set { SetProperty(ref _receivingTouchdowns, value); }
         }
-        public decimal Week11Points
+        public decimal FantasyPoints
         {
-            get { return _week11Points; }
-            set { SetProperty(ref _week11Points, value); }
+            get { return _fantasyPoints; }
+            set { SetProperty(ref _fantasyPoints, value); }
         }
-        public decimal Week12Points
-        {
-            get { return _week12Points; }
-            set { SetProperty(ref _week12Points, value); }
-        }
-        public decimal Week13Points
-        {
-            get { return _week13Points; }
-            set { SetProperty(ref _week13Points, value); }
-        }
-        public decimal Week14Points
-        {
-            get { return _week14Points; }
-            set { SetProperty(ref _week14Points, value); }
-        }
-        public decimal Week15Points
-        {
-            get { return _week15Points; }
-            set { SetProperty(ref _week15Points, value); }
-        }
-        public decimal Week16Points
-        {
-            get { return _week16Points; }
-            set { SetProperty(ref _week16Points, value); }
-        }
-        public decimal Week17Points
-        {
-            get { return _week17Points; }
-            set { SetProperty(ref _week17Points, value); }
-        }
-    }
 }
