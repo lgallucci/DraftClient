@@ -76,9 +76,17 @@
 
             foreach (PropertyInfo prop in props)
             {
-                prop.SetValue(newObject, values[columns[prop.Name]]);
+                prop.SetValue(newObject, typeof(DraftFileHandler).GetMethod("ConvertWithEnum").MakeGenericMethod(prop.PropertyType).Invoke(null, new object[] { values[columns[prop.Name]] }));
             }
             return newObject;
+        }
+
+        public static T ConvertWithEnum<T>(String value)
+        {
+            if (typeof(T).IsEnum)
+                return (T)Enum.Parse(typeof(T), value);
+
+            return (T)Convert.ChangeType(value, typeof(T));
         }
 
         public static Theme ReadThemeFile(string fileName)

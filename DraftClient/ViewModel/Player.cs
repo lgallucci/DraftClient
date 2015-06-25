@@ -1,5 +1,6 @@
 ﻿namespace DraftClient.ViewModel
 {
+    using System.Windows;
     using DraftEntities;
 
     public class Player : BindableBase
@@ -12,6 +13,7 @@
         private decimal _projectedPoints;
         private string _team;
         private int _playerId;
+        private Int32Rect _logoRectangle;
 
         public int AverageDraftPosition
         {
@@ -34,7 +36,11 @@
         public string Team
         {
             get { return _team; }
-            set { SetProperty(ref _team, value); }
+            set
+            {
+                SetProperty(ref _team, value);
+                LogoRectangle = GetLogoRectangle(_team);
+            }
         }
 
         public int ByeWeek
@@ -59,6 +65,23 @@
         {
             get { return _isPicked; }
             set { SetProperty(ref _isPicked, value); }
+        }
+
+        public Int32Rect LogoRectangle
+        {
+            get { return _logoRectangle; }
+            set { SetProperty(ref _logoRectangle, value); }
+        }
+
+        private Int32Rect GetLogoRectangle(string team)
+        {
+            switch (team)
+            {
+                case "CHI":
+                    return new Int32Rect(2000, 0, 400, 400);
+            }
+
+            return new Int32Rect(0, 0, 400, 400);
         }
     }
 }

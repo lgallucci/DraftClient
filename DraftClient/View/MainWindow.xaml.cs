@@ -89,7 +89,7 @@
             }
             catch (IOException)
             {
-                MessageBox.Show("Couldn't find or read the players file.  Please enter a valid file location in the box.");
+                MessageBox.Show("Couldn't find or read the players file.");
                 return false;
             }
 
@@ -211,11 +211,22 @@
 
         private void LoadPlayers()
         {
-            List<Player> players = FileHandler.DraftFileHandler.ReadCsvFile<Player>(_draftController.Settings.PlayerFile);
-            List<PlayerHistory> histories = FileHandler.DraftFileHandler.ReadCsvFile<PlayerHistory>(_draftController.Settings.PlayerFile);
+            List<DraftEntities.Player> players = FileHandler.DraftFileHandler.ReadCsvFile<DraftEntities.Player>(_draftController.Settings.PlayerFile);
+            //List<PlayerHistory> histories = FileHandler.DraftFileHandler.ReadCsvFile<PlayerHistory>(_draftController.Settings.PlayerFile);
 
-            PlayerList.Players = new ObservableCollection<Player>(players);
-            PlayerList.Histories = new ObservableCollection<PlayerHistory>(histories);
+            List<Player> presentationPlayers = players.Select(player => new Player
+            {
+                AverageDraftPosition = player.AverageDraftPosition,
+                Name = player.Name,
+                Position = player.Position,
+                Team = player.Team,
+                ByeWeek = player.ByeWeek,
+                ProjectedPoints = player.ProjectedPoints,
+                IsPicked = false,
+            }).ToList();
+
+            PlayerList.Players = new ObservableCollection<Player>(presentationPlayers);
+            //PlayerList.Histories = new ObservableCollection<PlayerHistory>(histories);
         }
 
         public void UpdateTeam(DraftTeam team)

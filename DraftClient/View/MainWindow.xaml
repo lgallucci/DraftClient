@@ -8,13 +8,25 @@
     xmlns:local="clr-namespace:DraftClient.View"
     Title="Fantasy Football Draft Tool" Width="1725" Height="950" 
     Closing="OnClosing" ResizeMode="CanMinimize">
+    <controls:MetroWindow.Resources>
+        <ResourceDictionary>
+
+            <ImageBrush x:Key="TeamLogoSource">
+                <ImageBrush.ImageSource>
+                    <CroppedBitmap Source="pack://application:,,,/Resources/team_gloves_all.png" SourceRect="{Binding LogoRectangle}"  />
+                </ImageBrush.ImageSource>
+            </ImageBrush>
+
+        </ResourceDictionary>
+    </controls:MetroWindow.Resources>
+    
     <controls:MetroWindow.Flyouts>
         <controls:FlyoutsControl>
             <controls:Flyout Header="{Binding Name}"
                              Position="Left"
                              Theme="Adapt"
                              x:Name="PlayerFlyout">
-                <Grid Margin="10" Width="400">
+                <Grid Margin="10" Width="400" Background="{StaticResource TeamLogoSource}">
                     <TextBlock Text="This flyout has the inverse theme of the current window theme" />
                 </Grid>
             </controls:Flyout>
