@@ -54,6 +54,10 @@
       <Project>{48F75AA8-1885-49B6-808F-7751D68AB756}</Project>
       <Name>DraftClient</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DraftEntities\DraftEntities.csproj">
+      <Project>{65184f9c-4e20-4e4a-8f1c-0f61c4f1d5c9}</Project>
+      <Name>DraftEntities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FileReader\FileHandler.csproj">
       <Project>{5D8786F4-B2D3-4E26-9279-A30624DC485C}</Project>
       <Name>FileHandler</Name>

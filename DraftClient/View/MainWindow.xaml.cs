@@ -70,7 +70,7 @@
 
             if (closeWindow)
             {
-                _dontPrompt = true; 
+                _dontPrompt = true;
                 Close();
             }
         }
@@ -211,22 +211,38 @@
 
         private void LoadPlayers()
         {
-            List<DraftEntities.Player> players = FileHandler.DraftFileHandler.ReadCsvFile<DraftEntities.Player>(_draftController.Settings.PlayerFile);
-            //List<PlayerHistory> histories = FileHandler.DraftFileHandler.ReadCsvFile<PlayerHistory>(_draftController.Settings.PlayerFile);
+            List<DraftEntities.Player> players =
+                FileHandler.DraftFileHandler.ReadCsvFile<DraftEntities.Player>("FantasyPlayers.csv");
+            List<DraftEntities.PlayerHistory> histories =
+                FileHandler.DraftFileHandler.ReadCsvFile<DraftEntities.PlayerHistory>("FantasyPlayersHistory.csv");
+            List<DraftEntities.TeamSchedule> schedules =
+                FileHandler.DraftFileHandler.ReadCsvFile<DraftEntities.TeamSchedule>("TeamSchedules.csv");
 
-            List<Player> presentationPlayers = players.Select(player => new Player
+            List<Player> presentationPlayers = players.Select(player =>
             {
-                AverageDraftPosition = player.AverageDraftPosition,
-                Name = player.Name,
-                Position = player.Position,
-                Team = player.Team,
-                ByeWeek = player.ByeWeek,
-                ProjectedPoints = player.ProjectedPoints,
-                IsPicked = false,
+                var tempPlayer = new Player();
+                tempPlayer.InjectFrom(player);
+                return tempPlayer;
+            }).ToList();
+
+            List<PlayerHistory> presentationHistories =
+                histories.Select(history =>
+                {
+                    var tempHistory = new PlayerHistory();
+                    tempHistory.InjectFrom(history);
+                    return tempHistory;
+                }).ToList();
+
+            List<TeamSchedule> presentationSchedules = schedules.Select(schedule =>
+            {
+                var tempSchedule = new TeamSchedule();
+                tempSchedule.InjectFrom(schedule);
+                return tempSchedule;
             }).ToList();
 
             PlayerList.Players = new ObservableCollection<Player>(presentationPlayers);
-            //PlayerList.Histories = new ObservableCollection<PlayerHistory>(histories);
+            PlayerList.Histories = new ObservableCollection<PlayerHistory>(presentationHistories);
+            PlayerList.Schedules = new ObservableCollection<TeamSchedule>(presentationSchedules);
         }
 
         public void UpdateTeam(DraftTeam team)

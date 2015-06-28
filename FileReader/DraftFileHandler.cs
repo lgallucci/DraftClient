@@ -30,7 +30,7 @@
                         {
                             columns[values[i]] = i;
                         }
-                        
+
                         firstLine = false;
                         continue;
                     }
@@ -38,7 +38,7 @@
                     objectList.Add(CreateObject<T>(columns, values));
                 }
             }
-
+            fileStream.Close();
             return objectList;
         }
 
@@ -48,20 +48,18 @@
             //before your loop
             var csv = new StringBuilder();
             string line = string.Empty;
+            IList<PropertyInfo> props = new List<PropertyInfo>(typeof(T).GetProperties());
 
             if (hasHeader)
             {
-                IList<PropertyInfo> props = new List<PropertyInfo>(typeof(T).GetProperties());
-                line = props.Aggregate(line, (current, prop) => current + "," + string.Format("{0}", prop.Name));
-                csv.AppendLine(string.Format("{0}{1}", line, Environment.NewLine));
+                csv.AppendLine(string.Join(",", props.Select(p => p.Name)));
             }
 
             //in your loop
             foreach (var o in objects)
             {
-                IList<PropertyInfo> props = new List<PropertyInfo>(o.GetType().GetProperties());
-                line = props.Aggregate(line, (current, prop) => current + "," + string.Format("{0}", prop.GetValue(o)));
-                csv.Append(string.Format("{0}{1}", line, Environment.NewLine));
+                var o1 = o;
+                csv.AppendLine(string.Join(",", props.Select(p => p.GetValue(o1))));
             }
 
             //after your loop
@@ -83,10 +81,17 @@
 
         public static T ConvertWithEnum<T>(String value)
         {
-            if (typeof(T).IsEnum)
-                return (T)Enum.Parse(typeof(T), value);
+            try
+            {
+                if (typeof(T).IsEnum)
+                    return (T)Enum.Parse(typeof(T), value);
 
-            return (T)Convert.ChangeType(value, typeof(T));
+                return (T)Convert.ChangeType(value, typeof(T));
+            }
+            catch (FormatException)
+            {
+                return default(T);
+            }
         }
 
         public static Theme ReadThemeFile(string fileName)

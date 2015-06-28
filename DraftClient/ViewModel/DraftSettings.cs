@@ -11,7 +11,6 @@
         private int _kickers = 1;
         private string _leagueName = "";
         private int _numberOfTeams = 12;
-        private string _playerFile = @"FantasyPlayerRankings.csv";
         private int _quarterbacks = 1;
         private int _runningBacks = 2;
         private ObservableCollection<DraftServer> _servers;
@@ -98,12 +97,6 @@
         {
             get { return _numberOfSeconds; }
             set { SetProperty(ref _numberOfSeconds, value); }
-        }
-
-        public string PlayerFile
-        {
-            get { return _playerFile; }
-            set { SetProperty(ref _playerFile, value); }
         }
 
         public ObservableCollection<DraftServer> Servers

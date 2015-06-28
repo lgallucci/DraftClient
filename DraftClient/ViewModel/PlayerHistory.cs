@@ -5,7 +5,9 @@
         private int _playerId;
         private string _name;
         private int _year;
-        private int _team;
+        private string _team;
+        private string _position;
+        private int _age;
         private int _gamesPlayed;
         private int _passingYards;
         private int _passingTouchdowns;
@@ -16,7 +18,10 @@
         private int _receptions;
         private int _receivingYards;
         private int _receivingTouchdowns;
+        private decimal _fieldGoalPercentage;
         private decimal _fantasyPoints;
+        private int _positionRank;
+        private int _overallRank;
 
         public int PlayerId
         {
@@ -36,10 +41,22 @@
             set { SetProperty(ref _year, value); }
         }
 
-        public int Team
+        public string Team
         {
             get { return _team; }
             set { SetProperty(ref _team, value); }
+        }
+
+        public string Position
+        {
+            get { return _position; }
+            set { SetProperty(ref _position, value); }
+        }
+
+        public int Age
+        {
+            get { return _age; }
+            set { SetProperty(ref _age, value); }
         }
 
         public int GamesPlayed
@@ -102,10 +119,28 @@
             set { SetProperty(ref _receivingTouchdowns, value); }
         }
 
+        public decimal FieldGoalPercentage
+        {
+            get { return _fieldGoalPercentage; }
+            set { SetProperty(ref _fieldGoalPercentage, value); }
+        }
+
         public decimal FantasyPoints
         {
             get { return _fantasyPoints; }
             set { SetProperty(ref _fantasyPoints, value); }
+        }
+
+        public int PositionRank
+        {
+            get { return _positionRank; }
+            set { SetProperty(ref _positionRank, value); }
+        }
+
+        public int OverallRank
+        {
+            get { return _overallRank; }
+            set { SetProperty(ref _overallRank, value); }
         }
     }
 }
