@@ -133,9 +133,9 @@ namespace DraftClient.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap team_gloves_all {
+        public static System.Drawing.Bitmap team_gloves_all_trans {
             get {
-                object obj = ResourceManager.GetObject("team_gloves_all", resourceCulture);
+                object obj = ResourceManager.GetObject("team_gloves_all_trans", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

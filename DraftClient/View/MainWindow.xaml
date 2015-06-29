@@ -10,28 +10,7 @@
     Closing="OnClosing" ResizeMode="CanMinimize">
     <controls:MetroWindow.Flyouts>
         <controls:FlyoutsControl>
-            <controls:Flyout Header="{Binding Name}"
-                             Position="Left"
-                             Theme="Adapt"
-                             x:Name="PlayerFlyout">
-                <Grid Margin="10" Width="400">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="400" />
-                    </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="0" Text="This flyout has the inverse theme of the current window theme" />
-                    <StackPanel Grid.Row="1" Height="400">
-                        <StackPanel.Background>
-                            <ImageBrush Stretch="None"
-                                        AlignmentY="Top"
-                                        Opacity=".60" 
-                                        ImageSource="pack://application:,,,/Resources/team_gloves_all.png" 
-                                        Viewbox="{Binding LogoRectangle}" 
-                                        ViewboxUnits="Absolute"/>
-                        </StackPanel.Background>
-                    </StackPanel>
-                </Grid>
-            </controls:Flyout>
+            <local:PlayerFlyout x:Name="PlayerFlyout" DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorLevel=1, AncestorType=Window}, Path=DisplayPlayer}" />
         </controls:FlyoutsControl>
     </controls:MetroWindow.Flyouts>
     <Grid  Name="MainGrid" HorizontalAlignment="Stretch"

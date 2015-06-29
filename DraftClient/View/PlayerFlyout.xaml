@@ -1,0 +1,29 @@
+﻿<controls:Flyout x:Class="DraftClient.View.PlayerFlyout"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="950"
+             d:DesignWidth="400"
+             Theme="Adapt"
+             Width="400"
+             Header="{Binding Name}"
+             Position="Left">
+    <StackPanel Margin="0 -75 0 0">
+        <StackPanel.Background>
+            <ImageBrush Stretch="Uniform"
+                        AlignmentY="Top"
+                        Opacity=".60" 
+                        ImageSource="pack://application:,,,/Resources/team_gloves_all_trans.png" 
+                        Viewbox="{Binding LogoRectangle}" 
+                        ViewboxUnits="Absolute"
+                        Viewport="0,0,150,150"
+                        ViewportUnits="Absolute" />
+        </StackPanel.Background>
+        <ScrollViewer Margin="0 75 0 0" VerticalScrollBarVisibility="Auto">
+            <TextBlock Text="HERES SOME STUFF" />
+        </ScrollViewer>
+    </StackPanel>
+</controls:Flyout>

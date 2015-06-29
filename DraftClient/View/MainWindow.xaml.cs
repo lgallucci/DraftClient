@@ -19,12 +19,12 @@
     /// </summary>
     public partial class MainWindow
     {
-        public static PlayerList PlayerList = new PlayerList();
         private readonly DraftController _draftController;
-        public AutoResetEvent DraftReset;
         private int _myTeamIndex = -1;
         private bool _dontPrompt;
-        private readonly Player _displayPlayer = new Player();
+
+        public Player DisplayPlayer { get; set; }
+        public static PlayerList PlayerList { get; set; }
 
         public MainWindow(bool isServer)
         {
@@ -34,16 +34,17 @@
                 IsServer = isServer
             };
 
+            DisplayPlayer = new Player();
+            PlayerList = new PlayerList();
+
             PlayerView.PlayerClicked += player =>
             {
-                _displayPlayer.InjectFrom(player);
-                _displayPlayer.Schedule = PlayerList.Schedules.First(s => s.Name == _displayPlayer.Team);
-                _displayPlayer.Histories = PlayerList.Histories.Where(s => s.PlayerId == _displayPlayer.PlayerId).ToList();
+                DisplayPlayer.InjectFrom(player);
+                DisplayPlayer.Schedule = PlayerList.Schedules.First(s => s.Name == DisplayPlayer.Team);
+                DisplayPlayer.Histories = PlayerList.Histories.Where(s => s.PlayerId == DisplayPlayer.PlayerId).ToList();
 
                 PlayerFlyout.IsOpen = true;
             };
-
-            DataContext = _displayPlayer;
         }
 
         private void OnClosing(object sender, CancelEventArgs e)

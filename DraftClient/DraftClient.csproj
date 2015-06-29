@@ -34,10 +34,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MahApps.Metro, Version=1.1.2.0, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
-      <HintPath>..\packages\MahApps.Metro.1.1.2.0\lib\net45\MahApps.Metro.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Omu.ValueInjecter, Version=3.0.1.0, Culture=neutral, PublicKeyToken=c7694541b0ac80e4, processorArchitecture=MSIL">
       <HintPath>..\packages\valueinjecter.3.0.1.1\lib\net45\Omu.ValueInjecter.dll</HintPath>
       <Private>True</Private>
@@ -95,6 +91,9 @@
     <Compile Include="View\DraftTimerControl.xaml.cs">
       <DependentUpon>DraftTimerControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\PlayerFlyout.xaml.cs">
+      <DependentUpon>PlayerFlyout.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\PlayerView.xaml.cs">
       <DependentUpon>PlayerView.xaml</DependentUpon>
     </Compile>
@@ -139,6 +138,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\PlayerFlyout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\PlayerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -199,6 +202,10 @@
       <Project>{5d8786f4-b2d3-4e26-9279-a30624dc485c}</Project>
       <Name>FileHandler</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MahApps.Metro\MahApps.Metro\MahApps.Metro.NET45.csproj">
+      <Project>{942d11c4-29f5-46c4-8c14-4b976d56c637}</Project>
+      <Name>MahApps.Metro.NET45</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WpfControls\WpfControls.vbproj">
       <Project>{d010f52c-140c-410d-b897-c1091b81aa13}</Project>
       <Name>WpfControls</Name>
@@ -239,7 +246,7 @@
     <Resource Include="Resources\Entypo-license.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\team_gloves_all.png" />
+    <Resource Include="Resources\team_gloves_all_trans.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
