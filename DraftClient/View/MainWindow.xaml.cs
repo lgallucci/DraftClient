@@ -37,10 +37,13 @@
             PlayerView.PlayerClicked += player =>
             {
                 _displayPlayer.InjectFrom(player);
+                _displayPlayer.Schedule = PlayerList.Schedules.First(s => s.Name == _displayPlayer.Team);
+                _displayPlayer.Histories = PlayerList.Histories.Where(s => s.PlayerId == _displayPlayer.PlayerId).ToList();
 
-                PlayerFlyout.Header = player.Name;
                 PlayerFlyout.IsOpen = true;
             };
+
+            DataContext = _displayPlayer;
         }
 
         private void OnClosing(object sender, CancelEventArgs e)

@@ -1,5 +1,6 @@
 ﻿namespace DraftClient.ViewModel
 {
+    using System.Collections.Generic;
     using System.Windows;
     using DraftEntities;
 
@@ -13,7 +14,9 @@
         private decimal _projectedPoints;
         private string _team;
         private int _playerId;
-        private Int32Rect _logoRectangle;
+        private Rect _logoRectangle = new Rect(0, 0, 400, 400);
+        private List<PlayerHistory> _histories = new List<PlayerHistory>();
+        private TeamSchedule _schedule;
 
         public int AverageDraftPosition
         {
@@ -67,21 +70,95 @@
             set { SetProperty(ref _isPicked, value); }
         }
 
-        public Int32Rect LogoRectangle
+        public Rect LogoRectangle
         {
             get { return _logoRectangle; }
             set { SetProperty(ref _logoRectangle, value); }
         }
 
-        private Int32Rect GetLogoRectangle(string team)
+        public List<PlayerHistory> Histories
+        {
+            get { return _histories; }
+            set { SetProperty(ref _histories, value); }
+        }
+
+        public TeamSchedule Schedule
+        {
+            get { return _schedule; }
+            set { SetProperty(ref _schedule, value); }
+        } 
+
+        private Rect GetLogoRectangle(string team)
         {
             switch (team)
             {
+                case "ARI":
+                    return new Rect(0, 0, 400, 400);
+                case "ATL":
+                    return new Rect(400, 0, 400, 400);
+                case "BAL":
+                    return new Rect(800, 0, 400, 400);
+                case "BUF":
+                    return new Rect(1200, 0, 400, 400);
+                case "CAR":
+                    return new Rect(1600, 0, 400, 400);
                 case "CHI":
-                    return new Int32Rect(2000, 0, 400, 400);
+                    return new Rect(2000, 0, 400, 400);
+                case "CIN":
+                    return new Rect(0, 400, 400, 400);
+                case "CLE":
+                    return new Rect(400, 400, 400, 400);
+                case "DAL":
+                    return new Rect(800, 400, 400, 400);
+                case "DEN":
+                    return new Rect(1200, 400, 400, 400);
+                case "DET":
+                    return new Rect(1600, 400, 400, 400);
+                case "GB":
+                    return new Rect(2000, 400, 400, 400);
+                case "HOU":
+                    return new Rect(0, 800, 400, 400);
+                case "IND":
+                    return new Rect(400, 800, 400, 400);
+                case "JAC":
+                    return new Rect(800, 800, 400, 400);
+                case "KC":
+                    return new Rect(1200, 800, 400, 400);
+                case "MIA":
+                    return new Rect(1600, 800, 400, 400);
+                case "MIN":
+                    return new Rect(2000, 800, 400, 400);
+                case "NE":
+                    return new Rect(0, 1200, 400, 400);
+                case "NO":
+                    return new Rect(400, 1200, 400, 400);
+                case "NYG":
+                    return new Rect(800, 1200, 400, 400);
+                case "NYJ":
+                    return new Rect(1200, 1200, 400, 400);
+                case "OAK":
+                    return new Rect(1600, 1200, 400, 400);
+                case "PHI":
+                    return new Rect(2000, 1200, 400, 400);
+                case "PIT":
+                    return new Rect(0, 1600, 400, 400);
+                case "SD":
+                    return new Rect(400, 1600, 400, 400);
+                case "SF":
+                    return new Rect(800, 1600, 400, 400);
+                case "SEA":
+                    return new Rect(1200, 1600, 400, 400);
+                case "STL":
+                    return new Rect(1600, 1600, 400, 400);
+                case "TB":
+                    return new Rect(2000, 1600, 400, 400);
+                case "TEN":
+                    return new Rect(0, 2000, 400, 400);
+                case "WAS":
+                    return new Rect(400, 2000, 400, 400);
             }
 
-            return new Int32Rect(0, 0, 400, 400);
+            return new Rect(0, 0, 400, 400);
         }
     }
 }

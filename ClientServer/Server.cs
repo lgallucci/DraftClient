@@ -22,7 +22,7 @@
         private readonly string _leagueName;
         private readonly int _numberOfTeams;
         private readonly int _port;
-        private static TcpListener _listener;
+        private TcpListener _listener;
         private bool _isRunning;
 
         public Server(string leagueName, int numberOfTeams)
@@ -105,6 +105,7 @@
                     connection.Client.Close();
                 }
             }
+            base.Close();
         }
 
         public override void SendMessage(NetworkMessageType type, object payload)

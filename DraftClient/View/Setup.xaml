@@ -154,10 +154,10 @@
                 </Grid.RowDefinitions>
                 <WrapPanel Grid.Row="0" Grid.Column="0">
                     <Button FontSize="18" Margin="45 25 0 0" Click="CreateDraft_Click">Create Draft</Button>
-                    <Border x:Name="ResetMessageBox" Visibility="Collapsed" Background="{StaticResource HighlightBrush}" Height="30" Width="200" Margin="275 25 0 0" Padding="10 0 0 0" CornerRadius="7">
+                    <Border x:Name="ResetMessageBox" Visibility="Collapsed" Background="{DynamicResource HighlightBrush}" Height="30" Width="200" Margin="275 25 0 0" Padding="10 0 0 0" CornerRadius="7">
                         <WrapPanel>
-                            <TextBlock x:Name="ResetMessageText" FontSize="12" Text="Test Message" Margin="0 6 0 0" Foreground="{StaticResource IdealForegroundColorBrush}" />
-                            <Button Margin="100 7 0 0" Width="15" Click="ResetMessageBoxClose" Style="{StaticResource CloseButton}" />
+                            <TextBlock x:Name="ResetMessageText" FontSize="12" Text="Test Message" Margin="0 6 0 0" Foreground="{DynamicResource IdealForegroundColorBrush}" />
+                            <Button Margin="100 7 0 0" Width="15" Click="ResetMessageBoxClose" Style="{DynamicResource CloseButton}" />
                         </WrapPanel>
                     </Border>
                 </WrapPanel>
@@ -183,10 +183,10 @@
                     <Button x:Name="ThemeButton"  Margin="45 35 0 0" Content="Choose Theme" Click="ThemeButton_OnClick">
                         <Button.Style>
                             <Style TargetType="Button" BasedOn="{StaticResource LinkButton}">
-                                <Setter Property="Foreground" Value="{StaticResource HighlightBrush}" />
+                                <Setter Property="Foreground" Value="{DynamicResource HighlightBrush}" />
                                 <Style.Triggers>
                                     <Trigger Property="IsMouseOver" Value="true">
-                                        <Setter Property="Foreground" Value="{StaticResource AccentColorBrush2}" />
+                                        <Setter Property="Foreground" Value="{DynamicResource AccentColorBrush2}" />
                                     </Trigger>
                                 </Style.Triggers>
                             </Style>

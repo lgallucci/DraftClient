@@ -37,7 +37,7 @@
                 <DataGridTemplateColumn>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Style="{StaticResource AccentedSquareButtonStyle}" Content="🔍" Click="PlayerClick"></Button>
+                            <Button Style="{DynamicResource MetroCircleButtonStyle}" BorderThickness="0" Cursor="Hand" Content="🔍" Click="PlayerClick"></Button>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
