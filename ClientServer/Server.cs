@@ -92,6 +92,8 @@
         public override void Close()
         {
             _isRunning = false;
+            _listener.Stop();
+            _listener = null;
             lock (_connectionLock)
             {
                 foreach (ConnectedClient connection in Connections)
@@ -126,6 +128,8 @@
 
         private void OnClientConnect(IAsyncResult asyn)
         {
+            if (!_isRunning) return;
+
             TcpClient tcpClient = _listener.EndAcceptTcpClient(asyn);
             var socketClient = new SocketClient(tcpClient);
 

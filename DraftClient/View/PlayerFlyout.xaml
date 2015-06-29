@@ -11,16 +11,23 @@
              Width="400"
              Header="{Binding Name}"
              Position="Left">
-    <StackPanel Margin="0 -75 0 0">
+    <StackPanel Margin="0 -75 0 0" Width="400" Height="350">
         <StackPanel.Background>
-            <ImageBrush Stretch="Uniform"
+            <VisualBrush Stretch="Uniform"
                         AlignmentY="Top"
-                        Opacity=".60" 
-                        ImageSource="pack://application:,,,/Resources/team_gloves_all_trans.png" 
+                        Opacity=".3" 
                         Viewbox="{Binding LogoRectangle}" 
                         ViewboxUnits="Absolute"
-                        Viewport="0,0,150,150"
-                        ViewportUnits="Absolute" />
+                        Viewport="0,0,300,300"
+                        ViewportUnits="Absolute">
+                <VisualBrush.Visual>
+                    <Image Source="pack://application:,,,/Resources/team_gloves_all_trans.png">
+                        <Image.Effect>
+                            <DropShadowEffect Color="White" ShadowDepth="5" BlurRadius="20" Direction="270" />
+                        </Image.Effect>
+                    </Image>
+                </VisualBrush.Visual>
+            </VisualBrush>
         </StackPanel.Background>
         <ScrollViewer Margin="0 75 0 0" VerticalScrollBarVisibility="Auto">
             <TextBlock Text="HERES SOME STUFF" />

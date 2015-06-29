@@ -7,7 +7,7 @@
     xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     xmlns:local="clr-namespace:DraftClient.View"
     Title="Fantasy Football Draft Tool" Width="1725" Height="950" 
-    Closing="OnClosing" ResizeMode="CanMinimize">
+    Closing="OnClosing" ResizeMode="CanMinimize" Icon="../Resources/American-football.ico" ShowIconOnTitleBar="False">
     <controls:MetroWindow.Flyouts>
         <controls:FlyoutsControl>
             <local:PlayerFlyout x:Name="PlayerFlyout" DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorLevel=1, AncestorType=Window}, Path=DisplayPlayer}" />

@@ -194,6 +194,7 @@
                 ThemeViewer.Visibility = Visibility.Collapsed;
                 ThemeLightDarkViewer.Visibility = Visibility.Collapsed;
                 StartupViewer.Visibility = Visibility.Visible;
+                Title = "Join Draft";
             }
             catch (IOException)
             {

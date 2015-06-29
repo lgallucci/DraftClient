@@ -5,18 +5,18 @@
                     mc:Ignorable="options">
 
     <Color x:Key="BlackColor">#FFFFFFFF</Color>
-    <Color x:Key="WhiteColor">#FF252525</Color>
+    <Color x:Key="WhiteColor">#FF454545</Color>
 
     <Color x:Key="Gray1">#FFF9F9F9</Color>
-    <Color x:Key="Gray2">#FF7F7F7F</Color>
-    <Color x:Key="Gray7">#FF7E7E7E</Color>
-    <Color x:Key="Gray8">#FF454545</Color>
-    <Color x:Key="Gray10">#FF2F2F2F</Color>
+    <Color x:Key="Gray2">#FFAFAFAF</Color>
+    <Color x:Key="Gray7">#FF8E8E8E</Color>
+    <Color x:Key="Gray8">#FF656565</Color>
+    <Color x:Key="Gray10">#FF4F4F4F</Color>
 
     <Color x:Key="GrayNormal">#FF7D7D7D</Color>
     <Color x:Key="GrayHover">#FFAAAAAA</Color>
 
-    <Color x:Key="FlyoutColor">#FF2B2B2B</Color>
+    <Color x:Key="FlyoutColor">#FF4B4B4B</Color>
 
     <!-- re-set brushes too -->
     <SolidColorBrush x:Key="BlackBrush" Color="{StaticResource BlackColor}" options:Freeze="True" />

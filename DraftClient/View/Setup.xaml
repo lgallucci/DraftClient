@@ -6,7 +6,7 @@
         xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         mc:Ignorable="d" Title="Choose Theme"
         DataContext="DraftClient.ViewModel.DraftSettings" Closing="Window_Closing" ResizeMode="NoResize" Height="400"
-        Width="700" Loaded="SetupLoaded">
+        Width="700" Loaded="SetupLoaded" Icon="../Resources/American-football.ico" ShowIconOnTitleBar="False">
     <Window.Resources>
         <ResourceDictionary>
 
