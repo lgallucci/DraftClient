@@ -11,14 +11,29 @@
              Width="400"
              Header="{Binding Name}"
              Position="Left">
-    <StackPanel Margin="0 -75 0 0" Width="400" Height="350">
+    <controls:Flyout.Resources>
+        <ResourceDictionary>
+            <Style TargetType="TextBlock">
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="FontFamily" Value="Segoe UI" />
+            </Style>
+            <Style x:Key="HeaderStatStyle" TargetType="TextBlock">
+                <Setter Property="Foreground" Value="{DynamicResource HighlightBrush}" />
+                <Setter Property="FontWeight" Value="Bold" />
+                <Setter Property="TextDecorations" Value="Underline" />
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="FontFamily" Value="Segoe UI" />
+            </Style>
+        </ResourceDictionary>
+    </controls:Flyout.Resources>
+    <StackPanel Margin="0 -75 0 0" Width="400" Height="950">
         <StackPanel.Background>
             <VisualBrush Stretch="Uniform"
                         AlignmentY="Top"
-                        Opacity=".3" 
+                        Opacity="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=controls:Flyout}, Path=LogoOpacity}" 
                         Viewbox="{Binding LogoRectangle}" 
                         ViewboxUnits="Absolute"
-                        Viewport="0,0,300,300"
+                        Viewport="0,0,400,400"
                         ViewportUnits="Absolute">
                 <VisualBrush.Visual>
                     <Image Source="pack://application:,,,/Resources/team_gloves_all_trans.png">
@@ -29,8 +44,38 @@
                 </VisualBrush.Visual>
             </VisualBrush>
         </StackPanel.Background>
-        <ScrollViewer Margin="0 75 0 0" VerticalScrollBarVisibility="Auto">
-            <TextBlock Text="HERES SOME STUFF" />
+        <ScrollViewer Margin="0 100 0 0" VerticalScrollBarVisibility="Auto" Width="400">
+            <StackPanel HorizontalAlignment="Stretch">
+                <TextBlock HorizontalAlignment="Center" Style="{DynamicResource HeaderStatStyle}" Text="SCHEDULE" />
+                <DockPanel HorizontalAlignment="Center">
+                    <StackPanel DockPanel.Dock="Left" Margin="10">
+                        <TextBlock Text="{Binding Schedule.Week1, StringFormat=Week 1: {0}}" />
+                        <TextBlock Text="{Binding Schedule.Week2, StringFormat=Week 2: {0}}" />
+                        <TextBlock Text="{Binding Schedule.Week3, StringFormat=Week 3: {0}}" />
+                        <TextBlock Text="{Binding Schedule.Week4, StringFormat=Week 4: {0}}" />
+                        <TextBlock Text="{Binding Schedule.Week5, StringFormat=Week 5: {0}}" />
+                        <TextBlock Text="{Binding Schedule.Week6, StringFormat=Week 6: {0}}" />
+                        <TextBlock Text="{Binding Schedule.Week7, StringFormat=Week 7: {0}}" />
+                        <TextBlock Text="{Binding Schedule.Week8, StringFormat=Week 8: {0}}" />
+                    </StackPanel>
+                    <StackPanel DockPanel.Dock="Right" Margin="10">
+                        <TextBlock Text="{Binding Schedule.Week9, StringFormat=Week 9: {0}}" />
+                        <TextBlock Text="{Binding Schedule.Week10, StringFormat=Week 10: {0}}" />
+                        <TextBlock Text="{Binding Schedule.Week11, StringFormat=Week 11: {0}}" />
+                        <TextBlock Text="{Binding Schedule.Week12, StringFormat=Week 12: {0}}" />
+                        <TextBlock Text="{Binding Schedule.Week13, StringFormat=Week 13: {0}}" />
+                        <TextBlock Text="{Binding Schedule.Week14, StringFormat=Week 14: {0}}" />
+                        <TextBlock Text="{Binding Schedule.Week15, StringFormat=Week 15: {0}}" />
+                        <TextBlock Text="{Binding Schedule.Week16, StringFormat=Week 16: {0}}" />
+                        <TextBlock Text="{Binding Schedule.Week17, StringFormat=Week 17: {0}}" />
+                    </StackPanel>
+                </DockPanel>
+
+                <StackPanel Margin="0 25 0 0">
+                    <TextBlock HorizontalAlignment="Center" Style="{DynamicResource HeaderStatStyle}" Text="HISTORY" />
+
+                </StackPanel>
+            </StackPanel>
         </ScrollViewer>
     </StackPanel>
 </controls:Flyout>
