@@ -64,6 +64,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="player_ages.csv" />
     <None Include="years_2012_fantasy_fantasy.csv" />
     <None Include="years_2013_fantasy_fantasy.csv" />
     <None Include="years_2014_fantasy_fantasy.csv" />

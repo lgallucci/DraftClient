@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text.RegularExpressions;
     using FileHandler;
     using DraftEntities;
     using Omu.ValueInjecter;
@@ -39,6 +40,12 @@
         public int OverallRank { get; set; }
     }
 
+    public class AgesTemp
+    {
+        public string Name { get; set; }
+        public int Age { get; set; }
+    }
+
     public class DataFileCreator
     {
         public static void Main()
@@ -46,7 +53,27 @@
             var players = DraftFileHandler.ReadCsvFile<Player>("FantasyPlayers.csv");
 
             //UpdateByeWeeks(players);
-            UpdateHistories(players);
+            //UpdateHistories(players);
+            UpdateAges(players);
+        }
+
+        private static void UpdateAges(List<Player> players)
+        {
+            var playerAges = DraftFileHandler.ReadCsvFile<AgesTemp>("player_ages.csv");
+
+            foreach (var player in players)
+            {
+                if (player.Age == default(int))
+                {
+                    var matchedPlayer = playerAges.FirstOrDefault(p => AreEqualClean(p.Name, player.Name));
+                    if (matchedPlayer != null)
+                    {
+                        player.Age = matchedPlayer.Age;
+                    }
+                }
+            }
+
+            DraftFileHandler.WriteCsvFile(players, "FantasyPlayers.csv");
         }
 
         private static void UpdateHistories(List<Player> players)

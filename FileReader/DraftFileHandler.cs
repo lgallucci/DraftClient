@@ -83,6 +83,8 @@
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(value)) return default(T);
+
                 if (typeof(T).IsEnum)
                     return (T)Enum.Parse(typeof(T), value);
 

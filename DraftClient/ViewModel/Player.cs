@@ -14,6 +14,7 @@
         private PlayerPosition _position;
         private decimal _projectedPoints;
         private string _team;
+        private int _age;
         private int _playerId;
         private Rect _logoRectangle = new Rect(0, 0, 400, 400);
         private List<PlayerHistory> _histories = new List<PlayerHistory>();
@@ -51,6 +52,12 @@
         {
             get { return _byeWeek; }
             set { SetProperty(ref _byeWeek, value); }
+        }
+
+        public int Age
+        {
+            get { return _age; }
+            set { SetProperty(ref _age, value); }
         }
 
         public decimal ProjectedPoints

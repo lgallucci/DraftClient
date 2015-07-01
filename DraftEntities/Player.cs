@@ -11,6 +11,7 @@
         public string Team { get; set; }
         public int ByeWeek { get; set; }
         public decimal ProjectedPoints { get; set; }
+        public int Age { get; set; }
         public int PlayerId { get; set; }
     }
 }
