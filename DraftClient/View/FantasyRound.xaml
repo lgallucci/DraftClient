@@ -28,7 +28,7 @@
                         </WrapPanel>
                         <WrapPanel>
                             <TextBlock
-                                Text="{Binding Path=AverageDraftPosition, StringFormat='ADP: {0} -'}" FontSize="9" />
+                                Text="{Binding Path=Rank, StringFormat='ADP: {0} -'}" FontSize="9" />
                             <TextBlock Text="{Binding Path=ByeWeek, StringFormat=' Bye: {0}'}" FontSize="9" />
                         </WrapPanel>
                     </StackPanel>
@@ -78,7 +78,7 @@
                        HorizontalAlignment="Stretch" VerticalAlignment="Center">
                 <StackPanel DockPanel.Dock="Left">
                     <TextBlock Text="ADP" FontSize="9" Margin="2" Foreground="Black" />
-                    <TextBlock Text="{Binding Path=DraftedPlayer.AverageDraftPosition}" FontSize="16" Foreground="Black" />
+                    <TextBlock Text="{Binding Path=DraftedPlayer.Rank}" FontSize="16" Foreground="Black" />
                 </StackPanel>
                 <StackPanel DockPanel.Dock="Right" Margin="2">
                     <TextBlock Text="Bye" FontSize="9" Foreground="Black" />

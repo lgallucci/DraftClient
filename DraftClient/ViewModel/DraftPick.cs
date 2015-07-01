@@ -35,7 +35,7 @@
                     _draftedPlayer.IsPicked = false;
                 }
                 SetProperty(ref _draftedPlayer, value);
-                OnMakePick(_draftedPlayer == null ? 0 : _draftedPlayer.AverageDraftPosition);
+                OnMakePick(_draftedPlayer == null ? 0 : _draftedPlayer.Rank);
                 if (_draftedPlayer != null)
                 {
                     _draftedPlayer.IsPicked = true;

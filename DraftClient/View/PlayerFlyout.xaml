@@ -76,9 +76,9 @@
                         ViewportUnits="Absolute">
                 <VisualBrush.Visual>
                     <Image Source="pack://application:,,,/Resources/team_gloves_all_trans.png">
-                        <!--<Image.Effect>
+                        <Image.Effect>
                             <DropShadowEffect Color="White" ShadowDepth="5" BlurRadius="20" Direction="270" />
-                        </Image.Effect>-->
+                        </Image.Effect>
                     </Image>
                 </VisualBrush.Visual>
             </VisualBrush>
@@ -92,7 +92,7 @@
                         <TextBlock Text="{Binding ByeWeek,  StringFormat=Bye:    {0}}" />
                     </StackPanel>
                     <StackPanel DockPanel.Dock="Right">
-                        <TextBlock Text="{Binding AverageDraftPosition, StringFormat=Rank: {0}}" />
+                        <TextBlock Text="{Binding Rank, StringFormat=Rank: {0}}" />
                         <TextBlock Text="{Binding Age,                  StringFormat=Age:  {0}, Converter={StaticResource AgeToStringConverter}}" />
                         <TextBlock Text="{Binding ProjectedPoints,      StringFormat=Proj:  {0:#,#.0}}" />
                     </StackPanel>

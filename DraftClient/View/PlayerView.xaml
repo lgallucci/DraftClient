@@ -28,8 +28,8 @@
                   AutoGenerateColumns="False"
                   IsReadOnly="True" HorizontalScrollBarVisibility="Hidden">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ADP" FontSize="11" Binding="{Binding AverageDraftPosition}" Width="*" />
-                <DataGridTextColumn Header="Name" FontSize="11" Binding="{Binding Name}" Width="3*" />
+                <DataGridTextColumn Header="Rank" FontSize="11" Binding="{Binding Rank}" Width="*" />
+                <DataGridTextColumn Header="Name" FontSize="11" Binding="{Binding Name}" Width="2.5*" />
                 <DataGridTextColumn Header="POS" FontSize="11" Binding="{Binding Position, Converter={StaticResource EnumConverter}}" Width="*" />
                 <DataGridTextColumn Header="Team" FontSize="11" Binding="{Binding Team}" Width="*" />
                 <DataGridTextColumn Header="Bye" FontSize="11" Binding="{Binding ByeWeek}" Width="*" />

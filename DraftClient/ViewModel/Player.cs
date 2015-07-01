@@ -7,7 +7,7 @@
 
     public class Player : BindableBase
     {
-        private int _averageDraftPosition;
+        private int _Rank;
         private int _byeWeek;
         private bool _isPicked;
         private string _name;
@@ -20,10 +20,10 @@
         private List<PlayerHistory> _histories = new List<PlayerHistory>();
         private TeamSchedule _schedule;
 
-        public int AverageDraftPosition
+        public int Rank
         {
-            get { return _averageDraftPosition; }
-            set { SetProperty(ref _averageDraftPosition, value); }
+            get { return _Rank; }
+            set { SetProperty(ref _Rank, value); }
         }
 
         public string Name

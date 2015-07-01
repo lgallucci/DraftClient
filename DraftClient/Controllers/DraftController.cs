@@ -68,7 +68,7 @@
                         if (draft.Picks[i, j] != 0)
                         {
                             ViewModel.Player player =
-                                MainWindow.PlayerList.Players.First(p => p.AverageDraftPosition == draft.Picks[i, j]);
+                                MainWindow.PlayerList.Players.First(p => p.Rank == draft.Picks[i, j]);
 
                             draftModel.Picks[i, j] = new ViewModel.DraftPick
                             {
@@ -101,7 +101,7 @@
                     {
                         if (src.Picks[i, j].DraftedPlayer != null)
                         {
-                            res.Picks[i, j] = src.Picks[i, j].DraftedPlayer.AverageDraftPosition;
+                            res.Picks[i, j] = src.Picks[i, j].DraftedPlayer.Rank;
                         }
                     }
                 }
@@ -129,7 +129,7 @@
         private void PickMade(DraftPick pick)
         {
             ViewModel.Player player =
-                MainWindow.PlayerList.Players.FirstOrDefault(p => p.AverageDraftPosition == pick.AverageDraftPosition);
+                MainWindow.PlayerList.Players.FirstOrDefault(p => p.Rank == pick.Rank);
 
             CurrentDraft.Picks[pick.Row, pick.Column].DraftedPlayer = player;
             CurrentDraft.Picks[pick.Row, pick.Column].Name = (player != null) ? player.Name : "";

@@ -201,7 +201,7 @@
                     {
                         newRound.MakePick += (adp, row, column) => _draftController.MakeMove(new DraftEntities.DraftPick
                         {
-                            AverageDraftPosition = adp,
+                            Rank = adp,
                             Row = row - 1,
                             Column = column - 1
                         });
@@ -216,11 +216,11 @@
         private void LoadPlayers()
         {
             List<DraftEntities.Player> players =
-                FileHandler.DraftFileHandler.ReadCsvFile<DraftEntities.Player>("FantasyPlayers.csv");
+                FileHandler.DraftFileHandler.ReadCsvFile<DraftEntities.Player>(@".\Resources\FantasyPlayers.csv");
             List<DraftEntities.PlayerHistory> histories =
-                FileHandler.DraftFileHandler.ReadCsvFile<DraftEntities.PlayerHistory>("FantasyPlayersHistory.csv");
+                FileHandler.DraftFileHandler.ReadCsvFile<DraftEntities.PlayerHistory>(@".\Resources\FantasyPlayersHistory.csv");
             List<DraftEntities.TeamSchedule> schedules =
-                FileHandler.DraftFileHandler.ReadCsvFile<DraftEntities.TeamSchedule>("TeamSchedules.csv");
+                FileHandler.DraftFileHandler.ReadCsvFile<DraftEntities.TeamSchedule>(@".\Resources\TeamSchedules.csv");
 
             List<Player> presentationPlayers = players.Select(player =>
             {
