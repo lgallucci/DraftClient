@@ -1,5 +1,6 @@
 ﻿namespace DraftClient.ViewModel
 {
+    using System;
     using System.Collections.Generic;
     using System.Windows;
     using DraftEntities;
@@ -54,7 +55,7 @@
 
         public decimal ProjectedPoints
         {
-            get { return _projectedPoints; }
+            get { return Decimal.Round(_projectedPoints, 1); }
             set { SetProperty(ref _projectedPoints, value); }
         }
 
@@ -160,5 +161,27 @@
 
             return new Rect(0, 0, 400, 400);
         }
+
+        protected override void AfterPropertyChanged(string propertyName)
+        {
+            if (propertyName == "Position")
+            {
+                OnPropertyChanged("CanSeePassing");
+                OnPropertyChanged("CanSeeRushing");
+                OnPropertyChanged("CanSeeReceiving");
+                OnPropertyChanged("CanSeeKicking");
+                OnPropertyChanged("CanSeeDefense");
+            }
+        }
+
+        public bool CanSeePassing { get { return _position == PlayerPosition.QB; } }
+
+        public bool CanSeeRushing { get { return _position == PlayerPosition.RB || _position == PlayerPosition.QB; } }
+
+        public bool CanSeeReceiving { get { return _position == PlayerPosition.RB || _position == PlayerPosition.WR || _position == PlayerPosition.TE; } }
+
+        public bool CanSeeKicking { get { return _position == PlayerPosition.K; } }
+
+        public bool CanSeeDefense { get { return _position == PlayerPosition.DEF; } }
     }
 }

@@ -22,6 +22,15 @@
         public int ReceivingYards { get; set; }
         public int ReceivingTouchdowns { get; set; }
         public decimal FieldGoalPercentage { get; set; }
+        public int ZeroToThirtyNine { get; set; }
+        public int FourtyToFourtyNine { get; set; }
+        public int FiftyPlus { get; set; }
+        public int ExtraPoints { get; set; }
+        public int DefensiveSacks { get; set; }
+        public int DefensiveTouchdowns { get; set; }
+        public int DefensiveInterceptions { get; set; }
+        public int DefensiveFumblesRecovered { get; set; }
+        public int DefensivePointsAgainst { get; set; }
         public decimal FantasyPoints { get; set; }
         public int PositionRank { get; set; }
         public int OverallRank { get; set; }

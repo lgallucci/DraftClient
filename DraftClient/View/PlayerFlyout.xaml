@@ -17,13 +17,16 @@
                 <Setter Property="FontSize" Value="18" />
                 <Setter Property="FontFamily" Value="Segoe UI" />
             </Style>
-            <Style x:Key="HeaderStatStyle" TargetType="TextBlock">
+            <Style x:Key="HeaderStatStyle" BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock">
                 <Setter Property="Foreground" Value="{DynamicResource HighlightBrush}" />
                 <Setter Property="FontWeight" Value="Bold" />
                 <Setter Property="TextDecorations" Value="Underline" />
-                <Setter Property="FontSize" Value="18" />
-                <Setter Property="FontFamily" Value="Segoe UI" />
             </Style>
+
+            <Style x:Key="SubHeaderStatStyle" BasedOn="{StaticResource HeaderStatStyle}" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="14" />
+            </Style>
+
         </ResourceDictionary>
     </controls:Flyout.Resources>
     <StackPanel Margin="0 -75 0 0" Width="400" Height="950">
@@ -71,9 +74,253 @@
                     </StackPanel>
                 </DockPanel>
 
-                <StackPanel Margin="0 25 0 0">
-                    <TextBlock HorizontalAlignment="Center" Style="{DynamicResource HeaderStatStyle}" Text="HISTORY" />
-
+                <StackPanel>
+                    <StackPanel.Resources>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FontSize" Value="12" />
+                            <Setter Property="FontFamily" Value="Segoe UI" />
+                            <Setter Property="TextAlignment" Value="Right"></Setter>
+                        </Style>
+                    </StackPanel.Resources>
+                    <StackPanel Margin="0 25 0 0">
+                        <TextBlock HorizontalAlignment="Center" Style="{DynamicResource HeaderStatStyle}" Text="HISTORY" />
+                        <TextBlock HorizontalAlignment="Center" Margin="0 10 0 0" Style="{DynamicResource SubHeaderStatStyle}" Text="OVERALL" />
+                        <ListView ItemsSource="{Binding Histories}" HorizontalAlignment="Center" >
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="{x:Type ListViewItem}">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="Background" Value="{x:Null}" />
+                                            <Setter Property="BorderBrush" Value="{x:Null}" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.View>
+                                <GridView AllowsColumnReorder="false" ColumnHeaderToolTip="Overall History">
+                                    <GridView.ColumnHeaderContainerStyle>
+                                        <Style TargetType="{x:Type GridViewColumnHeader}">
+                                            <Setter Property="IsEnabled" Value="False"/>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsEnabled" Value="False">
+                                                    <Setter Property="TextElement.Foreground" Value="Black"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </GridView.ColumnHeaderContainerStyle>
+                                    <GridViewColumn Header="Year" Width="40">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Year}" Foreground="{DynamicResource HighlightBrush}" />
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn DisplayMemberBinding="{Binding GamesPlayed}" Header="Gms Pld" Width="50" />
+                                    <GridViewColumn DisplayMemberBinding="{Binding FantasyPoints}" Header="Points" Width="50" />
+                                    <GridViewColumn DisplayMemberBinding="{Binding OverallRank}" Header="Ovr Rk" Width="50"/>
+                                    <GridViewColumn DisplayMemberBinding="{Binding PositionRank}" Header="Pos Rk" Width="50"/>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                        <StackPanel Visibility="{Binding CanSeePassing, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <TextBlock HorizontalAlignment="Center" Margin="0 10 0 0" Style="{DynamicResource SubHeaderStatStyle}" Text="PASSING" />
+                            <ListView ItemsSource="{Binding Histories}" HorizontalAlignment="Center" >
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="{x:Type ListViewItem}">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter Property="Background" Value="{x:Null}" />
+                                                <Setter Property="BorderBrush" Value="{x:Null}" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                                <ListView.View>
+                                    <GridView AllowsColumnReorder="false" ColumnHeaderToolTip="Passing History">
+                                        <GridView.ColumnHeaderContainerStyle>
+                                            <Style TargetType="{x:Type GridViewColumnHeader}">
+                                                <Setter Property="IsEnabled" Value="False"/>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsEnabled" Value="False">
+                                                        <Setter Property="TextElement.Foreground" Value="Black"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </GridView.ColumnHeaderContainerStyle>
+                                        <GridViewColumn Header="Year" Width="40">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Year}" Foreground="{DynamicResource HighlightBrush}" />
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn DisplayMemberBinding="{Binding PassingYards}" Header="Yards" Width="66.7" />
+                                        <GridViewColumn DisplayMemberBinding="{Binding PassingTouchdowns}" Header="TDs" Width="66.6" />
+                                        <GridViewColumn DisplayMemberBinding="{Binding PassingInterceptions}" Header="Ints" Width="66.6" />
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </StackPanel>
+                        <StackPanel Visibility="{Binding CanSeeRushing, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <TextBlock HorizontalAlignment="Center" Margin="0 10 0 0" Style="{DynamicResource SubHeaderStatStyle}" Text="RUSHING" />
+                            <ListView ItemsSource="{Binding Histories}" HorizontalAlignment="Center" >
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="{x:Type ListViewItem}">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter Property="Background" Value="{x:Null}" />
+                                                <Setter Property="BorderBrush" Value="{x:Null}" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                                <ListView.View>
+                                    <GridView AllowsColumnReorder="false" ColumnHeaderToolTip="Rushing History">
+                                        <GridView.ColumnHeaderContainerStyle>
+                                            <Style TargetType="{x:Type GridViewColumnHeader}">
+                                                <Setter Property="IsEnabled" Value="False"/>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsEnabled" Value="False">
+                                                        <Setter Property="TextElement.Foreground" Value="Black"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </GridView.ColumnHeaderContainerStyle>
+                                        <GridViewColumn Header="Year" Width="40">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Year}" Foreground="{DynamicResource HighlightBrush}" />
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn DisplayMemberBinding="{Binding RushingAttempts}" Header="Attempts" Width="66.7" />
+                                        <GridViewColumn DisplayMemberBinding="{Binding RushingYards}" Header="Yards" Width="66.6" />
+                                        <GridViewColumn DisplayMemberBinding="{Binding RushingTouchdowns}" Header="TDs" Width="66.6"/>
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </StackPanel>
+                        <StackPanel Visibility="{Binding CanSeeReceiving, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <TextBlock HorizontalAlignment="Center" Margin="0 10 0 0" Style="{DynamicResource SubHeaderStatStyle}" Text="RECEIVING" />
+                            <ListView ItemsSource="{Binding Histories}" HorizontalAlignment="Center" >
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="{x:Type ListViewItem}">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter Property="Background" Value="{x:Null}" />
+                                                <Setter Property="BorderBrush" Value="{x:Null}" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                                <ListView.View>
+                                    <GridView AllowsColumnReorder="false" ColumnHeaderToolTip="Receiving History">
+                                        <GridView.ColumnHeaderContainerStyle>
+                                            <Style TargetType="{x:Type GridViewColumnHeader}">
+                                                <Setter Property="IsEnabled" Value="False"/>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsEnabled" Value="False">
+                                                        <Setter Property="TextElement.Foreground" Value="Black"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </GridView.ColumnHeaderContainerStyle>
+                                        <GridViewColumn Header="Year" Width="40">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Year}" Foreground="{DynamicResource HighlightBrush}" />
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn DisplayMemberBinding="{Binding Receptions}" Header="Rec" Width="66.7" />
+                                        <GridViewColumn DisplayMemberBinding="{Binding ReceivingYards}" Header="Yds" Width="66.6" />
+                                        <GridViewColumn DisplayMemberBinding="{Binding ReceivingTouchdowns}" Header="Tds" Width="66.6" />
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </StackPanel>
+                        <StackPanel Visibility="{Binding CanSeeKicking, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <TextBlock HorizontalAlignment="Center" Margin="0 10 0 0" Style="{DynamicResource SubHeaderStatStyle}" Text="KICKING" />
+                            <ListView ItemsSource="{Binding Histories}" HorizontalAlignment="Center" >
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="{x:Type ListViewItem}">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter Property="Background" Value="{x:Null}" />
+                                                <Setter Property="BorderBrush" Value="{x:Null}" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                                <ListView.View>
+                                    <GridView AllowsColumnReorder="false" ColumnHeaderToolTip="Kicking History">
+                                        <GridView.ColumnHeaderContainerStyle>
+                                            <Style TargetType="{x:Type GridViewColumnHeader}">
+                                                <Setter Property="IsEnabled" Value="False"/>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsEnabled" Value="False">
+                                                        <Setter Property="TextElement.Foreground" Value="Black"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </GridView.ColumnHeaderContainerStyle>
+                                        <GridViewColumn Header="Year" Width="40">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Year}" Foreground="{DynamicResource HighlightBrush}" />
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn DisplayMemberBinding="{Binding ZeroToThirtyNine}" Header="0-39" Width="50" />
+                                        <GridViewColumn DisplayMemberBinding="{Binding FourtyToFourtyNine}" Header="40-49" Width="50" />
+                                        <GridViewColumn DisplayMemberBinding="{Binding FiftyPlus}" Header="50+" Width="50" />
+                                        <GridViewColumn DisplayMemberBinding="{Binding ExtraPoints}" Header="X Pts" Width="50" />
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </StackPanel>
+                        <StackPanel Visibility="{Binding CanSeeDefense, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <TextBlock HorizontalAlignment="Center" Margin="0 10 0 0" Style="{DynamicResource SubHeaderStatStyle}" Text="DEFENSE" />
+                            <ListView ItemsSource="{Binding Histories}" HorizontalAlignment="Center" >
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="{x:Type ListViewItem}">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter Property="Background" Value="{x:Null}" />
+                                                <Setter Property="BorderBrush" Value="{x:Null}" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                                <ListView.View>
+                                    <GridView AllowsColumnReorder="false" ColumnHeaderToolTip="Defense History">
+                                        <GridView.ColumnHeaderContainerStyle>
+                                            <Style TargetType="{x:Type GridViewColumnHeader}">
+                                                <Setter Property="IsEnabled" Value="False"/>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsEnabled" Value="False">
+                                                        <Setter Property="TextElement.Foreground" Value="Black"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </GridView.ColumnHeaderContainerStyle>
+                                        <GridViewColumn Header="Year" Width="40">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Year}" Foreground="{DynamicResource HighlightBrush}" />
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn DisplayMemberBinding="{Binding DefensiveSacks}" Header="Sacks" Width="40" />
+                                        <GridViewColumn DisplayMemberBinding="{Binding DefensiveTouchdowns}" Header="Tds" Width="40" />
+                                        <GridViewColumn DisplayMemberBinding="{Binding DefensiveInterceptions}" Header="Ints" Width="40" />
+                                        <GridViewColumn DisplayMemberBinding="{Binding DefensiveFumblesRecovered}" Header="Fbl Rc" Width="40" />
+                                        <GridViewColumn DisplayMemberBinding="{Binding DefensivePointsAgainst}" Header="Pts Agt" Width="40" />
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </StackPanel>
+                    </StackPanel>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

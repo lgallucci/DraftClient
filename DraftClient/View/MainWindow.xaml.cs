@@ -235,7 +235,7 @@
                     var tempHistory = new PlayerHistory();
                     tempHistory.InjectFrom(history);
                     return tempHistory;
-                }).ToList();
+                }).OrderByDescending(h => h.Year).ToList();
 
             List<TeamSchedule> presentationSchedules = schedules.Select(schedule =>
             {

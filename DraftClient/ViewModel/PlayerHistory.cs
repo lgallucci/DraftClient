@@ -19,6 +19,15 @@
         private int _receivingYards;
         private int _receivingTouchdowns;
         private decimal _fieldGoalPercentage;
+        private int _zeroToThirtyNine;
+        private int _fourtyToFourtyNine;
+        private int _fiftyPlus;
+        private int _extraPoints;
+        private int _defensiveSacks;
+        private int _defensiveTouchdowns;
+        private int _defensiveInterceptions;
+        private int _defensiveFumblesRecovered;
+        private int _defensivePointsAgainst;
         private decimal _fantasyPoints;
         private int _positionRank;
         private int _overallRank;
@@ -123,6 +132,60 @@
         {
             get { return _fieldGoalPercentage; }
             set { SetProperty(ref _fieldGoalPercentage, value); }
+        }
+
+        public int ZeroToThirtyNine
+        {
+            get { return _zeroToThirtyNine; }
+            set { SetProperty(ref _zeroToThirtyNine, value); }
+        }
+
+        public int FourtyToFourtyNine
+        {
+            get { return _fourtyToFourtyNine; }
+            set { SetProperty(ref _fourtyToFourtyNine, value); }
+        }
+
+        public int FiftyPlus
+        {
+            get { return _fiftyPlus; }
+            set { SetProperty(ref _fiftyPlus, value); }
+        }
+
+        public int ExtraPoints
+        {
+            get { return _extraPoints; }
+            set { SetProperty(ref _extraPoints, value); }
+        }
+
+        public int DefensiveSacks
+        {
+            get { return _defensiveSacks; }
+            set { SetProperty(ref _defensiveSacks, value); }
+        }
+
+        public int DefensiveTouchdowns
+        {
+            get { return _defensiveTouchdowns; }
+            set { SetProperty(ref _defensiveTouchdowns, value); }
+        }
+
+        public int DefensiveInterceptions
+        {
+            get { return _defensiveInterceptions; }
+            set { SetProperty(ref _defensiveInterceptions, value); }
+        }
+
+        public int DefensiveFumblesRecovered
+        {
+            get { return _defensiveFumblesRecovered; }
+            set { SetProperty(ref _defensiveFumblesRecovered, value); }
+        }
+
+        public int DefensivePointsAgainst
+        {
+            get { return _defensivePointsAgainst; }
+            set { SetProperty(ref _defensivePointsAgainst, value); }
         }
 
         public decimal FantasyPoints
