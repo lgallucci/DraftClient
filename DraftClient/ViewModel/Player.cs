@@ -164,24 +164,27 @@
 
         protected override void AfterPropertyChanged(string propertyName)
         {
-            if (propertyName == "Position")
+            if (propertyName == "Histories")
             {
                 OnPropertyChanged("CanSeePassing");
                 OnPropertyChanged("CanSeeRushing");
                 OnPropertyChanged("CanSeeReceiving");
                 OnPropertyChanged("CanSeeKicking");
                 OnPropertyChanged("CanSeeDefense");
+                OnPropertyChanged("IsRookie");
             }
         }
 
-        public bool CanSeePassing { get { return _position == PlayerPosition.QB; } }
+        public bool CanSeePassing { get { return _position == PlayerPosition.QB && !IsRookie; } }
 
-        public bool CanSeeRushing { get { return _position == PlayerPosition.RB || _position == PlayerPosition.QB; } }
+        public bool CanSeeRushing { get { return (_position == PlayerPosition.RB || _position == PlayerPosition.QB) && !IsRookie; } }
 
-        public bool CanSeeReceiving { get { return _position == PlayerPosition.RB || _position == PlayerPosition.WR || _position == PlayerPosition.TE; } }
+        public bool CanSeeReceiving { get { return (_position == PlayerPosition.RB || _position == PlayerPosition.WR || _position == PlayerPosition.TE) && !IsRookie; } }
 
-        public bool CanSeeKicking { get { return _position == PlayerPosition.K; } }
+        public bool CanSeeKicking { get { return _position == PlayerPosition.K && !IsRookie; } }
 
-        public bool CanSeeDefense { get { return _position == PlayerPosition.DEF; } }
+        public bool CanSeeDefense { get { return _position == PlayerPosition.DEF && !IsRookie; } }
+
+        public bool IsRookie { get { return _histories.Count == 0; } }
     }
 }
