@@ -15,7 +15,7 @@
     <controls:Flyout.Resources>
         <ResourceDictionary>
             <Style TargetType="TextBlock">
-                <Setter Property="FontSize" Value="18" />
+                <Setter Property="FontSize" Value="16" />
                 <Setter Property="FontFamily" Value="Segoe UI" />
             </Style>
             <Style x:Key="HeaderStatStyle" BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock">
@@ -25,7 +25,7 @@
             </Style>
 
             <Style x:Key="SubHeaderStatStyle" BasedOn="{StaticResource HeaderStatStyle}" TargetType="TextBlock">
-                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontSize" Value="13" />
             </Style>
 
             <Style TargetType="{x:Type ListViewItem}">
@@ -57,10 +57,11 @@
                 <Setter Property="OverridesDefaultStyle" Value="True" />
                 <Setter Property="Foreground" Value="{DynamicResource LabelTextBrush}" />
                 <Setter Property="FontFamily" Value="Segoe UI" />
-                <Setter Property="FontSize" Value="12" />
+                <Setter Property="FontSize" Value="11" />
             </Style>
-            
+
             <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
+            <converters:AgeToStringConverter x:Key="AgeToStringConverter" />
 
         </ResourceDictionary>
     </controls:Flyout.Resources>
@@ -75,14 +76,30 @@
                         ViewportUnits="Absolute">
                 <VisualBrush.Visual>
                     <Image Source="pack://application:,,,/Resources/team_gloves_all_trans.png">
-                        <Image.Effect>
+                        <!--<Image.Effect>
                             <DropShadowEffect Color="White" ShadowDepth="5" BlurRadius="20" Direction="270" />
-                        </Image.Effect>
+                        </Image.Effect>-->
                     </Image>
                 </VisualBrush.Visual>
             </VisualBrush>
         </StackPanel.Background>
-        <ScrollViewer Margin="0 100 0 0" VerticalScrollBarVisibility="Auto" Width="400">
+        <StackPanel Margin="50 75 50 0">
+            <Border BorderBrush="{DynamicResource HighlightBrush}" BorderThickness="2" Padding="25 5 25 5">
+                <DockPanel HorizontalAlignment="Stretch">
+                    <StackPanel DockPanel.Dock="Left" Width="125">
+                        <TextBlock Text="{Binding Position, StringFormat=Pos:    {0}}" />
+                        <TextBlock Text="{Binding Team,     StringFormat=Team: {0}}" />
+                        <TextBlock Text="{Binding ByeWeek,  StringFormat=Bye:    {0}}" />
+                    </StackPanel>
+                    <StackPanel DockPanel.Dock="Right">
+                        <TextBlock Text="{Binding AverageDraftPosition, StringFormat=Rank: {0}}" />
+                        <TextBlock Text="{Binding Age,                  StringFormat=Age:  {0}, Converter={StaticResource AgeToStringConverter}}" />
+                        <TextBlock Text="{Binding ProjectedPoints,      StringFormat=Proj:  {0:#,#.0}}" />
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+        </StackPanel>
+        <ScrollViewer Margin="0 15 0 0" VerticalScrollBarVisibility="Auto" Width="400">
             <StackPanel HorizontalAlignment="Stretch">
                 <TextBlock HorizontalAlignment="Center" Style="{DynamicResource HeaderStatStyle}" Text="SCHEDULE" />
                 <DockPanel HorizontalAlignment="Center">
@@ -126,7 +143,7 @@
 
                         <StackPanel Visibility="{Binding IsRookie, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                             <TextBlock HorizontalAlignment="Center" Margin="0 10 0 0" Style="{DynamicResource SubHeaderStatStyle}" Text="OVERALL" />
-                            <ListView ItemsSource="{Binding Histories}" HorizontalAlignment="Center" BorderThickness="0" >
+                            <ListView ItemsSource="{Binding Histories}" HorizontalAlignment="Center" BorderThickness="0" Background="Transparent" >
                                 <ListView.View>
                                     <GridView AllowsColumnReorder="false" ColumnHeaderToolTip="Overall History">
                                         <GridViewColumn Header="Year" Width="40">
@@ -146,7 +163,7 @@
                         </StackPanel>
                         <StackPanel Visibility="{Binding CanSeePassing, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <TextBlock HorizontalAlignment="Center" Margin="0 10 0 0" Style="{DynamicResource SubHeaderStatStyle}" Text="PASSING" />
-                            <ListView ItemsSource="{Binding Histories}" HorizontalAlignment="Center" BorderThickness="0" >
+                            <ListView ItemsSource="{Binding Histories}" HorizontalAlignment="Center" BorderThickness="0" Background="Transparent"  >
                                 <ListView.View>
                                     <GridView AllowsColumnReorder="false" ColumnHeaderToolTip="Passing History">
                                         <GridViewColumn Header="Year" Width="40">
@@ -165,7 +182,7 @@
                         </StackPanel>
                         <StackPanel Visibility="{Binding CanSeeRushing, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <TextBlock HorizontalAlignment="Center" Margin="0 10 0 0" Style="{DynamicResource SubHeaderStatStyle}" Text="RUSHING" />
-                            <ListView ItemsSource="{Binding Histories}" HorizontalAlignment="Center" BorderThickness="0" >
+                            <ListView ItemsSource="{Binding Histories}" HorizontalAlignment="Center" BorderThickness="0" Background="Transparent" >
                                 <ListView.View>
                                     <GridView AllowsColumnReorder="false" ColumnHeaderToolTip="Rushing History">
                                         <GridViewColumn Header="Year" Width="40">
@@ -184,7 +201,7 @@
                         </StackPanel>
                         <StackPanel Visibility="{Binding CanSeeReceiving, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <TextBlock HorizontalAlignment="Center" Margin="0 10 0 0" Style="{DynamicResource SubHeaderStatStyle}" Text="RECEIVING" />
-                            <ListView ItemsSource="{Binding Histories}" HorizontalAlignment="Center" BorderThickness="0" >
+                            <ListView ItemsSource="{Binding Histories}" HorizontalAlignment="Center" BorderThickness="0" Background="Transparent" >
                                 <ListView.View>
                                     <GridView AllowsColumnReorder="false" ColumnHeaderToolTip="Receiving History">
                                         <GridViewColumn Header="Year" Width="40">
@@ -203,7 +220,7 @@
                         </StackPanel>
                         <StackPanel Visibility="{Binding CanSeeKicking, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <TextBlock HorizontalAlignment="Center" Margin="0 10 0 0" Style="{DynamicResource SubHeaderStatStyle}" Text="KICKING" />
-                            <ListView ItemsSource="{Binding Histories}" HorizontalAlignment="Center" BorderThickness="0" >
+                            <ListView ItemsSource="{Binding Histories}" HorizontalAlignment="Center" BorderThickness="0" Background="Transparent" >
                                 <ListView.View>
                                     <GridView AllowsColumnReorder="false" ColumnHeaderToolTip="Kicking History">
                                         <GridViewColumn Header="Year" Width="40">
@@ -223,7 +240,7 @@
                         </StackPanel>
                         <StackPanel Visibility="{Binding CanSeeDefense, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <TextBlock HorizontalAlignment="Center" Margin="0 10 0 0" Style="{DynamicResource SubHeaderStatStyle}" Text="DEFENSE" />
-                            <ListView ItemsSource="{Binding Histories}" HorizontalAlignment="Center" BorderThickness="0" >
+                            <ListView ItemsSource="{Binding Histories}" HorizontalAlignment="Center" BorderThickness="0" Background="Transparent" >
                                 <ListView.View>
                                     <GridView AllowsColumnReorder="false" ColumnHeaderToolTip="Defense History">
                                         <GridViewColumn Header="Year" Width="40">

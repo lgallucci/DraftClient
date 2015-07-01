@@ -73,6 +73,7 @@
     <Compile Include="Controllers\ConnectionServer.cs" />
     <Compile Include="Controllers\SetupController.cs" />
     <Compile Include="Controllers\DraftController.cs" />
+    <Compile Include="Converters\AgeToStringConverter.cs" />
     <Compile Include="Converters\EnumConverter.cs" />
     <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="Converters\InverseBooleanToVisibilityConverter.cs" />
