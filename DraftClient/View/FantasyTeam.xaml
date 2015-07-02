@@ -7,31 +7,35 @@
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
-        
         <Style x:Key="JoinButtonStyle" TargetType="Button">
             <Setter Property="FontSize" Value="10" />
-            <Setter Property="Padding" Value="0" />
             <Setter Property="MinHeight" Value="12" />
             <Setter Property="MinWidth" Value="12" />
         </Style>
     </UserControl.Resources>
-    <WrapPanel>
-        <WrapPanel Name="TeamPanel" HorizontalAlignment="Center" />
-        <Image Width="17" Height="12.5" Margin="5 0 0 0" x:Name="ConnectedImage" />
-        <Button x:Name="JoinButton" Width="25.5" Height="12.5" Margin="5 0 0 0" Padding="-5" Style="{StaticResource JoinButtonStyle}" Click="JoinButton_OnClick">
-            <Button.Template>
-                <ControlTemplate TargetType="Button">
-                    <Image Width="25.5" Height="12.5"  x:Name="JoinImage" Source="pack://application:,,,/Resources/JoinImage.png"/>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver"
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <WrapPanel Grid.Row="0" Name="TeamPanel" HorizontalAlignment="Center" VerticalAlignment="Bottom" />
+        <WrapPanel Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+            <Button x:Name="JoinButton" Width="25.5" Height="12.5" Margin="0 0 0 2" Style="{StaticResource JoinButtonStyle}" Click="JoinButton_OnClick">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Image Width="25.5" Height="12.5"  x:Name="JoinImage" Source="pack://application:,,,/Resources/JoinImage.png"/>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver"
                                  Value="true">
-                            <Setter TargetName="JoinImage"
+                                <Setter TargetName="JoinImage"
                                     Property="Source"
                                     Value="pack://application:,,,/Resources/JoinImage_dark.png" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Button.Template>
-        </Button>
-    </WrapPanel>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+            <Image HorizontalAlignment="Right" DockPanel.Dock="Bottom" Width="10" Height="8" Margin="0 0 0 2" x:Name="ConnectedImage" />
+        </WrapPanel>
+    </Grid>
 </UserControl>

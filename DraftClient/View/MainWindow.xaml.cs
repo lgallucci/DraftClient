@@ -185,6 +185,9 @@
                 PicksGrid.Children.Add(teamBlock);
                 Grid.SetColumn(teamBlock, i);
                 Grid.SetRow(teamBlock, 0);
+                teamBlock.HorizontalAlignment = HorizontalAlignment.Stretch;
+                teamBlock.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+                teamBlock.VerticalAlignment = VerticalAlignment.Stretch;
             }
 
             for (int i = 1; i < PicksGrid.RowDefinitions.Count; i++)

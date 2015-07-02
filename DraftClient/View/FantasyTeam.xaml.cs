@@ -66,7 +66,7 @@
             {
                 Name = "TeamNameEdit",
                 FontFamily = new FontFamily("Segoe UI"),
-                FontSize = 16,
+                FontSize = 14,
                 Text = text
             };
             textBox.KeyUp += TeamNameEdit_KeyUp;
@@ -88,7 +88,7 @@
             {
                 Name = "TeamName",
                 FontFamily = new FontFamily("Segoe UI"),
-                FontSize = 16,
+                FontSize = 14,
                 Text = text.ToUpper(),
                 FontWeight = IsMyTeam ? FontWeights.Bold : FontWeights.Normal,
                 FontStyle = IsMyTeam ? FontStyles.Italic : FontStyles.Normal
