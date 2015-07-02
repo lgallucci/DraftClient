@@ -239,10 +239,14 @@
     <Resource Include="Resources\Disconnected.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\buzzer.mp3" />
+    <None Include="Resources\buzzer.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\countdown_beep.mp3" />
+    <None Include="Resources\countdown_beep.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Entypo.ttf" />
@@ -252,7 +256,9 @@
     <None Include="Resources\FantasyPlayersHistory.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\glass_ping.mp3" />
+    <None Include="Resources\glass_ping.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\JoinImage.png" />

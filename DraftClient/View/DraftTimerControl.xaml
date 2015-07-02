@@ -46,7 +46,7 @@
                         Click="ResumeDraftButton_OnClick"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center" />
-                <TextBlock Name="CountdownTextBlock" Margin="5 0 0 0" Text="00:00:00" FontWeight="DemiBold" FontFamily="Segoe UI" FontSize="42" Foreground="{StaticResource AccentColorBrush}"
+                <TextBlock Name="CountdownTextBlock" Margin="5 0 0 0" Text="00:00" FontWeight="DemiBold" FontFamily="Segoe UI" FontSize="42" Foreground="{StaticResource AccentColorBrush}"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center" />
             </StackPanel>

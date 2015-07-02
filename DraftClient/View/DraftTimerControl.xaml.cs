@@ -2,6 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
+    using System.Media;
+    using System.Reflection;
     using System.Windows;
     using System.Windows.Media;
     using System.Windows.Threading;
@@ -12,10 +15,7 @@
     /// </summary>
     public partial class DraftTimerControl
     {
-        private Dictionary<int, string> SoundFiles = new Dictionary<int, string>
-        {
-        };
-
+        private MediaPlayer _player;
         private readonly DispatcherTimer _timer;
         private DateTime _lastSoundPlayed;
 
@@ -28,6 +28,8 @@
             {
                 Interval = new TimeSpan(0, 0, 0, 0, 200)
             };
+            _player = new MediaPlayer();
+            
             _timer.Tick += (sender, args) =>
             {
                 if (State == null) return;
@@ -35,12 +37,21 @@
                 var pausedTicks = State.PickPauseTime > DateTime.MinValue ? (DateTime.UtcNow - State.PickPauseTime) : new TimeSpan(0);
                 var timeLeft = State.PickEndTime + pausedTicks + State.PausedTime - DateTime.UtcNow;
 
+                if (timeLeft.TotalSeconds >= 30 && timeLeft.TotalSeconds < 31)
+                {
+                    PlaySound("glass_ping");
+                }
+                
                 if (timeLeft.TotalSeconds < 10 && timeLeft.Seconds % 2 == 1)
                 {
                     CountdownTextBlock.Foreground = (Brush)FindResource("AccentColorBrush3");
                 }
                 else
                 {
+                    if (timeLeft.TotalSeconds < 11 && timeLeft.TotalSeconds > 1)
+                    {
+                        PlaySound("countdown_beep");
+                    }
                     CountdownTextBlock.Foreground = (Brush)FindResource("AccentColorBrush");
                 }
 
@@ -48,7 +59,7 @@
                 {
                     CountdownTextBlock.Text = timeLeft.ToString(@"mm\:ss");
                 }
-                else
+                else if (timeLeft.TotalSeconds < 1 && timeLeft.TotalSeconds >= 0)
                 {
                     if (timeLeft.TotalDays > 0)
                         CountdownTextBlock.Foreground = (Brush)FindResource("AccentColorBrush3");
@@ -60,15 +71,20 @@
         
         private void PlaySound(string soundName)
         {
-            if (_lastSoundPlayed.AddSeconds(1.1) > DateTime.UtcNow)
+            if (_lastSoundPlayed.AddSeconds(1) > DateTime.UtcNow)
             {
                 return;
             }
 
-            Uri uri = new Uri(string.Format(@"pack://application:,,,/Resources/{0}.mp3", soundName));
-            var player = new MediaPlayer();
-            player.Open(uri);
-            player.Play();
+            //Uri uri = new Uri(string.Format(@"pack://application:,,,/Resources/{0}.mp3", soundName));
+            var uri = new Uri(string.Format(@"{0}\Resources\{1}.mp3", Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), soundName));
+
+            if (_player.Source != uri)
+            {
+                _player.Open(uri);
+            } 
+            _player.Position = new TimeSpan(0);
+            _player.Play();
 
             _lastSoundPlayed = DateTime.UtcNow;
         }
