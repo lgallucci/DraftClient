@@ -35,7 +35,7 @@
                     </ControlTemplate>
                 </Button.Template>
             </Button>
-            <Image HorizontalAlignment="Right" DockPanel.Dock="Bottom" Width="10" Height="8" Margin="0 0 0 2" x:Name="ConnectedImage" />
+            <Image HorizontalAlignment="Right" DockPanel.Dock="Bottom" Width="14" Height="12" Margin="0 0 0 2" x:Name="ConnectedImage" />
         </WrapPanel>
     </Grid>
 </UserControl>
