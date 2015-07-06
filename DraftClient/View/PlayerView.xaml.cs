@@ -2,6 +2,7 @@
 {
     using System.Windows;
     using System.Windows.Controls;
+    using System.Windows.Controls.Primitives;
     using System.Windows.Data;
     using DraftEntities;
     using Player = DraftClient.ViewModel.Player;
@@ -39,26 +40,33 @@
             if (player != null)
                 // If filter is turned on, filter completed items.
             {
-                switch (player.Position)
+                if (SearchButton.IsChecked.HasValue && SearchButton.IsChecked.Value)
                 {
-                    case PlayerPosition.QB:
-                        e.Accepted = cbQB.IsChecked.Value;
-                        break;
-                    case PlayerPosition.WR:
-                        e.Accepted = cbWR.IsChecked.Value;
-                        break;
-                    case PlayerPosition.RB:
-                        e.Accepted = cbRB.IsChecked.Value;
-                        break;
-                    case PlayerPosition.TE:
-                        e.Accepted = cbTE.IsChecked.Value;
-                        break;
-                    case PlayerPosition.K:
-                        e.Accepted = cbK.IsChecked.Value;
-                        break;
-                    case PlayerPosition.DEF:
-                        e.Accepted = cbDEF.IsChecked.Value;
-                        break;
+                    e.Accepted = e.Accepted && player.Name.ToLower().Contains(SearchTextBox.Text.ToLower());
+                }
+                else
+                {
+                    switch (player.Position)
+                    {
+                        case PlayerPosition.QB:
+                            e.Accepted = cbQB.IsChecked.HasValue && cbQB.IsChecked.Value;
+                            break;
+                        case PlayerPosition.WR:
+                            e.Accepted = cbWR.IsChecked.HasValue && cbWR.IsChecked.Value;
+                            break;
+                        case PlayerPosition.RB:
+                            e.Accepted = cbRB.IsChecked.HasValue && cbRB.IsChecked.Value;
+                            break;
+                        case PlayerPosition.TE:
+                            e.Accepted = cbTE.IsChecked.HasValue && cbTE.IsChecked.Value;
+                            break;
+                        case PlayerPosition.K:
+                            e.Accepted = cbK.IsChecked.HasValue && cbK.IsChecked.Value;
+                            break;
+                        case PlayerPosition.DEF:
+                            e.Accepted = cbDEF.IsChecked.HasValue && cbDEF.IsChecked.Value;
+                            break;
+                    }
                 }
             }
         }
@@ -95,5 +103,23 @@
         }
 
         #endregion
+
+        private void FilterTextChanged(object sender, TextChangedEventArgs e)
+        {
+            CollectionViewSource.GetDefaultView(dataGrid1.ItemsSource).Refresh();
+        }
+
+        private void SearchButtonClick(object sender, RoutedEventArgs e)
+        {
+            var button = sender as ToggleButton;
+            if (button != null && button.IsChecked != null && !button.IsChecked.Value)
+            {
+                SearchTextBox.Text = "";
+            }
+            else
+            {
+                SearchTextBox.Focus();
+            }
+        }
     }
 }

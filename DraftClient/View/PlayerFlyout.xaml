@@ -85,18 +85,23 @@
         </StackPanel.Background>
         <StackPanel Margin="50 75 50 0">
             <Border BorderBrush="{DynamicResource HighlightBrush}" BorderThickness="2" Padding="25 5 25 5">
-                <DockPanel HorizontalAlignment="Stretch">
-                    <StackPanel DockPanel.Dock="Left" Width="125">
+                <StackPanel HorizontalAlignment="Stretch">
+                    <WrapPanel>
+                    <StackPanel Width="125">
                         <TextBlock Text="{Binding Position, StringFormat=Pos:    {0}}" />
                         <TextBlock Text="{Binding Team,     StringFormat=Team: {0}}" />
                         <TextBlock Text="{Binding ByeWeek,  StringFormat=Bye:    {0}}" />
                     </StackPanel>
-                    <StackPanel DockPanel.Dock="Right">
+                    <StackPanel >
                         <TextBlock Text="{Binding Rank, StringFormat=Rank: {0}}" />
                         <TextBlock Text="{Binding Age,                  StringFormat=Age:  {0}, Converter={StaticResource AgeToStringConverter}}" />
                         <TextBlock Text="{Binding ProjectedPoints,      StringFormat=Proj:  {0:#,#.0}}" />
+                        </StackPanel>
+                    </WrapPanel>
+                    <StackPanel Visibility="{Binding Path=IsSuspended, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <TextBlock HorizontalAlignment="Center" Margin="0 10 0 0" FontWeight="Bold" Text="{Binding SuspendedGames, StringFormat=**SUSPENDED for {0} games**}" />
                     </StackPanel>
-                </DockPanel>
+                </StackPanel>
             </Border>
         </StackPanel>
         <ScrollViewer Margin="0 15 0 0" VerticalScrollBarVisibility="Auto" Width="400">

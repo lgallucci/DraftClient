@@ -19,6 +19,7 @@
         private Rect _logoRectangle = new Rect(0, 0, 400, 400);
         private List<PlayerHistory> _histories = new List<PlayerHistory>();
         private TeamSchedule _schedule;
+        private int _suspendedGames;
 
         public int Rank
         {
@@ -76,6 +77,12 @@
         {
             get { return _isPicked; }
             set { SetProperty(ref _isPicked, value); }
+        }
+
+        public int SuspendedGames
+        {
+            get { return _suspendedGames; }
+            set { SetProperty(ref _suspendedGames, value); }
         }
 
         public Rect LogoRectangle
@@ -180,6 +187,11 @@
                 OnPropertyChanged("CanSeeDefense");
                 OnPropertyChanged("IsRookie");
             }
+
+            if (propertyName == "SuspendedGames")
+            {
+                OnPropertyChanged("IsSuspended");
+            }
         }
 
         public bool CanSeePassing { get { return _position == PlayerPosition.QB && !IsRookie; } }
@@ -193,5 +205,7 @@
         public bool CanSeeDefense { get { return _position == PlayerPosition.DEF && !IsRookie; } }
 
         public bool IsRookie { get { return _histories.Count == 0; } }
+
+        public bool IsSuspended { get { return _suspendedGames > 0; } }
     }
 }
