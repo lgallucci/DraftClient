@@ -35,7 +35,7 @@
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Rectangle Width="10" Height="10">
                                 <Rectangle.Resources>
-                                    <SolidColorBrush x:Key="BlackBrush" Color="{StaticResource IdealForegroundColor}" />
+                                    <SolidColorBrush x:Key="BlackBrush" Color="{DynamicResource IdealForegroundColor}" />
                                 </Rectangle.Resources>
                                 <Rectangle.Fill>
                                     <VisualBrush Visual="{StaticResource appbar_axis_x_letter}" />
@@ -155,10 +155,10 @@
                 <WrapPanel Grid.Row="0" Grid.Column="0">
                     <Button FontSize="18" Margin="45 25 0 0" Click="CreateDraft_Click">Create Draft</Button>
                     <Border x:Name="ResetMessageBox" Visibility="Collapsed" Background="{DynamicResource HighlightBrush}" Height="30" Width="200" Margin="275 25 0 0" Padding="10 0 0 0" CornerRadius="7">
-                        <WrapPanel>
+                        <DockPanel>
                             <TextBlock x:Name="ResetMessageText" FontSize="12" Text="Test Message" Margin="0 6 0 0" Foreground="{DynamicResource IdealForegroundColorBrush}" />
-                            <Button Margin="100 7 0 0" Width="15" Click="ResetMessageBoxClose" Style="{DynamicResource CloseButton}" />
-                        </WrapPanel>
+                            <Button HorizontalAlignment="Right" Margin="0 0 6 0" Click="ResetMessageBoxClose" Style="{DynamicResource CloseButton}" />
+                        </DockPanel>
                     </Border>
                 </WrapPanel>
                 <StackPanel Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center">
