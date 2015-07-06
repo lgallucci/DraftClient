@@ -38,7 +38,7 @@
         {
             var player = e.Item as Player;
             if (player != null)
-                // If filter is turned on, filter completed items.
+            // If filter is turned on, filter completed items.
             {
                 if (SearchButton.IsChecked.HasValue && SearchButton.IsChecked.Value)
                 {
@@ -114,7 +114,14 @@
             var button = sender as ToggleButton;
             if (button != null && button.IsChecked != null && !button.IsChecked.Value)
             {
-                SearchTextBox.Text = "";
+                if (string.IsNullOrWhiteSpace(SearchTextBox.Text))
+                {
+                    CollectionViewSource.GetDefaultView(dataGrid1.ItemsSource).Refresh();
+                }
+                else
+                {
+                    SearchTextBox.Text = "";
+                }
             }
             else
             {
