@@ -10,6 +10,7 @@
     using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Controls;
+    using MahApps.Metro.Controls.Dialogs;
     using Omu.ValueInjecter;
     using Controllers;
     using ViewModel;
@@ -47,20 +48,18 @@
             };
         }
 
-        private void OnClosing(object sender, CancelEventArgs e)
+        private async void OnClosing(object sender, CancelEventArgs e)
         {
             if (_dontPrompt) return;
 
-            MessageBoxResult messageBoxResult = MessageBox.Show(string.Format("Are you sure?{0}This will {1} the draft", Environment.NewLine,
-                _draftController.IsServer ? "close" : "leave"), "Close Confirmation", MessageBoxButton.YesNo);
+            e.Cancel = true;
 
-            if (messageBoxResult == MessageBoxResult.Yes)
+            MessageDialogResult messageBoxResult = await this.ShowMessageAsync("Close Confirmation", string.Format("Are you sure?{0}This will {1} the draft", Environment.NewLine,
+                _draftController.IsServer ? "close" : "leave"), MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings { AffirmativeButtonText = "Yes", NegativeButtonText = "No"});
+
+            if (messageBoxResult == MessageDialogResult.Affirmative)
             {
-                CloseWindow("Draft Closed", false);
-            }
-            else
-            {
-                e.Cancel = true;
+                CloseWindow("Draft Closed", true);
             }
         }
 
@@ -93,8 +92,7 @@
             }
             catch (IOException)
             {
-                MessageBox.Show("Couldn't find or read the players file.");
-                return false;
+                throw new TimeoutException("Couldn't find or read the players file.");
             }
 
             return true;

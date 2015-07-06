@@ -11,6 +11,7 @@
     using DraftEntities;
     using MahApps.Metro;
     using MahApps.Metro.Controls;
+    using MahApps.Metro.Controls.Dialogs;
     using DraftServer = ViewModel.DraftServer;
     using DraftSettings = ViewModel.DraftSettings;
 
@@ -64,8 +65,8 @@
             catch (TimeoutException ex)
             {
                 ConnectingWindow.Hide();
-                MessageBox.Show(ex.Message);
                 _setupController.DisconnectFromDraftServer();
+                this.ShowMessageAsync("An error occurred", ex.Message);
             }
         }
 
@@ -83,9 +84,8 @@
 
         private void CreateDraft_Click(object sender, RoutedEventArgs e)
         {
-            ServerSetupViewer.Visibility = Visibility.Visible;
-            ThemeViewer.Visibility = Visibility.Collapsed;
-            StartupViewer.Visibility = Visibility.Collapsed;
+            UpdateSetupView(ServerSetupViewer);
+
             Title = "Create Draft";
         }
 
@@ -136,12 +136,16 @@
         {
             if (!isServer)
                 _setupController.DisconnectFromDraftServer();
+
+            DraftSettings.Servers.Clear();
+
             _setupController.ResetConnection();
             DraftSettings.Reset();
-            ServerSetupViewer.Visibility = Visibility.Collapsed;
-            ThemeViewer.Visibility = Visibility.Collapsed;
-            StartupViewer.Visibility = Visibility.Visible;
+
+            UpdateSetupView(StartupViewer);
+
             Title = "Join Draft";
+
             if (!string.IsNullOrWhiteSpace(resetMessage))
             {
                 ResetMessageBox.Visibility = Visibility.Visible;
@@ -153,19 +157,25 @@
             }
         }
 
-        private void ThemeButton_OnClick(object sender, RoutedEventArgs e)
+        private void UpdateSetupView(ScrollViewer enabledViewer)
         {
             ServerSetupViewer.Visibility = Visibility.Collapsed;
-            ThemeViewer.Visibility = Visibility.Visible;
+            ThemeViewer.Visibility = Visibility.Collapsed;
+            ThemeLightDarkViewer.Visibility = Visibility.Collapsed;
             StartupViewer.Visibility = Visibility.Collapsed;
+
+            enabledViewer.Visibility = Visibility.Visible;
+        }
+
+        private void ThemeButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            UpdateSetupView(ThemeViewer);
             Title = "Choose Theme";
         }
 
         private void CancelDraft_Click(object sender, RoutedEventArgs e)
         {
-            ServerSetupViewer.Visibility = Visibility.Collapsed;
-            ThemeViewer.Visibility = Visibility.Collapsed;
-            StartupViewer.Visibility = Visibility.Visible;
+            UpdateSetupView(StartupViewer);
             Title = "Join Draft";
         }
 
@@ -176,9 +186,8 @@
             var themeAccent = ThemeManager.GetAccent(themeName);
             ChangeTheme(themeAccent, theme.Item1);
 
-            ServerSetupViewer.Visibility = Visibility.Collapsed;
-            ThemeViewer.Visibility = Visibility.Collapsed;
-            StartupViewer.Visibility = Visibility.Visible;
+            UpdateSetupView(StartupViewer);
+
             Title = "Join Draft";
         }
 
@@ -190,18 +199,13 @@
                 
                 ChangeTheme(ThemeManager.GetAccent(theme.Accent) ,ThemeManager.GetAppTheme(theme.BaseTheme));
 
-                ServerSetupViewer.Visibility = Visibility.Collapsed;
-                ThemeViewer.Visibility = Visibility.Collapsed;
-                ThemeLightDarkViewer.Visibility = Visibility.Collapsed;
-                StartupViewer.Visibility = Visibility.Visible;
+                UpdateSetupView(StartupViewer);
+
                 Title = "Join Draft";
             }
             catch (IOException)
             {
-                ServerSetupViewer.Visibility = Visibility.Collapsed;
-                ThemeViewer.Visibility = Visibility.Collapsed;
-                ThemeLightDarkViewer.Visibility = Visibility.Visible;
-                StartupViewer.Visibility = Visibility.Collapsed;
+                UpdateSetupView(ThemeLightDarkViewer);
             }
         }
 
@@ -223,10 +227,7 @@
             var themeApp = ThemeManager.GetAppTheme(themeName);
             ChangeTheme(theme.Item2, themeApp);
 
-            ServerSetupViewer.Visibility = Visibility.Collapsed;
-            ThemeViewer.Visibility = Visibility.Visible;
-            ThemeLightDarkViewer.Visibility = Visibility.Collapsed;
-            StartupViewer.Visibility = Visibility.Collapsed;
+            UpdateSetupView(ThemeViewer);
         }
 
         private void ResetMessageBoxClose(object sender, RoutedEventArgs e)
