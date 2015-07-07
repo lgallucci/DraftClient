@@ -19,8 +19,6 @@
         private readonly DispatcherTimer _timer;
         private DateTime _lastSoundPlayed;
 
-        //TODO: Send timer info over wire
-        //TODO: Play sounds
         public DraftTimerControl()
         {
             InitializeComponent();

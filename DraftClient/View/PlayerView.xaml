@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:c="clr-namespace:DraftClient.Converters"
              Loaded="UserControl_Loaded" mc:Ignorable="d" d:DesignWidth="400">
     <UserControl.Resources>
@@ -27,7 +28,7 @@
                 <CheckBox Name="cbK" IsChecked="True" Content="Ks" Margin="5 0 5 0" />
                 <CheckBox Name="cbDEF" IsChecked="True" Content="DEFs" Margin="5 0 5 0"/>
             </WrapPanel>
-            <TextBox Name="SearchTextBox" Width="0" Canvas.Left="370" BorderThickness="1" TextChanged="FilterTextChanged" />
+            <TextBox controls:TextBoxHelper.Watermark="Search Players"  Name="SearchTextBox" Width="0" Canvas.Left="370" BorderThickness="1" TextChanged="FilterTextChanged" />
             <ToggleButton Style="{DynamicResource MetroCircleToggleButtonStyle}" Content="🔍" Cursor="Hand" Width="30" Height="30" Margin="370 0 0 0" Click="SearchButtonClick" Name="SearchButton" >
                 <ToggleButton.Triggers>
                     <EventTrigger RoutedEvent="ToggleButton.Checked">

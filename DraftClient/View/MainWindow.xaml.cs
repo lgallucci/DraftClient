@@ -54,8 +54,8 @@
 
             e.Cancel = true;
 
-            MessageDialogResult messageBoxResult = await this.ShowMessageAsync("Close Confirmation", string.Format("Are you sure?{0}This will {1} the draft", Environment.NewLine,
-                _draftController.IsServer ? "close" : "leave"), MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings { AffirmativeButtonText = "Yes", NegativeButtonText = "No"});
+            MessageDialogResult messageBoxResult = await this.ShowMessageAsync(string.Format("{0} the draft?",_draftController.IsServer ? "Close" : "Leave"), "Are you sure?"
+                , MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings { AffirmativeButtonText = "Yes", NegativeButtonText = "No"});
 
             if (messageBoxResult == MessageDialogResult.Affirmative)
             {
@@ -73,6 +73,8 @@
 
             if (closeWindow)
             {
+                _draftController.SaveDraft();
+
                 _dontPrompt = true;
                 Close();
             }

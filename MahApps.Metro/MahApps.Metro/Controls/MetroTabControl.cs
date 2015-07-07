@@ -143,7 +143,7 @@ namespace MahApps.Metro.Controls
                 {
                     var paramData = (Tuple<object, MetroTabItem>)parameter;
 
-                    if (owner.CloseTabCommand != null) // TODO: let MetroTabControl define parameter to pass to command
+                    if (owner.CloseTabCommand != null)
                         owner.CloseTabCommand.Execute(null);
                     else
                     {

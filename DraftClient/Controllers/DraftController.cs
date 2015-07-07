@@ -199,5 +199,16 @@
         {
             Application.Current.Dispatcher.Invoke(() => _mainWindow.CloseWindow("Draft Closed by Server", true));
         }
+
+        public void SaveDraft()
+        {
+            //TODO: Save Draft
+        }
+
+        public Draft LoadDraft(string draftName)
+        {
+            //TODO: Load Draft
+            throw new NotImplementedException();
+        }
     }
 }

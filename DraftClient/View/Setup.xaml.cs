@@ -36,6 +36,9 @@
             _setupController.SubscribeToMessages(DraftSettings.Servers);
 
             DataContext = DraftSettings;
+
+            //TODO: Add load draft button
+            //TODO: Load Drafts
         }
 
         public DraftSettings DraftSettings { get; set; }
