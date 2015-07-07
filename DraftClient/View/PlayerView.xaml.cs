@@ -1,5 +1,6 @@
 ﻿namespace DraftClient.View
 {
+    using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Controls.Primitives;
@@ -109,19 +110,23 @@
             CollectionViewSource.GetDefaultView(dataGrid1.ItemsSource).Refresh();
         }
 
-        private void SearchButtonClick(object sender, RoutedEventArgs e)
+        private async void SearchButtonClick(object sender, RoutedEventArgs e)
         {
             var button = sender as ToggleButton;
             if (button != null && button.IsChecked != null && !button.IsChecked.Value)
             {
-                if (string.IsNullOrWhiteSpace(SearchTextBox.Text))
+                await Task.Delay(200);
+                Application.Current.Dispatcher.Invoke(() =>
                 {
-                    CollectionViewSource.GetDefaultView(dataGrid1.ItemsSource).Refresh();
-                }
-                else
-                {
-                    SearchTextBox.Text = "";
-                }
+                    if (string.IsNullOrWhiteSpace(SearchTextBox.Text))
+                    {
+                        CollectionViewSource.GetDefaultView(dataGrid1.ItemsSource).Refresh();
+                    }
+                    else
+                    {
+                        SearchTextBox.Text = "";
+                    }
+                });
             }
             else
             {
