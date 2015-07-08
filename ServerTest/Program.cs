@@ -1,10 +1,7 @@
 ﻿namespace ServerTest
 {
-    using System;
-    using System.Linq;
     using System.Threading;
     using ClientServer;
-    using DraftEntities;
 
     internal class Program
     {
@@ -13,13 +10,6 @@
             var server = new Server("Test Fantasy League", 12);
 
             server.StartServer();
-
-            server.SendDraft += () => new Draft
-            {
-                Drafting = true,
-                Picks = new int[5, 5]
-            };
-
 
             while (true)
             {

@@ -96,11 +96,9 @@
             _connection.RetrieveDraftSettings += OnRetrieveDraftSettings;
             _connection.TeamUpdated += OnTeamUpdated;
             _connection.PickMade += OnPickMade;
-            _connection.SendDraft += OnSendDraft;
             _connection.TeamUpdated += OnTeamUpdated;
             _connection.SendDraftSettings += OnSendDraftSettings;
             _connection.UserDisconnect += OnUserDisconnect;
-            _connection.RetrieveDraft += OnRetrieveDraft;
             _connection.DraftStop += OnDraftStop;
             _connection.DraftStateChanged += OnDraftStateChanged;
         }
@@ -111,11 +109,9 @@
             _connection.RetrieveDraftSettings -= OnRetrieveDraftSettings;
             _connection.TeamUpdated -= OnTeamUpdated;
             _connection.PickMade -= OnPickMade;
-            _connection.SendDraft -= OnSendDraft;
             _connection.TeamUpdated -= OnTeamUpdated;
             _connection.SendDraftSettings -= OnSendDraftSettings;
             _connection.UserDisconnect -= OnUserDisconnect;
-            _connection.RetrieveDraft -= OnRetrieveDraft;
             _connection.DraftStop -= OnDraftStop;
             _connection.DraftStateChanged += OnDraftStateChanged;
         }
@@ -175,29 +171,6 @@
         public delegate void DraftStopHandler();
 
         public delegate void DraftStateChangedHandler(DraftState state);
-
-        public event RetrieveDraftHandler RetrieveDraft;
-
-        public void OnRetrieveDraft(Draft draft)
-        {
-            RetrieveDraftHandler handler = RetrieveDraft;
-            if (handler != null)
-            {
-                handler(draft);
-            }
-        }
-
-        public event SendDraftHandler SendDraft;
-
-        public Draft OnSendDraft()
-        {
-            SendDraftHandler handler = SendDraft;
-            if (handler != null)
-            {
-                return handler();
-            }
-            return null;
-        }
 
         public event RetrieveDraftSettingsHandler RetrieveDraftSettings;
 

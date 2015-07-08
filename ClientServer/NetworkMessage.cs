@@ -44,8 +44,6 @@
         UpdateTeamMessage,
 
         //Draft Setup
-        SendDraftMessage,
-        RetrieveDraftMessage,
         SendDraftSettingsMessage,
         RetrieveDraftSettingsMessage
     }

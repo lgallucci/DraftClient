@@ -96,21 +96,27 @@
             }
         }
 
-        public static Theme ReadThemeFile(string fileName)
+        public static T ReadFile<T>(string fileName)
         {
-            var reader = new XmlSerializer(typeof(Theme));
+            var reader = new XmlSerializer(typeof(T));
             var file = new StreamReader(fileName);
-            var theme = (Theme)reader.Deserialize(file);
+            var readObject = (T)reader.Deserialize(file);
             file.Close();
-            return theme;
+            return readObject;
         }
 
-        public static void WriteThemeFile(Theme theme, string fileName)
+        public static void WriteFile<T>(T theme, string fileName)
         {
-            var writer = new XmlSerializer(typeof(Theme));
+            var writer = new XmlSerializer(typeof(T));
             var file = new StreamWriter(fileName);
             writer.Serialize(file, theme);
             file.Close();
+        }
+
+        public static string[] GetFilesWithPrefix(string prefix)
+        {
+            var localDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+            return Directory.GetFiles(localDirectory ?? ".", string.Format("{0}_*", prefix));
         }
     }
 }

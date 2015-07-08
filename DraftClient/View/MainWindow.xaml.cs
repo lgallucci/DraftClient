@@ -54,70 +54,62 @@
 
             e.Cancel = true;
 
-            MessageDialogResult messageBoxResult = await this.ShowMessageAsync(string.Format("{0} the draft?",_draftController.IsServer ? "Close" : "Leave"), "Are you sure?"
-                , MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings { AffirmativeButtonText = "Yes", NegativeButtonText = "No"});
+            MessageDialogResult messageBoxResult = await this.ShowMessageAsync(string.Format("{0} the draft?", _draftController.IsServer ? "Close" : "Leave"), "Are you sure?"
+                , MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings { AffirmativeButtonText = "Yes", NegativeButtonText = "No" });
 
             if (messageBoxResult == MessageDialogResult.Affirmative)
             {
-                CloseWindow("Draft Closed", true);
+                CloseWindow("Draft Closed");
             }
         }
 
-        public void CloseWindow(string resetMessage, bool closeWindow)
+        public void CloseWindow(string resetMessage)
         {
+            if (_draftController.IsServer)
+            {
+                _draftController.SaveDraft();
+            }
+
             if (Owner != null)
             {
                 ((Setup)Owner).Reset(_draftController.IsServer, resetMessage);
                 Owner.Show();
             }
 
-            if (closeWindow)
-            {
-                _draftController.SaveDraft();
-
-                _dontPrompt = true;
-                Close();
-            }
+            _dontPrompt = true;
+            Close();
         }
 
-        public async Task<bool> SetupDraft(DraftSettings settings)
+        public bool SetupDraft(DraftSettings settings)
         {
+            _draftController.Settings = settings;
+
+            if (_draftController.IsServer)
+            {
+                if (_draftController.Settings.CurrentDraft == null)
+                {
+                    _draftController.Settings.CurrentDraft = new Draft(_draftController.Settings.TotalRounds,
+                        _draftController.Settings.NumberOfTeams, _draftController.Settings.NumberOfSeconds, true);
+                }
+            }
+            
             try
             {
-                _draftController.Settings = settings;
-
                 LoadPlayers();
-
-                await RetrieveDraft();
-
-                SetupGrid(settings);
             }
             catch (IOException)
             {
                 throw new TimeoutException("Couldn't find or read the players file.");
             }
 
-            return true;
-        }
+            SetupGrid(settings);
 
-        private async Task RetrieveDraft()
-        {
-            if (_draftController.IsServer)
-            {
-                _draftController.CurrentDraft = new Draft(_draftController.Settings.TotalRounds, _draftController.Settings.NumberOfTeams, _draftController.Settings.NumberOfSeconds, true);
-            }
-            else
-            {
-                if (!await _draftController.GetDraft())
-                {
-                    throw new TimeoutException("Didn't recieve draft information in time");
-                }
-            }
+            return true;
         }
 
         private void SetupGrid(DraftSettings settings)
         {
-            DraftTimerControl.PopulateState(_draftController.CurrentDraft.State);
+            DraftTimerControl.PopulateState(_draftController.Settings.CurrentDraft.State);
             DraftTimerControl.DraftStateChanged += state => _draftController.UpdateDraftState(state);
 
             for (int i = 0; i < settings.NumberOfTeams + 1; i++)
@@ -196,7 +188,7 @@
                 {
                     var newRound = new FantasyRound
                     {
-                        Pick = _draftController.CurrentDraft.Picks[i - 1, j - 1],
+                        Pick = _draftController.Settings.CurrentDraft.Picks[i - 1][j - 1],
                         Round = i,
                         Team = j
                     };

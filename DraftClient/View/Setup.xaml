@@ -5,8 +5,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         mc:Ignorable="d" Title="Choose Theme"
-        DataContext="DraftClient.ViewModel.DraftSettings" Closing="Window_Closing" ResizeMode="NoResize" Height="400"
-        Width="700" Loaded="SetupLoaded" Icon="../Resources/American-football.ico" ShowIconOnTitleBar="False">
+        DataContext="DraftClient.ViewModel.DraftSettings" Closing="Window_Closing" ResizeMode="NoResize"
+        Width="700" Loaded="SetupLoaded" Icon="../Resources/American-football.ico" ShowIconOnTitleBar="False" SizeToContent="Height">
     <Window.Resources>
         <ResourceDictionary>
 
@@ -57,100 +57,99 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="2*" />
+                    <RowDefinition Height="4*" x:Name="SettingsRow" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <WrapPanel Margin="15" Grid.Column="0" Grid.Row="0">
                     <TextBlock Width="200">League Name</TextBlock>
-                    <ComboBox  x:Name="LeagueName"
-                               Width="237"
-                          Margin="0 10 0 0"
+                    <ComboBox  x:Name="LeagueName" Width="237"
                           Style="{DynamicResource VirtualisedMetroComboBox}"
                           controls:TextBoxHelper.Watermark="League Name"
-                          DisplayMemberPath="Title"
                           IsEditable="True"
-                          ItemsSource="{Binding PreviousDrafts}" 
+                          ItemsSource="{Binding PreviousDrafts, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:MetroWindow}}}" 
                           SelectedValue="{Binding LeagueName}"
                           FontSize="14"
                           MaxDropDownHeight="125"
-                          Text="{Binding LeagueName}" />
+                          Text="{Binding LeagueName}"
+                          LostFocus="LeagueName_Validate"/>
+
                 </WrapPanel>
-                <WrapPanel Margin="15" Grid.Column="0" Grid.Row="1">
-                    <WrapPanel Width="275" Margin="0 5 0 5">
-                        <TextBlock Width="200" Text="Timer Seconds" />
-                        <TextBox x:Name="NumberOfSeconds" Width="55" FontSize="14" MaxLength="3" Text="{Binding NumberOfSeconds}"
+                <StackPanel Grid.Row="1">
+                    <WrapPanel Margin="15">
+                        <WrapPanel Width="275" Margin="0 5 0 5">
+                            <TextBlock Width="200" Text="Timer Seconds" />
+                            <TextBox x:Name="NumberOfSeconds" Width="55" FontSize="14" MaxLength="3" Text="{Binding NumberOfSeconds}"
                              TextAlignment="Center" />
+                        </WrapPanel>
                     </WrapPanel>
-                </WrapPanel>
-                <WrapPanel Margin="15" Grid.Column="0" Grid.Row="2">
-                    <WrapPanel Width="250" Margin="0 5 0 5">
-                        <TextBlock Width="200" Text="Number Of Teams" />
-                        <TextBox x:Name="NumberOfRounds" Width="35" FontSize="14" Text="{Binding NumberOfTeams}"
+                    <WrapPanel Margin="15">
+                        <WrapPanel Width="250" Margin="0 5 0 5">
+                            <TextBlock Width="200" Text="Number Of Teams" />
+                            <TextBox x:Name="NumberOfRounds" Width="35" FontSize="14" Text="{Binding NumberOfTeams}"
                              TextAlignment="Center" />
-                    </WrapPanel>
-                    <WrapPanel Width="250" Margin="0 5 0 5">
-                        <TextBlock Width="200">Bench Players</TextBlock>
-                        <TextBox x:Name="BenchPlayers" Width="35" FontSize="14" Text="{Binding BenchPlayers}"
+                        </WrapPanel>
+                        <WrapPanel Width="250" Margin="0 5 0 5">
+                            <TextBlock Width="200">Bench Players</TextBlock>
+                            <TextBox x:Name="BenchPlayers" Width="35" FontSize="14" Text="{Binding BenchPlayers}"
                              TextAlignment="Center" />
+                        </WrapPanel>
                     </WrapPanel>
-                </WrapPanel>
-                <WrapPanel Margin="15" Grid.Column="0" Grid.Row="3">
-                    <WrapPanel Width="150" Margin="0 5 0 5">
-                        <TextBlock Width="90" VerticalAlignment="Center">
+                    <WrapPanel Margin="15">
+                        <WrapPanel Width="150" Margin="0 5 0 5">
+                            <TextBlock Width="90" VerticalAlignment="Center">
                             <Run Text="QB" />
-                        </TextBlock>
-                        <TextBox x:Name="QBCount" Width="35" FontSize="14" Text="{Binding Quarterbacks}"
+                            </TextBlock>
+                            <TextBox x:Name="QBCount" Width="35" FontSize="14" Text="{Binding Quarterbacks}"
                                  TextAlignment="Center" />
-                    </WrapPanel>
-                    <WrapPanel Width="150" Margin="0 5 0 5">
-                        <TextBlock Width="90" VerticalAlignment="Center">
+                        </WrapPanel>
+                        <WrapPanel Width="150" Margin="0 5 0 5">
+                            <TextBlock Width="90" VerticalAlignment="Center">
                             <Run Text="WR" />
-                        </TextBlock>
-                        <TextBox x:Name="WRCount" Width="35" FontSize="14" Text="{Binding WideRecievers}"
+                            </TextBlock>
+                            <TextBox x:Name="WRCount" Width="35" FontSize="14" Text="{Binding WideRecievers}"
                                  TextAlignment="Center" />
-                    </WrapPanel>
-                    <WrapPanel Width="150" Margin="0 5 0 5">
-                        <TextBlock Width="90" VerticalAlignment="Center">
+                        </WrapPanel>
+                        <WrapPanel Width="150" Margin="0 5 0 5">
+                            <TextBlock Width="90" VerticalAlignment="Center">
                             <Run Text="RB" />
-                        </TextBlock>
-                        <TextBox x:Name="RBCount" Width="35" FontSize="14" Text="{Binding RunningBacks}"
+                            </TextBlock>
+                            <TextBox x:Name="RBCount" Width="35" FontSize="14" Text="{Binding RunningBacks}"
                                  TextAlignment="Center" />
-                    </WrapPanel>
-                    <WrapPanel Width="150" Margin="0 5 0 5">
-                        <TextBlock Width="90" VerticalAlignment="Center">
+                        </WrapPanel>
+                        <WrapPanel Width="150" Margin="0 5 0 5">
+                            <TextBlock Width="90" VerticalAlignment="Center">
                             <Run Text="WR/RB/TE" />
-                        </TextBlock>
-                        <TextBox x:Name="WRRBTECount" Width="35" FontSize="14" Text="{Binding FlexWithTightEnd}"
+                            </TextBlock>
+                            <TextBox x:Name="WRRBTECount" Width="35" FontSize="14" Text="{Binding FlexWithTightEnd}"
                                  TextAlignment="Center" />
-                    </WrapPanel>
-                    <WrapPanel Width="150" Margin="0 5 0 5">
-                        <TextBlock Width="90" VerticalAlignment="Center">
+                        </WrapPanel>
+                        <WrapPanel Width="150" Margin="0 5 0 5">
+                            <TextBlock Width="90" VerticalAlignment="Center">
                             <Run Text="TE" />
-                        </TextBlock>
-                        <TextBox x:Name="TECount" Width="35" FontSize="14" Text="{Binding TightEnds}"
+                            </TextBlock>
+                            <TextBox x:Name="TECount" Width="35" FontSize="14" Text="{Binding TightEnds}"
                                  TextAlignment="Center" />
-                    </WrapPanel>
-                    <WrapPanel Width="150" Margin="0 5 0 5">
-                        <TextBlock Width="90" VerticalAlignment="Center">
+                        </WrapPanel>
+                        <WrapPanel Width="150" Margin="0 5 0 5">
+                            <TextBlock Width="90" VerticalAlignment="Center">
                             <Run Text="K" />
-                        </TextBlock>
-                        <TextBox x:Name="KCount" Width="35" FontSize="14" Text="{Binding Kickers}"
+                            </TextBlock>
+                            <TextBox x:Name="KCount" Width="35" FontSize="14" Text="{Binding Kickers}"
                                  TextAlignment="Center" />
-                    </WrapPanel>
-                    <WrapPanel Width="150" Margin="0 5 0 5">
-                        <TextBlock Width="90" VerticalAlignment="Center">
+                        </WrapPanel>
+                        <WrapPanel Width="150" Margin="0 5 0 5">
+                            <TextBlock Width="90" VerticalAlignment="Center">
                             <Run Text="DEF" />
-                        </TextBlock>
-                        <TextBox x:Name="DEFCount" Width="35" FontSize="14" Text="{Binding Defenses}"
+                            </TextBlock>
+                            <TextBox x:Name="DEFCount" Width="35" FontSize="14" Text="{Binding Defenses}"
                                  TextAlignment="Center" />
+                        </WrapPanel>
                     </WrapPanel>
-                </WrapPanel>
+                </StackPanel>
                 <WrapPanel Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right">
-                    <Button Margin="5 15 5 0" Width="125" Height="30" Name="CancelDraftButton" Content="Cancel Draft"
+                    <Button Margin="5 15 5 5" Width="125" Height="30" Name="CancelDraftButton" Content="Cancel Draft"
                             Click="CancelDraft_Click" />
-                    <Button Content="Start Draft" Name="StartButton" Margin="5 15 5 0" Width="125" Height="30"
+                    <Button Content="Start Draft" Name="StartButton" Margin="5 15 5 5" Width="125" Height="30"
                             Click="StartDraft_Click" IsEnabled="{Binding IsValid}" />
                 </WrapPanel>
             </Grid>
@@ -204,12 +203,12 @@
                     </Button>
                 </WrapPanel>
                 <WrapPanel Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right">
-                    <Button FontSize="18" Margin="0 20 45 0" IsEnabled="False" Name="JoinDraftButton" Content="Join Draft"
+                    <Button FontSize="18" Margin="0 20 45 10" IsEnabled="False" Name="JoinDraftButton" Content="Join Draft"
                             Click="JoinDraft_Click" />
                 </WrapPanel>
             </Grid>
         </ScrollViewer>
-        <ScrollViewer VerticalScrollBarVisibility="Auto" Name="ThemeViewer" Visibility="Collapsed">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Name="ThemeViewer" Visibility="Collapsed" Height="375">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
@@ -514,7 +513,7 @@
                             <Button Click="ChangeBaseTheme_OnClick" Style="{StaticResource LinkButton}" Margin="0 7 0 7" Content="LIGHT" />
                         </StackPanel>
                     </DockPanel>
-                    <DockPanel Tag="BaseDark" Dock="Bottom" Height="30">
+                    <DockPanel Tag="BaseDark" Dock="Bottom" Height="31">
                         <DockPanel.Resources>
                             <ResourceDictionary>
                                 <ResourceDictionary.MergedDictionaries>
@@ -529,13 +528,13 @@
                 </DockPanel>
             </Grid>
         </ScrollViewer>
-        <ScrollViewer VerticalScrollBarVisibility="Auto" Name="ThemeLightDarkViewer" Visibility="Visible">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Name="ThemeLightDarkViewer" Visibility="Visible"  Height="375">
             <ScrollViewer.Resources>
                 <ResourceDictionary>
                     <Style x:Key="LinkButton" TargetType="Button">
                         <Setter Property="HorizontalAlignment" Value="Center" />
                         <Setter Property="VerticalAlignment" Value="Center" />
-                        <Setter Property="Margin" Value="0 150 0 0" />
+                        <Setter Property="Margin" Value="0 150 0 150" />
                         <Setter Property="FontSize" Value="30"></Setter>
                         <Setter Property="Cursor" Value="Hand" />
                         <Setter Property="Template">

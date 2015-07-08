@@ -181,15 +181,6 @@
                     case NetworkMessageType.LogoutMessage:
                         Logout(connection);
                         break;
-                    case NetworkMessageType.SendDraftMessage:
-                        Draft draft = OnSendDraft();
-                        SendMessage(connection, new NetworkMessage
-                        {
-                            SenderId = ClientId,
-                            MessageContent = draft,
-                            MessageType = NetworkMessageType.RetrieveDraftMessage
-                        });
-                        break;
                     case NetworkMessageType.SendDraftSettingsMessage:
                         DraftSettings draftSettings = OnSendDraftSettings();
                         SendMessage(connection, new NetworkMessage

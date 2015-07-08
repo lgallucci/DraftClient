@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.IO;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -104,6 +105,28 @@
                 {
                     _setupWindow.DraftSettings.DraftTeams.Add(Mapper.Map<DraftTeam>(draftTeam));
                 }
+                
+                _setupWindow.DraftSettings.CurrentDraft = new Draft(settings.CurrentDraft.MaxRound,
+                    settings.CurrentDraft.MaxTeam, settings.NumberOfSeconds, false);
+                
+                for (int i = 0; i < settings.CurrentDraft.MaxRound; i++)
+                {
+                    for (int j = 0; j < settings.CurrentDraft.MaxTeam; j++)
+                    {
+                        if (settings.CurrentDraft.Picks[i, j] != 0)
+                        {
+                            ViewModel.Player player =
+                                MainWindow.PlayerList.Players.First(p => p.Rank == settings.CurrentDraft.Picks[i, j]);
+
+                            _setupWindow.DraftSettings.CurrentDraft.Picks[i][j] = new ViewModel.DraftPick
+                            {
+                                DraftedPlayer = player,
+                                CanEdit = false,
+                                Name = player.Name
+                            };
+                        }
+                    }
+                }
             });
             _settingsResetEvent.Set();
         }
@@ -136,6 +159,26 @@
         public void ResetConnection()
         {
             _connectionServer.ResetConnection();
+        }
+
+        public ViewModel.DraftSettings LoadDraft(string draftName)
+        {
+            return FileHandler.DraftFileHandler.ReadFile<ViewModel.DraftSettings>(string.Format("DRAFT_{0}.xml", draftName));
+        }
+
+        public string[] LoadPreviousDrafts()
+        {
+            return GetDraftNames(FileHandler.DraftFileHandler.GetFilesWithPrefix("DRAFT"));
+        }
+
+        private string[] GetDraftNames(string[] filesWithPath)
+        {
+            var fileNames = new string[filesWithPath.Length];
+            for(int i = 0; i < filesWithPath.Length; i++)
+            {
+                fileNames[i] = Path.GetFileName(filesWithPath[i]).Replace("DRAFT_", "").Replace(".xml", "");
+            }
+            return fileNames;
         }
     }
 }

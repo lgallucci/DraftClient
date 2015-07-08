@@ -4,7 +4,6 @@
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Threading;
-    using System.Threading.Tasks;
     using System.Windows;
     using ClientServer;
     using DraftClient.View;
@@ -21,11 +20,9 @@
             _connectionServer = ConnectionServer.Instance;
             _mainWindow = mainWindow;
             _connectionServer.PickMade += PickMade;
-            _connectionServer.SendDraft += SendDraft;
             _connectionServer.TeamUpdated += TeamUpdated;
             _connectionServer.SendDraftSettings += SendDraftSettings;
             _connectionServer.UserDisconnect += UserDisconnect;
-            _connectionServer.RetrieveDraft += RetrieveDraft;
             _connectionServer.DraftStop += DraftStop;
             _connectionServer.DraftStateChanged += DraftStateChanged;
             _mainWindow.Closed += RemoveHandlers;
@@ -36,78 +33,12 @@
         private void RemoveHandlers(object sender, EventArgs e)
         {
             _connectionServer.PickMade -= PickMade;
-            _connectionServer.SendDraft -= SendDraft;
             _connectionServer.TeamUpdated -= TeamUpdated;
             _connectionServer.SendDraftSettings -= SendDraftSettings;
             _connectionServer.UserDisconnect -= UserDisconnect;
-            _connectionServer.RetrieveDraft -= RetrieveDraft;
             _connectionServer.DraftStop -= DraftStop;
             _connectionServer.DraftStateChanged -= DraftStateChanged;
             _mainWindow.Closed -= RemoveHandlers;
-        }
-
-        public Task<bool> GetDraft()
-        {
-            _draftReset = new AutoResetEvent(false);
-            _connectionServer.SendMessage(NetworkMessageType.SendDraftMessage, null);
-
-            return Task.Run(() => _draftReset.WaitOne(5000));
-        }
-
-        private void RetrieveDraft(Draft draft)
-        {
-            if (draft == null) return;
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                var draftModel = new ViewModel.Draft(draft.MaxRound, draft.MaxTeam, Settings.NumberOfSeconds, false);
-                draftModel.InjectFrom(draft);
-                for (int i = 0; i < draft.MaxRound; i++)
-                {
-                    for (int j = 0; j < draft.MaxTeam; j++)
-                    {
-                        if (draft.Picks[i, j] != 0)
-                        {
-                            ViewModel.Player player =
-                                MainWindow.PlayerList.Players.First(p => p.Rank == draft.Picks[i, j]);
-
-                            draftModel.Picks[i, j] = new ViewModel.DraftPick
-                            {
-                                DraftedPlayer = player,
-                                CanEdit = IsServer,
-                                Name = player.Name
-                            };
-                        }
-                    }
-                }
-                CurrentDraft = draftModel;
-            });
-
-            _draftReset.Set();
-        }
-
-        private Draft SendDraft()
-        {
-            Mapper.AddMap<ViewModel.Draft, Draft>(src =>
-            {
-                var res = new Draft();
-                res.InjectFrom(src);
-                int rows = src.Picks.GetLength(0),
-                    columns = src.Picks.GetLength(1);
-
-                res.Picks = new int[rows, columns];
-                for (int i = 0; i < rows; i++)
-                {
-                    for (int j = 0; j < columns; j++)
-                    {
-                        if (src.Picks[i, j].DraftedPlayer != null)
-                        {
-                            res.Picks[i, j] = src.Picks[i, j].DraftedPlayer.Rank;
-                        }
-                    }
-                }
-                return res;
-            });
-            return Mapper.Map<Draft>(CurrentDraft);
         }
 
         private DraftSettings SendDraftSettings()
@@ -121,6 +52,22 @@
                 {
                     res.DraftTeams.Add(Mapper.Map<DraftTeam>(draftTeam));
                 }
+                int rows = src.CurrentDraft.Picks.Count,
+                    columns = src.CurrentDraft.Picks[0].Count;
+
+                res.CurrentDraft = new Draft { Picks = new int[rows, columns] };
+                res.CurrentDraft.InjectFrom(src.CurrentDraft);
+
+                for (int i = 0; i < rows; i++)
+                {
+                    for (int j = 0; j < columns; j++)
+                    {
+                        if (src.CurrentDraft.Picks[i][j].DraftedPlayer != null)
+                        {
+                            res.CurrentDraft.Picks[i, j] = src.CurrentDraft.Picks[i][j].DraftedPlayer.Rank;
+                        }
+                    }
+                }
                 return res;
             });
             return Mapper.Map<DraftSettings>(Settings);
@@ -131,8 +78,8 @@
             ViewModel.Player player =
                 MainWindow.PlayerList.Players.FirstOrDefault(p => p.Rank == pick.Rank);
 
-            CurrentDraft.Picks[pick.Row, pick.Column].DraftedPlayer = player;
-            CurrentDraft.Picks[pick.Row, pick.Column].Name = (player != null) ? player.Name : "";
+            Settings.CurrentDraft.Picks[pick.Row][pick.Column].DraftedPlayer = player;
+            Settings.CurrentDraft.Picks[pick.Row][pick.Column].Name = (player != null) ? player.Name : "";
         }
 
         private void TeamUpdated(DraftTeam team)
@@ -154,9 +101,7 @@
         #endregion
 
         public bool IsServer { get; set; }
-        public ViewModel.Draft CurrentDraft { get; set; }
         public ViewModel.DraftSettings Settings { get; set; }
-        private AutoResetEvent _draftReset;
 
         public void MakeMove(DraftPick pick)
         {
@@ -197,18 +142,17 @@
 
         public void DraftStop()
         {
-            Application.Current.Dispatcher.Invoke(() => _mainWindow.CloseWindow("Draft Closed by Server", true));
+            Application.Current.Dispatcher.Invoke(() => _mainWindow.CloseWindow("Draft Closed by Server"));
         }
 
         public void SaveDraft()
         {
-            //TODO: Save Draft
-        }
-
-        public Draft LoadDraft(string draftName)
-        {
-            //TODO: Load Draft
-            throw new NotImplementedException();
+            foreach (var team in Settings.DraftTeams)
+            {
+                team.IsConnected = false;
+                team.ConnectedUser = Guid.Empty;
+            }
+            FileHandler.DraftFileHandler.WriteFile(Settings, string.Format("DRAFT_{0}.xml", Settings.LeagueName));
         }
     }
 }

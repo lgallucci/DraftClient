@@ -21,13 +21,22 @@
         private static DraftSettings _instance;
         public static DraftSettings Instance
         {
-            get { return _instance ?? (_instance = new DraftSettings()); }
+            get 
+            {
+                if (_instance == null)
+                {
+                    _instance = new DraftSettings();
+                    _instance.Reset();
+                }
+                return _instance; 
+            }
         }
 
         private DraftSettings()
         {
-            Reset();
         }
+
+        public Draft CurrentDraft { get; set; }
 
         public string LeagueName
         {
@@ -115,10 +124,10 @@
         {
             get { return Quarterbacks + WideRecievers + RunningBacks + FlexWithTightEnd + TightEnds + Kickers + Defenses + BenchPlayers; }
         }
-
+        
         public override bool Validate()
         {
-            return _leagueName.Length > 0
+            return !string.IsNullOrEmpty(_leagueName)
                    && _numberOfTeams > 0
                    && _numberOfTeams < 15;
         }
@@ -135,6 +144,7 @@
                     Name = string.Format("Team{0}", i + 1)
                 });
             }
+            CurrentDraft = null;
         }
     }
 }

@@ -75,7 +75,6 @@
 
                         Console.WriteLine("Connected to {0} as {1}", servers[0].FantasyDraft, name);
 
-                        _connection.RetrieveDraft += RetrieveDraft;
                         _connection.RetrieveDraftSettings += RetrieveDraftSettings;
 
                         while (true)
@@ -85,8 +84,6 @@
                             recievedDraft = false;
                             GetDraftSettings();
                             Thread.Sleep(5000);
-                            GetDraft();
-                            Thread.Sleep(5000); 
 
                             while (!recievedDraftSettings || !recievedDraft)
                             {
@@ -112,12 +109,6 @@
         {
             recievedDraftSettings = true;
             Console.WriteLine("Recieved DraftSettings!");
-        }
-
-        private void GetDraft()
-        {
-            Console.WriteLine("Getting Draft!");
-            _connection.SendMessage(NetworkMessageType.SendDraftMessage, null);
         }
 
         private void RetrieveDraft(Draft draft)

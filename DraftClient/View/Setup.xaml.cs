@@ -3,15 +3,16 @@
     using System;
     using System.ComponentModel;
     using System.IO;
-    using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Controls;
     using DraftClient.Controllers;
-    using DraftClient.Extensions;
     using DraftEntities;
     using MahApps.Metro;
     using MahApps.Metro.Controls;
     using MahApps.Metro.Controls.Dialogs;
+    using Omu.ValueInjecter;
+    using Properties;
+    using Providers;
     using DraftServer = ViewModel.DraftServer;
     using DraftSettings = ViewModel.DraftSettings;
 
@@ -22,6 +23,9 @@
     {
         private readonly SetupController _setupController;
         private MainWindow _draftWindow;
+        private double _actualHeight;
+
+        public string[] PreviousDrafts { get; set; }
 
         public Setup()
         {
@@ -35,10 +39,9 @@
 
             _setupController.SubscribeToMessages(DraftSettings.Servers);
 
-            DataContext = DraftSettings;
+            PreviousDrafts = _setupController.LoadPreviousDrafts();
 
-            //TODO: Add load draft button
-            //TODO: Load Drafts
+            DataContext = DraftSettings;
         }
 
         public DraftSettings DraftSettings { get; set; }
@@ -50,13 +53,13 @@
             OpenDraft(true);
         }
 
-        public async Task CreateDraftWindow(bool isServer, int totalRounds, int numberOfTeams)
+        public void CreateDraftWindow(bool isServer, int totalRounds, int numberOfTeams)
         {
             try
             {
                 _draftWindow = new MainWindow(isServer);
 
-                if (await _draftWindow.SetupDraft(DraftSettings))
+                if (_draftWindow.SetupDraft(DraftSettings))
                 {
                     _draftWindow.Owner = this;
                     Hide();
@@ -65,7 +68,7 @@
                     ConnectingWindow.Hide();
                 }
             }
-            catch (TimeoutException ex)
+            catch (Exception ex)
             {
                 ConnectingWindow.Hide();
                 _setupController.DisconnectFromDraftServer();
@@ -82,7 +85,7 @@
 
             if (isServer) _setupController.StartServer(DraftSettings.LeagueName, DraftSettings.NumberOfTeams);
 
-            CreateDraftWindow(isServer, DraftSettings.TotalRounds, DraftSettings.NumberOfTeams).DoNotAwait();
+            CreateDraftWindow(isServer, DraftSettings.TotalRounds, DraftSettings.NumberOfTeams);
         }
 
         private void CreateDraft_Click(object sender, RoutedEventArgs e)
@@ -92,7 +95,7 @@
             Title = "Create Draft";
         }
 
-        private async void JoinDraft_Click(object sender, RoutedEventArgs e) 
+        private async void JoinDraft_Click(object sender, RoutedEventArgs e)
         {
             var lbi = ServerListBox.SelectedItem as DraftServer;
             if (lbi != null)
@@ -104,15 +107,15 @@
 
                     if (!await _setupController.GetDraftSettings())
                     {
-                        throw new TimeoutException("Didn't recieve draft settings");
+                        throw new TimeoutException("Didn't recieve draft in time.");
                     }
                     OpenDraft(false);
                 }
                 catch (Exception ex)
                 {
                     ConnectingWindow.Hide();
-                    MessageBox.Show(ex.Message);
                     _setupController.DisconnectFromDraftServer();
+                    this.ShowMessageAsync("An error occurred", ex.Message);
                 }
             }
         }
@@ -144,6 +147,8 @@
 
             _setupController.ResetConnection();
             DraftSettings.Reset();
+            DraftSettings.LeagueName = "";
+            AnimateToFull();
 
             UpdateSetupView(StartupViewer);
 
@@ -178,6 +183,7 @@
 
         private void CancelDraft_Click(object sender, RoutedEventArgs e)
         {
+            Reset(true, "Draft Canceled");
             UpdateSetupView(StartupViewer);
             Title = "Join Draft";
         }
@@ -198,9 +204,9 @@
         {
             try
             {
-                var theme = FileHandler.DraftFileHandler.ReadThemeFile("SavedTheme.xml");
-                
-                ChangeTheme(ThemeManager.GetAccent(theme.Accent) ,ThemeManager.GetAppTheme(theme.BaseTheme));
+                var theme = FileHandler.DraftFileHandler.ReadFile<Theme>("SavedTheme.xml");
+
+                ChangeTheme(ThemeManager.GetAccent(theme.Accent), ThemeManager.GetAppTheme(theme.BaseTheme));
 
                 UpdateSetupView(StartupViewer);
 
@@ -216,7 +222,7 @@
         {
             ThemeManager.ChangeAppStyle(Application.Current, accent, baseTheme);
 
-            FileHandler.DraftFileHandler.WriteThemeFile(new Theme
+            FileHandler.DraftFileHandler.WriteFile(new Theme
             {
                 Accent = accent.Name,
                 BaseTheme = baseTheme.Name
@@ -241,6 +247,48 @@
         private void SetupLoaded(object sender, RoutedEventArgs e)
         {
             ReadTheme();
+        }
+
+        private void LeagueName_Validate(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(DraftSettings.LeagueName)) return;
+
+            try
+            {
+                DraftSettings = _setupController.LoadDraft(DraftSettings.LeagueName);
+                DataContext = DraftSettings;
+
+                if (SettingsRow.ActualHeight > 0)
+                {
+                    StartButton.Content = "Continue Draft";
+                    var animation = new GridLengthAnimation
+                    {
+                        From = new GridLength(236),
+                        To = new GridLength(0),
+                        Duration = new TimeSpan(0, 0, 0, 0, 100)
+                    };
+                    SettingsRow.BeginAnimation(RowDefinition.HeightProperty, animation);
+                }
+            }
+            catch (IOException)
+            {
+                AnimateToFull();
+            }
+        }
+
+        private void AnimateToFull()
+        {
+            if (SettingsRow.ActualHeight == 0)
+            {
+                StartButton.Content = "Create Draft";
+                var animation = new GridLengthAnimation
+                {
+                    From = new GridLength(0),
+                    To = new GridLength(236),
+                    Duration = new TimeSpan(0, 0, 0, 0, 100)
+                };
+                SettingsRow.BeginAnimation(RowDefinition.HeightProperty, animation);
+            }
         }
     }
 }

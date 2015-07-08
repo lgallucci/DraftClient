@@ -17,5 +17,7 @@
         public int Defenses { get; set; }
         public int BenchPlayers { get; set; }
         public Collection<DraftTeam> DraftTeams { get; set; }
+        public int NumberOfSeconds { get; set; }
+        public Draft CurrentDraft { get; set; }
     }
 }
