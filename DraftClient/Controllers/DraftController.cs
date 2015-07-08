@@ -76,7 +76,7 @@
         private void PickMade(DraftPick pick)
         {
             ViewModel.Player player =
-                MainWindow.PlayerList.Players.FirstOrDefault(p => p.Rank == pick.Rank);
+                Setup.PlayerList.Players.FirstOrDefault(p => p.Rank == pick.Rank);
 
             Settings.CurrentDraft.Picks[pick.Row][pick.Column].DraftedPlayer = player;
             Settings.CurrentDraft.Picks[pick.Row][pick.Column].Name = (player != null) ? player.Name : "";
@@ -115,7 +115,7 @@
 
         public void UpdateTeam(int teamNumber, string name)
         {
-            var team = Settings.DraftTeams[teamNumber-1];
+            var team = Settings.DraftTeams[teamNumber - 1];
 
             team.Name = name;
 
@@ -124,7 +124,7 @@
 
         public void JoinTeam(int teamNumber)
         {
-            var team = Settings.DraftTeams[teamNumber-1];
+            var team = Settings.DraftTeams[teamNumber - 1];
             team.ConnectedUser = GetClientId();
             team.IsConnected = true;
             _connectionServer.SendMessage(NetworkMessageType.UpdateTeamMessage, Mapper.Map<DraftTeam>(team));
@@ -147,12 +147,33 @@
 
         public void SaveDraft()
         {
-            foreach (var team in Settings.DraftTeams)
+            var settings = new DraftSettings();
+            settings.InjectFrom(Settings);
+            settings.DraftTeams = new Collection<DraftTeam>();
+            foreach (ViewModel.DraftTeam draftTeam in Settings.DraftTeams)
             {
-                team.IsConnected = false;
-                team.ConnectedUser = Guid.Empty;
+                draftTeam.IsConnected = false;
+                draftTeam.ConnectedUser = Guid.Empty;
+                settings.DraftTeams.Add(Mapper.Map<DraftTeam>(draftTeam));
             }
-            FileHandler.DraftFileHandler.WriteFile(Settings, string.Format("DRAFT_{0}.xml", Settings.LeagueName));
+            int rows = Settings.CurrentDraft.Picks.Count,
+                columns = Settings.CurrentDraft.Picks[0].Count;
+
+            settings.CurrentDraft = new Draft { Picks = new int[rows, columns] };
+            settings.CurrentDraft.InjectFrom(Settings.CurrentDraft);
+
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < columns; j++)
+                {
+                    if (Settings.CurrentDraft.Picks[i][j].DraftedPlayer != null)
+                    {
+                        settings.CurrentDraft.Picks[i, j] = Settings.CurrentDraft.Picks[i][j].DraftedPlayer.Rank;
+                    }
+                }
+            }
+
+            FileHandler.DraftFileHandler.WriteFile(settings, string.Format("DRAFT_{0}.xml", Settings.LeagueName));
         }
     }
 }

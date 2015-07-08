@@ -1,5 +1,8 @@
 ﻿namespace DraftEntities
 {
+    using System;
+
+    [Serializable]
     public class Theme
     {
         public string Accent { get; set; }

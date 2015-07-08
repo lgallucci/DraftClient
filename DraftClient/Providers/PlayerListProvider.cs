@@ -11,7 +11,7 @@
     {
         public IEnumerable GetSuggestions(string filter)
         {
-            List<Player> filteredPlayers = MainWindow.PlayerList.Players.Where(p => p.IsPicked == false && p.Name.ToLower().Contains(filter.ToLower())).OrderBy(p => p.Name).ToList();
+            List<Player> filteredPlayers = Setup.PlayerList.Players.Where(p => p.IsPicked == false && p.Name.ToLower().Contains(filter.ToLower())).OrderBy(p => p.Name).ToList();
             return filteredPlayers;
         }
     }

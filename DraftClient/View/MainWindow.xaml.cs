@@ -25,7 +25,6 @@
         private bool _dontPrompt;
 
         public Player DisplayPlayer { get; set; }
-        public static PlayerList PlayerList { get; set; }
 
         public MainWindow(bool isServer)
         {
@@ -36,13 +35,12 @@
             };
 
             DisplayPlayer = new Player();
-            PlayerList = new PlayerList();
 
             PlayerView.PlayerClicked += player =>
             {
                 DisplayPlayer.InjectFrom(player);
-                DisplayPlayer.Schedule = PlayerList.Schedules.First(s => s.Name == DisplayPlayer.Team);
-                DisplayPlayer.Histories = PlayerList.Histories.Where(s => s.PlayerId == DisplayPlayer.PlayerId).ToList();
+                DisplayPlayer.Schedule = Setup.PlayerList.Schedules.First(s => s.Name == DisplayPlayer.Team);
+                DisplayPlayer.Histories = Setup.PlayerList.Histories.Where(s => s.PlayerId == DisplayPlayer.PlayerId).ToList();
 
                 PlayerFlyout.IsOpen = true;
             };
@@ -91,15 +89,6 @@
                     _draftController.Settings.CurrentDraft = new Draft(_draftController.Settings.TotalRounds,
                         _draftController.Settings.NumberOfTeams, _draftController.Settings.NumberOfSeconds, true);
                 }
-            }
-            
-            try
-            {
-                LoadPlayers();
-            }
-            catch (IOException)
-            {
-                throw new TimeoutException("Couldn't find or read the players file.");
             }
 
             SetupGrid(settings);
@@ -206,42 +195,6 @@
                     Grid.SetColumn(newRound, j);
                 }
             }
-        }
-
-        private void LoadPlayers()
-        {
-            List<DraftEntities.Player> players =
-                FileHandler.DraftFileHandler.ReadCsvFile<DraftEntities.Player>(@".\Resources\FantasyPlayers.csv");
-            List<DraftEntities.PlayerHistory> histories =
-                FileHandler.DraftFileHandler.ReadCsvFile<DraftEntities.PlayerHistory>(@".\Resources\FantasyPlayersHistory.csv");
-            List<DraftEntities.TeamSchedule> schedules =
-                FileHandler.DraftFileHandler.ReadCsvFile<DraftEntities.TeamSchedule>(@".\Resources\TeamSchedules.csv");
-
-            List<Player> presentationPlayers = players.Select(player =>
-            {
-                var tempPlayer = new Player();
-                tempPlayer.InjectFrom(player);
-                return tempPlayer;
-            }).ToList();
-
-            List<PlayerHistory> presentationHistories =
-                histories.Select(history =>
-                {
-                    var tempHistory = new PlayerHistory();
-                    tempHistory.InjectFrom(history);
-                    return tempHistory;
-                }).OrderByDescending(h => h.Year).ToList();
-
-            List<TeamSchedule> presentationSchedules = schedules.Select(schedule =>
-            {
-                var tempSchedule = new TeamSchedule();
-                tempSchedule.InjectFrom(schedule);
-                return tempSchedule;
-            }).ToList();
-
-            PlayerList.Players = new ObservableCollection<Player>(presentationPlayers);
-            PlayerList.Histories = new ObservableCollection<PlayerHistory>(presentationHistories);
-            PlayerList.Schedules = new ObservableCollection<TeamSchedule>(presentationSchedules);
         }
 
         public void UpdateTeam(DraftTeam team)

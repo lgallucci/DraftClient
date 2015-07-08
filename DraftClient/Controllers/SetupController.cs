@@ -116,7 +116,7 @@
                         if (settings.CurrentDraft.Picks[i, j] != 0)
                         {
                             ViewModel.Player player =
-                                MainWindow.PlayerList.Players.First(p => p.Rank == settings.CurrentDraft.Picks[i, j]);
+                                Setup.PlayerList.Players.First(p => p.Rank == settings.CurrentDraft.Picks[i, j]);
 
                             _setupWindow.DraftSettings.CurrentDraft.Picks[i][j] = new ViewModel.DraftPick
                             {
@@ -161,9 +161,39 @@
             _connectionServer.ResetConnection();
         }
 
-        public ViewModel.DraftSettings LoadDraft(string draftName)
+        public void LoadDraft(string draftName)
         {
-            return FileHandler.DraftFileHandler.ReadFile<ViewModel.DraftSettings>(string.Format("DRAFT_{0}.xml", draftName));
+            var settings =
+                FileHandler.DraftFileHandler.ReadFile<DraftSettings>(string.Format("DRAFT_{0}.xml", draftName));
+            
+            _setupWindow.DraftSettings.InjectFrom(settings);
+            _setupWindow.DraftSettings.DraftTeams = new ObservableCollection<DraftTeam>();
+            foreach (DraftEntities.DraftTeam draftTeam in settings.DraftTeams)
+            {
+                _setupWindow.DraftSettings.DraftTeams.Add(Mapper.Map<DraftTeam>(draftTeam));
+            }
+
+            _setupWindow.DraftSettings.CurrentDraft = new Draft(settings.CurrentDraft.MaxRound,
+                settings.CurrentDraft.MaxTeam, settings.NumberOfSeconds, true);
+
+            for (int i = 0; i < settings.CurrentDraft.MaxRound; i++)
+            {
+                for (int j = 0; j < settings.CurrentDraft.MaxTeam; j++)
+                {
+                    if (settings.CurrentDraft.Picks[i, j] != 0)
+                    {
+                        ViewModel.Player player =
+                            Setup.PlayerList.Players.First(p => p.Rank == settings.CurrentDraft.Picks[i, j]);
+
+                        _setupWindow.DraftSettings.CurrentDraft.Picks[i][j] = new ViewModel.DraftPick
+                        {
+                            DraftedPlayer = player,
+                            CanEdit = true,
+                            Name = player.Name
+                        };
+                    }
+                }
+            }
         }
 
         public string[] LoadPreviousDrafts()

@@ -20,7 +20,7 @@
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            DataContext = MainWindow.PlayerList;
+            DataContext = Setup.PlayerList;
             cbQB.Checked += cbPosition_Changed;
             cbQB.Unchecked += cbPosition_Changed;
             cbWR.Checked += cbPosition_Changed;

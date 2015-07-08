@@ -5,6 +5,7 @@
     using System.IO;
     using System.Linq;
     using System.Reflection;
+    using System.Runtime.Serialization.Formatters.Binary;
     using System.Text;
     using System.Xml.Serialization;
     using DraftEntities;
@@ -98,18 +99,18 @@
 
         public static T ReadFile<T>(string fileName)
         {
-            var reader = new XmlSerializer(typeof(T));
+            var reader = new BinaryFormatter();
             var file = new StreamReader(fileName);
-            var readObject = (T)reader.Deserialize(file);
+            var readObject = (T)reader.Deserialize(file.BaseStream);
             file.Close();
             return readObject;
         }
 
         public static void WriteFile<T>(T theme, string fileName)
         {
-            var writer = new XmlSerializer(typeof(T));
+            var writer = new BinaryFormatter();
             var file = new StreamWriter(fileName);
-            writer.Serialize(file, theme);
+            writer.Serialize(file.BaseStream, theme);
             file.Close();
         }
 

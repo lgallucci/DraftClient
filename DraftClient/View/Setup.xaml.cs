@@ -1,20 +1,22 @@
 ﻿namespace DraftClient.View
 {
     using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.IO;
+    using System.Linq;
+    using System.Runtime.Serialization;
     using System.Windows;
     using System.Windows.Controls;
     using DraftClient.Controllers;
-    using DraftEntities;
     using MahApps.Metro;
     using MahApps.Metro.Controls;
     using MahApps.Metro.Controls.Dialogs;
     using Omu.ValueInjecter;
     using Properties;
     using Providers;
-    using DraftServer = ViewModel.DraftServer;
-    using DraftSettings = ViewModel.DraftSettings;
+    using ViewModel;
 
     /// <summary>
     ///     Interaction logic for Setup.xaml
@@ -41,11 +43,14 @@
 
             PreviousDrafts = _setupController.LoadPreviousDrafts();
 
+            LoadPlayers();
+
             DataContext = DraftSettings;
         }
 
         public DraftSettings DraftSettings { get; set; }
         public SpinnyWindow ConnectingWindow = new SpinnyWindow();
+        public static PlayerList PlayerList { get; set; }
 
         private void StartDraft_Click(object sender, RoutedEventArgs e)
         {
@@ -74,6 +79,44 @@
                 _setupController.DisconnectFromDraftServer();
                 this.ShowMessageAsync("An error occurred", ex.Message);
             }
+        }
+
+        private void LoadPlayers()
+        {
+            PlayerList = new PlayerList();
+            
+            List<DraftEntities.Player> players =
+                FileHandler.DraftFileHandler.ReadCsvFile<DraftEntities.Player>(@".\Resources\FantasyPlayers.csv");
+            List<DraftEntities.PlayerHistory> histories =
+                FileHandler.DraftFileHandler.ReadCsvFile<DraftEntities.PlayerHistory>(@".\Resources\FantasyPlayersHistory.csv");
+            List<DraftEntities.TeamSchedule> schedules =
+                FileHandler.DraftFileHandler.ReadCsvFile<DraftEntities.TeamSchedule>(@".\Resources\TeamSchedules.csv");
+
+            List<Player> presentationPlayers = players.Select(player =>
+            {
+                var tempPlayer = new Player();
+                tempPlayer.InjectFrom(player);
+                return tempPlayer;
+            }).ToList();
+
+            List<PlayerHistory> presentationHistories =
+                histories.Select(history =>
+                {
+                    var tempHistory = new PlayerHistory();
+                    tempHistory.InjectFrom(history);
+                    return tempHistory;
+                }).OrderByDescending(h => h.Year).ToList();
+
+            List<TeamSchedule> presentationSchedules = schedules.Select(schedule =>
+            {
+                var tempSchedule = new TeamSchedule();
+                tempSchedule.InjectFrom(schedule);
+                return tempSchedule;
+            }).ToList();
+
+            PlayerList.Players = new ObservableCollection<Player>(presentationPlayers);
+            PlayerList.Histories = new ObservableCollection<PlayerHistory>(presentationHistories);
+            PlayerList.Schedules = new ObservableCollection<TeamSchedule>(presentationSchedules);
         }
 
         public void OpenDraft(bool isServer)
@@ -204,13 +247,17 @@
         {
             try
             {
-                var theme = FileHandler.DraftFileHandler.ReadFile<Theme>("SavedTheme.xml");
+                var theme = FileHandler.DraftFileHandler.ReadFile<DraftEntities.Theme>("SavedTheme.xml");
 
                 ChangeTheme(ThemeManager.GetAccent(theme.Accent), ThemeManager.GetAppTheme(theme.BaseTheme));
 
                 UpdateSetupView(StartupViewer);
 
                 Title = "Join Draft";
+            }
+            catch (SerializationException)
+            {
+                UpdateSetupView(ThemeLightDarkViewer);
             }
             catch (IOException)
             {
@@ -222,7 +269,7 @@
         {
             ThemeManager.ChangeAppStyle(Application.Current, accent, baseTheme);
 
-            FileHandler.DraftFileHandler.WriteFile(new Theme
+            FileHandler.DraftFileHandler.WriteFile(new DraftEntities.Theme
             {
                 Accent = accent.Name,
                 BaseTheme = baseTheme.Name
@@ -255,8 +302,7 @@
 
             try
             {
-                DraftSettings = _setupController.LoadDraft(DraftSettings.LeagueName);
-                DataContext = DraftSettings;
+                _setupController.LoadDraft(DraftSettings.LeagueName);
 
                 if (SettingsRow.ActualHeight > 0)
                 {
@@ -269,6 +315,10 @@
                     };
                     SettingsRow.BeginAnimation(RowDefinition.HeightProperty, animation);
                 }
+            }
+            catch (SerializationException)
+            {
+                AnimateToFull();
             }
             catch (IOException)
             {
