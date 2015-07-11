@@ -298,7 +298,7 @@
 
         private void LeagueName_Validate(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(DraftSettings.LeagueName)) return;
+            if (string.IsNullOrWhiteSpace(DraftSettings.LeagueName) && SettingsRow.ActualHeight > 0) AnimateToFull();
 
             try
             {

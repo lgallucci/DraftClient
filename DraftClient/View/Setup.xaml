@@ -71,7 +71,8 @@
                           FontSize="14"
                           MaxDropDownHeight="125"
                           Text="{Binding LeagueName}"
-                          LostFocus="LeagueName_Validate"/>
+                          LostFocus="LeagueName_Validate"
+                          SelectionChanged="LeagueName_Validate"/>
 
                 </WrapPanel>
                 <StackPanel Grid.Row="1">

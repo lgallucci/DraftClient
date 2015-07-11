@@ -100,9 +100,6 @@
 
                         OnServerHandshake();
                         break;
-                    case NetworkMessageType.RetrieveDraftMessage:
-                        OnRetrieveDraft(networkMessage.MessageContent as Draft);
-                        break;
                     case NetworkMessageType.RetrieveDraftSettingsMessage:
                         OnRetrieveDraftSettings(networkMessage.MessageContent as DraftSettings);
                         break;
