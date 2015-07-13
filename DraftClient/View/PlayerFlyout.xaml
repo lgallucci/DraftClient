@@ -6,10 +6,10 @@
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:converters="clr-namespace:DraftClient.Converters"
              mc:Ignorable="d" 
-             d:DesignHeight="950"
-             d:DesignWidth="400"
+			 d:DesignHeight="900"
+			 d:DesignWidth="400"
+			 Width="400"
              Theme="Adapt"
-             Width="400"
              Header="{Binding Name}"
              Position="Left">
     <controls:Flyout.Resources>
@@ -87,15 +87,15 @@
             <Border BorderBrush="{DynamicResource HighlightBrush}" BorderThickness="2" Padding="25 5 25 5">
                 <StackPanel HorizontalAlignment="Stretch">
                     <WrapPanel>
-                    <StackPanel Width="125">
-                        <TextBlock Text="{Binding Position, StringFormat=Pos:    {0}}" />
-                        <TextBlock Text="{Binding Team,     StringFormat=Team: {0}}" />
-                        <TextBlock Text="{Binding ByeWeek,  StringFormat=Bye:    {0}}" />
-                    </StackPanel>
-                    <StackPanel >
-                        <TextBlock Text="{Binding Rank, StringFormat=Rank: {0}}" />
-                        <TextBlock Text="{Binding Age,                  StringFormat=Age:  {0}, Converter={StaticResource AgeToStringConverter}}" />
-                        <TextBlock Text="{Binding ProjectedPoints,      StringFormat=Proj:  {0:#,#.0}}" />
+                        <StackPanel Width="125">
+                            <TextBlock Text="{Binding Position, StringFormat=Pos:    {0}}" />
+                            <TextBlock Text="{Binding Team,     StringFormat=Team: {0}}" />
+                            <TextBlock Text="{Binding ByeWeek,  StringFormat=Bye:    {0}}" />
+                        </StackPanel>
+                        <StackPanel >
+                            <TextBlock Text="{Binding Rank, StringFormat=Rank: {0}}" />
+                            <TextBlock Text="{Binding Age,                  StringFormat=Age:  {0}, Converter={StaticResource AgeToStringConverter}}" />
+                            <TextBlock Text="{Binding ProjectedPoints,      StringFormat=Proj:  {0:#,#.0}}" />
                         </StackPanel>
                     </WrapPanel>
                     <StackPanel Visibility="{Binding Path=IsSuspended, Converter={StaticResource BooleanToVisibilityConverter}}">

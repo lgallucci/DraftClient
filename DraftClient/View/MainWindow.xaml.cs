@@ -10,6 +10,7 @@
     using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Controls;
+    using System.Windows.Media;
     using MahApps.Metro.Controls.Dialogs;
     using Omu.ValueInjecter;
     using Controllers;
@@ -25,6 +26,9 @@
         private bool _dontPrompt;
 
         public Player DisplayPlayer { get; set; }
+
+        const int screenwidth = 1600;
+        const int screenheight = 900;
 
         public MainWindow(bool isServer)
         {
@@ -44,6 +48,19 @@
 
                 PlayerFlyout.IsOpen = true;
             };
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            var width = SystemParameters.PrimaryScreenWidth;
+            var height = SystemParameters.PrimaryScreenHeight;
+
+
+            double scalex = width / screenwidth;
+            double scaley = height / screenheight;
+
+            MainGrid.LayoutTransform = new ScaleTransform(scalex, scaley);
+            PlayerFlyout.LayoutTransform = new ScaleTransform(scalex, scaley);
         }
 
         private async void OnClosing(object sender, CancelEventArgs e)
