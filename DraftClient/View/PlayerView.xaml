@@ -5,7 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:c="clr-namespace:DraftClient.Converters"
-             Loaded="UserControl_Loaded" mc:Ignorable="d" d:DesignWidth="400">
+             Loaded="UserControl_Loaded" mc:Ignorable="d" d:DesignWidth="350">
     <UserControl.Resources>
         <ResourceDictionary>
             <!--Create an instance of the converter for Email-->
@@ -20,16 +20,16 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Canvas Grid.Row="0">
-            <WrapPanel Width="350" Height="25" Margin="25 5 0 0" HorizontalAlignment="Center">
-                <CheckBox Name="cbQB" IsChecked="True" Content="QBs" Margin="5 0 5 0" />
-                <CheckBox Name="cbWR" IsChecked="True" Content="WRs" Margin="5 0 5 0" />
-                <CheckBox Name="cbRB" IsChecked="True" Content="RBs" Margin="5 0 5 0" />
-                <CheckBox Name="cbTE" IsChecked="True" Content="TEs" Margin="5 0 5 0" />
-                <CheckBox Name="cbK" IsChecked="True" Content="Ks" Margin="5 0 5 0" />
-                <CheckBox Name="cbDEF" IsChecked="True" Content="DEFs" Margin="5 0 5 0"/>
+            <WrapPanel Width="325" Height="25" Margin="5 5 0 0" HorizontalAlignment="Center">
+                <CheckBox Name="cbQB" IsChecked="True" Content="QBs" Margin="5 0 0 0" />
+                <CheckBox Name="cbWR" IsChecked="True" Content="WRs" Margin="8 0 0 0" />
+                <CheckBox Name="cbRB" IsChecked="True" Content="RBs" Margin="8 0 0 0" />
+                <CheckBox Name="cbTE" IsChecked="True" Content="TEs" Margin="8 0 0 0" />
+                <CheckBox Name="cbK" IsChecked="True" Content="Ks" Margin="8 0 0 0" />
+                <CheckBox Name="cbDEF" IsChecked="True" Content="DEFs" Margin="8 0 0 0"/>
             </WrapPanel>
-            <TextBox controls:TextBoxHelper.Watermark="Search Players"  Name="SearchTextBox" Width="0" Canvas.Left="370" BorderThickness="1" TextChanged="FilterTextChanged" />
-            <ToggleButton Style="{DynamicResource MetroCircleToggleButtonStyle}" Content="🔍" Cursor="Hand" Width="30" Height="30" Margin="370 0 0 0" Click="SearchButtonClick" Name="SearchButton" >
+            <TextBox controls:TextBoxHelper.Watermark="Search Players"  Name="SearchTextBox" Width="0" Canvas.Left="325" BorderThickness="1" TextChanged="FilterTextChanged" />
+            <ToggleButton Style="{DynamicResource MetroCircleToggleButtonStyle}" Content="🔍" Cursor="Hand" Width="30" Height="30" Margin="325 0 0 0" Click="SearchButtonClick" Name="SearchButton" >
                 <ToggleButton.Triggers>
                     <EventTrigger RoutedEvent="ToggleButton.Checked">
                         <BeginStoryboard>
@@ -37,11 +37,11 @@
                                 <DoubleAnimation 
                                             Storyboard.TargetName="SearchTextBox"
                                             Storyboard.TargetProperty="(Canvas.Left)" 
-                                            From="370" To="0" Duration="0:0:.1" AutoReverse="False"/>
+                                            From="325" To="0" Duration="0:0:.1" AutoReverse="False"/>
                                 <DoubleAnimation 
                                             Storyboard.TargetName="SearchTextBox"
                                             Storyboard.TargetProperty="(TextBox.Width)" 
-                                            From="0" To="370" Duration="0:0:.1" AutoReverse="False"/>
+                                            From="0" To="325" Duration="0:0:.1" AutoReverse="False"/>
                             </Storyboard>
                         </BeginStoryboard>
                     </EventTrigger>
@@ -51,11 +51,11 @@
                                 <DoubleAnimation 
                                             Storyboard.TargetName="SearchTextBox"
                                             Storyboard.TargetProperty="(Canvas.Left)" 
-                                            From="0" To="370" Duration="0:0:.1" AutoReverse="False"/>
+                                            From="0" To="325" Duration="0:0:.1" AutoReverse="False"/>
                                 <DoubleAnimation 
                                             Storyboard.TargetName="SearchTextBox"
                                             Storyboard.TargetProperty="(TextBox.Width)" 
-                                            From="370" To="0" Duration="0:0:.1" AutoReverse="False"/>
+                                            From="325" To="0" Duration="0:0:.1" AutoReverse="False"/>
                             </Storyboard>
                         </BeginStoryboard>
                     </EventTrigger>
@@ -64,14 +64,19 @@
         </Canvas>
         <DataGrid Grid.Row="1" Name="dataGrid1" ItemsSource="{Binding Source={StaticResource cvsPlayers}}"
                   AutoGenerateColumns="False"
-                  IsReadOnly="True" HorizontalScrollBarVisibility="Hidden">
+                  IsReadOnly="True" HorizontalScrollBarVisibility="Hidden" >
+            <DataGrid.Resources>
+                <Style BasedOn="{StaticResource MetroDataGridColumnHeader}" TargetType="DataGridColumnHeader">
+                    <Setter Property="FontSize" Value="10"/>
+                </Style>
+            </DataGrid.Resources>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Rank" FontSize="11" Binding="{Binding Rank}" Width="*" />
-                <DataGridTextColumn Header="Name" FontSize="11" Binding="{Binding Name}" Width="2.5*" />
-                <DataGridTextColumn Header="POS" FontSize="11" Binding="{Binding Position, Converter={StaticResource EnumConverter}}" Width="*" />
-                <DataGridTextColumn Header="Team" FontSize="11" Binding="{Binding Team}" Width="*" />
-                <DataGridTextColumn Header="Bye" FontSize="11" Binding="{Binding ByeWeek}" Width="*" />
-                <DataGridTextColumn Header="Proj Pts" FontSize="11" Binding="{Binding ProjectedPoints}" Width="*" />
+                <DataGridTextColumn Header="Rank" FontSize="10" Binding="{Binding Rank}" Width="*" />
+                <DataGridTextColumn Header="Name" FontSize="10" Binding="{Binding Name}" Width="2.5*" />
+                <DataGridTextColumn Header="POS" FontSize="10" Binding="{Binding Position, Converter={StaticResource EnumConverter}}" Width="*" />
+                <DataGridTextColumn Header="Team" FontSize="10" Binding="{Binding Team}" Width="*" />
+                <DataGridTextColumn Header="Bye" FontSize="10" Binding="{Binding ByeWeek}" Width="*" />
+                <DataGridTextColumn Header="Proj Pts" FontSize="10" Binding="{Binding ProjectedPoints}" Width="*" />
                 <DataGridTemplateColumn>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

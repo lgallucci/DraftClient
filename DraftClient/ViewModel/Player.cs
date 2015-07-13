@@ -16,7 +16,7 @@
         private string _team;
         private int _age;
         private int _playerId;
-        private Rect _logoRectangle = new Rect(0, 0, 400, 400);
+        private Rect _logoRectangle = new Rect(0, 0, 350, 350);
         private List<PlayerHistory> _histories = new List<PlayerHistory>();
         private TeamSchedule _schedule;
         private int _suspendedGames;
@@ -108,72 +108,72 @@
             switch (team)
             {
                 case "ARI":
-                    return new Rect(0, 0, 400, 400);
+                    return new Rect(0, 0, 350, 350);
                 case "ATL":
-                    return new Rect(400, 0, 400, 400);
+                    return new Rect(350, 0, 350, 350);
                 case "BAL":
-                    return new Rect(800, 0, 400, 400);
+                    return new Rect(700, 0, 350, 350);
                 case "BUF":
-                    return new Rect(1200, 0, 400, 400);
+                    return new Rect(1050, 0, 350, 350);
                 case "CAR":
-                    return new Rect(1600, 0, 400, 400);
+                    return new Rect(1400, 0, 350, 350);
                 case "CHI":
-                    return new Rect(2000, 0, 400, 400);
+                    return new Rect(1750, 0, 350, 350);
                 case "CIN":
-                    return new Rect(0, 400, 400, 400);
+                    return new Rect(0, 350, 350, 350);
                 case "CLE":
-                    return new Rect(400, 400, 400, 400);
+                    return new Rect(350, 350, 350, 350);
                 case "DAL":
-                    return new Rect(800, 400, 400, 400);
+                    return new Rect(700, 350, 350, 350);
                 case "DEN":
-                    return new Rect(1200, 400, 400, 400);
+                    return new Rect(1050, 350, 350, 350);
                 case "DET":
-                    return new Rect(1600, 400, 400, 400);
+                    return new Rect(1400, 350, 350, 350);
                 case "GB":
-                    return new Rect(2000, 400, 400, 400);
+                    return new Rect(1750, 350, 350, 350);
                 case "HOU":
-                    return new Rect(0, 800, 400, 400);
+                    return new Rect(0, 700, 350, 350);
                 case "IND":
-                    return new Rect(400, 800, 400, 400);
+                    return new Rect(350, 700, 350, 350);
                 case "JAC":
-                    return new Rect(800, 800, 400, 400);
+                    return new Rect(700, 700, 350, 350);
                 case "KC":
-                    return new Rect(1200, 800, 400, 400);
+                    return new Rect(1050, 700, 350, 350);
                 case "MIA":
-                    return new Rect(1600, 800, 400, 400);
+                    return new Rect(1400, 700, 350, 350);
                 case "MIN":
-                    return new Rect(2000, 800, 400, 400);
+                    return new Rect(1750, 700, 350, 350);
                 case "NE":
-                    return new Rect(0, 1200, 400, 400);
+                    return new Rect(0, 1050, 350, 350);
                 case "NO":
-                    return new Rect(400, 1200, 400, 400);
+                    return new Rect(350, 1050, 350, 350);
                 case "NYG":
-                    return new Rect(800, 1200, 400, 400);
+                    return new Rect(700, 1050, 350, 350);
                 case "NYJ":
-                    return new Rect(1200, 1200, 400, 400);
+                    return new Rect(1050, 1050, 350, 350);
                 case "OAK":
-                    return new Rect(1600, 1200, 400, 400);
+                    return new Rect(1400, 1050, 350, 350);
                 case "PHI":
-                    return new Rect(2000, 1200, 400, 400);
+                    return new Rect(1750, 1050, 350, 350);
                 case "PIT":
-                    return new Rect(0, 1600, 400, 400);
+                    return new Rect(0, 1400, 350, 350);
                 case "SD":
-                    return new Rect(400, 1600, 400, 400);
+                    return new Rect(350, 1400, 350, 350);
                 case "SF":
-                    return new Rect(800, 1600, 400, 400);
+                    return new Rect(700, 1400, 350, 350);
                 case "SEA":
-                    return new Rect(1200, 1600, 400, 400);
+                    return new Rect(1050, 1400, 350, 350);
                 case "STL":
-                    return new Rect(1600, 1600, 400, 400);
+                    return new Rect(1400, 1400, 350, 350);
                 case "TB":
-                    return new Rect(2000, 1600, 400, 400);
+                    return new Rect(1750, 1400, 350, 350);
                 case "TEN":
-                    return new Rect(0, 2000, 400, 400);
+                    return new Rect(0, 1750, 350, 350);
                 case "WAS":
-                    return new Rect(400, 2000, 400, 400);
+                    return new Rect(350, 1750, 350, 350);
             }
 
-            return new Rect(0, 0, 400, 400);
+            return new Rect(0, 0, 350, 350);
         }
 
         protected override void AfterPropertyChanged(string propertyName)

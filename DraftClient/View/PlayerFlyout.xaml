@@ -6,16 +6,16 @@
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:converters="clr-namespace:DraftClient.Converters"
              mc:Ignorable="d" 
-             d:DesignHeight="950"
-             d:DesignWidth="400"
+             d:DesignHeight="800"
+             d:DesignWidth="350"
              Theme="Adapt"
-             Width="400"
+             Width="350"
              Header="{Binding Name}"
              Position="Left">
     <controls:Flyout.Resources>
         <ResourceDictionary>
             <Style TargetType="TextBlock">
-                <Setter Property="FontSize" Value="16" />
+                <Setter Property="FontSize" Value="14" />
                 <Setter Property="FontFamily" Value="Segoe UI" />
             </Style>
             <Style x:Key="HeaderStatStyle" BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock">
@@ -25,7 +25,7 @@
             </Style>
 
             <Style x:Key="SubHeaderStatStyle" BasedOn="{StaticResource HeaderStatStyle}" TargetType="TextBlock">
-                <Setter Property="FontSize" Value="13" />
+                <Setter Property="FontSize" Value="12" />
             </Style>
 
             <Style TargetType="{x:Type ListViewItem}">
@@ -57,7 +57,7 @@
                 <Setter Property="OverridesDefaultStyle" Value="True" />
                 <Setter Property="Foreground" Value="{DynamicResource LabelTextBrush}" />
                 <Setter Property="FontFamily" Value="Segoe UI" />
-                <Setter Property="FontSize" Value="11" />
+                <Setter Property="FontSize" Value="10" />
             </Style>
 
             <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
@@ -65,14 +65,14 @@
 
         </ResourceDictionary>
     </controls:Flyout.Resources>
-    <StackPanel Margin="0 -75 0 0" Width="400" Height="950">
+    <StackPanel Margin="0 -75 0 0" Width="350" Height="850">
         <StackPanel.Background>
             <VisualBrush Stretch="Uniform"
                         AlignmentY="Top"
                         Opacity="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=controls:Flyout}, Path=LogoOpacity}" 
                         Viewbox="{Binding LogoRectangle}" 
                         ViewboxUnits="Absolute"
-                        Viewport="0,0,400,400"
+                        Viewport="0,0,350,350"
                         ViewportUnits="Absolute">
                 <VisualBrush.Visual>
                     <Image Source="pack://application:,,,/Resources/team_gloves_all_trans.png">
@@ -83,19 +83,19 @@
                 </VisualBrush.Visual>
             </VisualBrush>
         </StackPanel.Background>
-        <StackPanel Margin="50 75 50 0">
+        <StackPanel Margin="25 75 25 0">
             <Border BorderBrush="{DynamicResource HighlightBrush}" BorderThickness="2" Padding="25 5 25 5">
                 <StackPanel HorizontalAlignment="Stretch">
                     <WrapPanel>
-                    <StackPanel Width="125">
-                        <TextBlock Text="{Binding Position, StringFormat=Pos:    {0}}" />
-                        <TextBlock Text="{Binding Team,     StringFormat=Team: {0}}" />
-                        <TextBlock Text="{Binding ByeWeek,  StringFormat=Bye:    {0}}" />
-                    </StackPanel>
-                    <StackPanel >
-                        <TextBlock Text="{Binding Rank, StringFormat=Rank: {0}}" />
-                        <TextBlock Text="{Binding Age,                  StringFormat=Age:  {0}, Converter={StaticResource AgeToStringConverter}}" />
-                        <TextBlock Text="{Binding ProjectedPoints,      StringFormat=Proj:  {0:#,#.0}}" />
+                        <StackPanel Width="100">
+                            <TextBlock Text="{Binding Position, StringFormat=Pos:    {0}}" />
+                            <TextBlock Text="{Binding Team,     StringFormat=Team: {0}}" />
+                            <TextBlock Text="{Binding ByeWeek,  StringFormat=Bye:    {0}}" />
+                        </StackPanel>
+                        <StackPanel >
+                            <TextBlock Text="{Binding Rank, StringFormat=Rank: {0}}" />
+                            <TextBlock Text="{Binding Age,                  StringFormat=Age:  {0}, Converter={StaticResource AgeToStringConverter}}" />
+                            <TextBlock Text="{Binding ProjectedPoints,      StringFormat=Proj:  {0:#,#.0}}" />
                         </StackPanel>
                     </WrapPanel>
                     <StackPanel Visibility="{Binding Path=IsSuspended, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -104,7 +104,7 @@
                 </StackPanel>
             </Border>
         </StackPanel>
-        <ScrollViewer Margin="0 15 0 0" VerticalScrollBarVisibility="Auto" Width="400">
+        <ScrollViewer Margin="0 15 0 0" VerticalScrollBarVisibility="Auto" Width="350">
             <StackPanel HorizontalAlignment="Stretch">
                 <TextBlock HorizontalAlignment="Center" Style="{DynamicResource HeaderStatStyle}" Text="SCHEDULE" />
                 <DockPanel HorizontalAlignment="Center">

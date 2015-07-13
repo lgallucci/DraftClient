@@ -6,7 +6,7 @@
     x:Class="DraftClient.View.MainWindow"
     xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     xmlns:local="clr-namespace:DraftClient.View"
-    Title="Fantasy Football Draft Tool" Width="1725" Height="950" 
+    Title="Fantasy Football Draft Tool" Width="1600" Height="850" 
     Closing="OnClosing" ResizeMode="CanMinimize" Icon="../Resources/American-football.ico" ShowIconOnTitleBar="False">
     <controls:MetroWindow.Flyouts>
         <controls:FlyoutsControl>
@@ -16,7 +16,7 @@
     <Grid  Name="MainGrid" HorizontalAlignment="Stretch"
           VerticalAlignment="Stretch">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="400" />
+            <ColumnDefinition Width="350" />
             <ColumnDefinition Width="4*" MaxWidth="1300" />
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0">
