@@ -134,6 +134,7 @@
 
         public void Reset()
         {
+            Servers.Clear();
             DraftTeams.Clear();
             for (int i = 0; i < _numberOfTeams; i++)
             {

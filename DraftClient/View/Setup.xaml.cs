@@ -6,9 +6,11 @@
     using System.ComponentModel;
     using System.IO;
     using System.Linq;
+    using System.Runtime.CompilerServices;
     using System.Runtime.Serialization;
     using System.Windows;
     using System.Windows.Controls;
+    using Annotations;
     using DraftClient.Controllers;
     using MahApps.Metro;
     using MahApps.Metro.Controls;
@@ -21,13 +23,35 @@
     /// <summary>
     ///     Interaction logic for Setup.xaml
     /// </summary>
-    public partial class Setup
+    public partial class Setup : INotifyPropertyChanged
     {
         private readonly SetupController _setupController;
         private MainWindow _draftWindow;
         private double _actualHeight;
 
-        public string[] PreviousDrafts { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private string[] _previousDrafts;
+        public string[] PreviousDrafts
+        {
+            get
+            {
+                return _previousDrafts;
+            }
+            set
+            {
+                _previousDrafts = value;
+                OnPropertyChanged();
+            }
+        }
 
         public Setup()
         {
@@ -40,8 +64,6 @@
             };
 
             _setupController.SubscribeToMessages(DraftSettings.Servers);
-
-            PreviousDrafts = _setupController.LoadPreviousDrafts();
 
             LoadPlayers();
 
@@ -84,7 +106,7 @@
         private void LoadPlayers()
         {
             PlayerList = new PlayerList();
-            
+
             List<DraftEntities.Player> players =
                 FileHandler.DraftFileHandler.ReadCsvFile<DraftEntities.Player>(@".\Resources\FantasyPlayers.csv");
             List<DraftEntities.PlayerHistory> histories =
@@ -134,6 +156,8 @@
         private void CreateDraft_Click(object sender, RoutedEventArgs e)
         {
             UpdateSetupView(ServerSetupViewer);
+
+            PreviousDrafts = _setupController.LoadPreviousDrafts();
 
             Title = "Create Draft";
         }
@@ -186,12 +210,11 @@
             if (!isServer)
                 _setupController.DisconnectFromDraftServer();
 
-            DraftSettings.Servers.Clear();
-
             _setupController.ResetConnection();
             DraftSettings.Reset();
             DraftSettings.LeagueName = "";
-            AnimateToFull();
+            AnimateToFull(); 
+            ResetPlayerList();
 
             UpdateSetupView(StartupViewer);
 
@@ -296,6 +319,14 @@
             ReadTheme();
         }
 
+        public void ResetPlayerList()
+        {
+            foreach (var player in PlayerList.Players)
+            {
+                player.IsPicked = false;
+            }
+        }
+
         private void LeagueName_Validate(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(DraftSettings.LeagueName) && SettingsRow.ActualHeight > 0) AnimateToFull();
@@ -318,10 +349,14 @@
             }
             catch (SerializationException)
             {
+                DraftSettings.Reset();
+                ResetPlayerList();
                 AnimateToFull();
             }
             catch (IOException)
             {
+                DraftSettings.Reset();
+                ResetPlayerList();
                 AnimateToFull();
             }
         }
