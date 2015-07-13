@@ -164,7 +164,7 @@
         public void LoadDraft(string draftName)
         {
             var settings =
-                FileHandler.DraftFileHandler.ReadFile<DraftSettings>(string.Format("DRAFT_{0}.xml", draftName));
+                FileHandler.DraftFileHandler.ReadFile<DraftSettings>(string.Format("DRAFT_{0}", draftName));
             
             _setupWindow.DraftSettings.InjectFrom(settings);
             _setupWindow.DraftSettings.DraftTeams = new ObservableCollection<DraftTeam>();
@@ -206,7 +206,7 @@
             var fileNames = new string[filesWithPath.Length];
             for(int i = 0; i < filesWithPath.Length; i++)
             {
-                fileNames[i] = Path.GetFileName(filesWithPath[i]).Replace("DRAFT_", "").Replace(".xml", "");
+                fileNames[i] = Path.GetFileName(filesWithPath[i]).Replace("DRAFT_", "").Replace(".dc", "");
             }
             return fileNames;
         }

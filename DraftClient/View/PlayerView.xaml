@@ -20,7 +20,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Canvas Grid.Row="0">
-            <WrapPanel Width="350" Height="25" Margin="20 5 0 0" HorizontalAlignment="Center">
+            <WrapPanel Width="350" Height="25" Margin="25 5 0 0" HorizontalAlignment="Center">
                 <CheckBox Name="cbQB" IsChecked="True" Content="QBs" Margin="5 0 5 0" />
                 <CheckBox Name="cbWR" IsChecked="True" Content="WRs" Margin="5 0 5 0" />
                 <CheckBox Name="cbRB" IsChecked="True" Content="RBs" Margin="5 0 5 0" />

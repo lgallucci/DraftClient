@@ -173,7 +173,7 @@
                 }
             }
 
-            FileHandler.DraftFileHandler.WriteFile(settings, string.Format("DRAFT_{0}.xml", Settings.LeagueName));
+            FileHandler.DraftFileHandler.WriteFile(settings, string.Format("DRAFT_{0}", Settings.LeagueName));
         }
     }
 }
