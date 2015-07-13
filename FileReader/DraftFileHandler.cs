@@ -49,7 +49,7 @@
             //before your loop
             var csv = new StringBuilder();
             string line = string.Empty;
-            IList<PropertyInfo> props = new List<PropertyInfo>(typeof(T).GetProperties());
+            IList<PropertyInfo> props = new List<PropertyInfo>(typeof (T).GetProperties());
 
             if (hasHeader)
             {
@@ -71,11 +71,14 @@
             where T : class, new()
         {
             var newObject = new T();
-            IList<PropertyInfo> props = new List<PropertyInfo>(typeof(T).GetProperties());
+            IList<PropertyInfo> props = new List<PropertyInfo>(typeof (T).GetProperties());
 
             foreach (PropertyInfo prop in props)
             {
-                prop.SetValue(newObject, typeof(DraftFileHandler).GetMethod("ConvertWithEnum").MakeGenericMethod(prop.PropertyType).Invoke(null, new object[] { values[columns[prop.Name]] }));
+                prop.SetValue(newObject,
+                    typeof (DraftFileHandler).GetMethod("ConvertWithEnum")
+                        .MakeGenericMethod(prop.PropertyType)
+                        .Invoke(null, new object[] {values[columns[prop.Name]]}));
             }
             return newObject;
         }
@@ -86,10 +89,10 @@
             {
                 if (string.IsNullOrWhiteSpace(value)) return default(T);
 
-                if (typeof(T).IsEnum)
-                    return (T)Enum.Parse(typeof(T), value);
+                if (typeof (T).IsEnum)
+                    return (T) Enum.Parse(typeof (T), value);
 
-                return (T)Convert.ChangeType(value, typeof(T));
+                return (T) Convert.ChangeType(value, typeof (T));
             }
             catch (FormatException)
             {
@@ -99,18 +102,22 @@
 
         public static T ReadFile<T>(string fileName)
         {
+            fileName += ".dc";
+
             var reader = new BinaryFormatter();
             var file = new StreamReader(fileName);
-            var readObject = (T)reader.Deserialize(file.BaseStream);
+            var readObject = (T) reader.Deserialize(file.BaseStream);
             file.Close();
             return readObject;
         }
 
-        public static void WriteFile<T>(T theme, string fileName)
+        public static void WriteFile<T>(T data, string fileName)
         {
+            fileName += ".dc";
+
             var writer = new BinaryFormatter();
             var file = new StreamWriter(fileName);
-            writer.Serialize(file.BaseStream, theme);
+            writer.Serialize(file.BaseStream, data);
             file.Close();
         }
 

@@ -270,7 +270,7 @@
         {
             try
             {
-                var theme = FileHandler.DraftFileHandler.ReadFile<DraftEntities.Theme>("SavedTheme.xml");
+                var theme = FileHandler.DraftFileHandler.ReadFile<DraftEntities.Theme>("SavedTheme");
 
                 ChangeTheme(ThemeManager.GetAccent(theme.Accent), ThemeManager.GetAppTheme(theme.BaseTheme));
 
