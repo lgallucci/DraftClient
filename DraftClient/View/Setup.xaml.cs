@@ -296,7 +296,7 @@
             {
                 Accent = accent.Name,
                 BaseTheme = baseTheme.Name
-            }, "SavedTheme.xml");
+            }, "SavedTheme");
         }
 
         private void ChangeBaseTheme_OnClick(object sender, RoutedEventArgs e)
