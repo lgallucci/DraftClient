@@ -100,9 +100,6 @@
 
                         OnServerHandshake();
                         break;
-                    case NetworkMessageType.RetrieveDraftMessage:
-                        OnRetrieveDraft(networkMessage.MessageContent as Draft);
-                        break;
                     case NetworkMessageType.RetrieveDraftSettingsMessage:
                         OnRetrieveDraftSettings(networkMessage.MessageContent as DraftSettings);
                         break;
@@ -131,6 +128,8 @@
 
         private void HandleDisconnect(object sender, Guid e)
         {
+            //OnDisconnect();
+
             SentMessages.Clear();
             _timKeepAlive.Stop();
             _timAcknowledgeReturn.Stop();
@@ -172,12 +171,8 @@
 
         public delegate void PickMadeHandler(DraftPick pick);
 
-        public delegate void RetrieveDraftHandler(Draft draft);
-
         public delegate void RetrieveDraftSettingsHandler(DraftSettings settings);
-
-        public delegate Draft SendDraftHandler();
-
+        
         public delegate DraftSettings SendDraftSettingsHandler();
 
         public delegate void ServerHandshakeHandler();
@@ -189,29 +184,6 @@
         public delegate void DraftStopHandler();
 
         public delegate void DraftStateChangedHandler(DraftState state);
-
-        public event RetrieveDraftHandler RetrieveDraft;
-
-        public void OnRetrieveDraft(Draft draft)
-        {
-            RetrieveDraftHandler handler = RetrieveDraft;
-            if (handler != null)
-            {
-                handler(draft);
-            }
-        }
-
-        public event SendDraftHandler SendDraft;
-
-        public Draft OnSendDraft()
-        {
-            SendDraftHandler handler = SendDraft;
-            if (handler != null)
-            {
-                return handler();
-            }
-            return null;
-        }
 
         public event RetrieveDraftSettingsHandler RetrieveDraftSettings;
 
