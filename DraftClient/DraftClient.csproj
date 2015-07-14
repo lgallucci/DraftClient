@@ -99,7 +99,6 @@
     <Compile Include="Converters\InverseBooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\PositionToColorConverter.cs" />
     <Compile Include="Converters\StringLengthToVisibilityConverter.cs" />
-    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Providers\GridLengthAnimation.cs" />
     <Compile Include="Providers\PlayerListProvider.cs" />
     <Compile Include="ViewModel\BindableBase.cs" />
