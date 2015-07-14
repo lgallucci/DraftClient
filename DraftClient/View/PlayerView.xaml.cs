@@ -6,6 +6,7 @@
     using System.Windows.Controls.Primitives;
     using System.Windows.Data;
     using DraftEntities;
+    using Providers;
     using Player = DraftClient.ViewModel.Player;
 
     /// <summary>
@@ -20,7 +21,7 @@
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            DataContext = Setup.PlayerList;
+            DataContext = Globals.PlayerList;
             cbQB.Checked += cbPosition_Changed;
             cbQB.Unchecked += cbPosition_Changed;
             cbWR.Checked += cbPosition_Changed;
@@ -33,6 +34,23 @@
             cbK.Unchecked += cbPosition_Changed;
             cbDEF.Checked += cbPosition_Changed;
             cbDEF.Unchecked += cbPosition_Changed;
+            this.Unloaded += RemoveHandlers;
+        }
+
+        private void RemoveHandlers(object sender, RoutedEventArgs e)
+        {
+            cbQB.Checked -= cbPosition_Changed;
+            cbQB.Unchecked -= cbPosition_Changed;
+            cbWR.Checked -= cbPosition_Changed;
+            cbWR.Unchecked -= cbPosition_Changed;
+            cbRB.Checked -= cbPosition_Changed;
+            cbRB.Unchecked -= cbPosition_Changed;
+            cbTE.Checked -= cbPosition_Changed;
+            cbTE.Unchecked -= cbPosition_Changed;
+            cbK.Checked -= cbPosition_Changed;
+            cbK.Unchecked -= cbPosition_Changed;
+            cbDEF.Checked -= cbPosition_Changed;
+            cbDEF.Unchecked -= cbPosition_Changed;
         }
 
         private void CollectionViewSource_Filter(object sender, FilterEventArgs e)

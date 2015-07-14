@@ -33,16 +33,18 @@
                 Interval = 250,
                 Enabled = true
             };
-            _timAcknowledgeReturn.Elapsed += (sender, args) =>
+            _timAcknowledgeReturn.Elapsed += AcknowledgeTimeElapsed;
+        }
+
+        private void AcknowledgeTimeElapsed(object sender, ElapsedEventArgs e)
+        {
+            foreach (var message in SentMessages.Where(sm => sm.Value.Timeout < DateTime.Now).ToList())
             {
-                foreach (var message in SentMessages.Where(sm => sm.Value.Timeout < DateTime.Now).ToList())
-                {
-                    //Console.WriteLine("MessageCount:{0}", SentMessages.Count);
-                    TimeoutMessage missedMessage;
-                    SentMessages.TryRemove(message.Value.Message.MessageId, out missedMessage);
-                    SendMessage(missedMessage.ConnectedClient, missedMessage.Message);
-                }
-            };
+                //Console.WriteLine("MessageCount:{0}", SentMessages.Count);
+                TimeoutMessage missedMessage;
+                SentMessages.TryRemove(message.Value.Message.MessageId, out missedMessage);
+                SendMessage(missedMessage.ConnectedClient, missedMessage.Message);
+            }
         }
 
         public Guid ClientId { get; set; }
@@ -93,7 +95,7 @@
                         break;
                     case NetworkMessageType.HandShakeMessage:
 
-                        _timKeepAlive.Elapsed += (o, args) => SendMessage(NetworkMessageType.KeepAliveMessage, null);
+                        _timKeepAlive.Elapsed += SendKeepAlive;
                         _timKeepAlive.Interval = 5000;
                         _timKeepAlive.Enabled = true;
                         _timKeepAlive.Start();
@@ -124,6 +126,11 @@
             {
                 //TODO: Handle exceptions on network handling
             }
+        }
+
+        private void SendKeepAlive(object sender, ElapsedEventArgs e)
+        {
+            SendMessage(NetworkMessageType.KeepAliveMessage, null);
         }
 
         private void HandleDisconnect(object sender, Guid e)
@@ -288,6 +295,12 @@
                 _client.Client.ClientDisconnect -= HandleDisconnect;
                 _client.Client.Close();
             }
+
+            if (_timKeepAlive != null)
+                _timKeepAlive.Elapsed -= SendKeepAlive;
+
+            if (_timAcknowledgeReturn != null)
+            _timAcknowledgeReturn.Elapsed -= AcknowledgeTimeElapsed;
         }
     }
 }

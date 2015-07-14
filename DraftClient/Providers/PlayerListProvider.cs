@@ -3,7 +3,6 @@
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
-    using DraftClient.View;
     using DraftClient.ViewModel;
     using WpfControls;
 
@@ -11,7 +10,7 @@
     {
         public IEnumerable GetSuggestions(string filter)
         {
-            List<Player> filteredPlayers = Setup.PlayerList.Players.Where(p => p.IsPicked == false && p.Name.ToLower().Contains(filter.ToLower()))
+            List<Player> filteredPlayers = Globals.PlayerList.Players.Where(p => p.IsPicked == false && p.Name.ToLower().Contains(filter.ToLower()))
                 .OrderBy(o => o.Rank).ToList();
             return filteredPlayers;
         }

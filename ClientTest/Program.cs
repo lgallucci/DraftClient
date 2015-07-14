@@ -23,7 +23,7 @@
 
     internal class ClientRunner
     {
-        private ConnectionServer _connection;
+        private ConnectionService _connection;
         private AutoResetEvent _reset;
 
         private bool recievedDraft = false;
@@ -33,7 +33,7 @@
         {
             var servers = new Collection<DraftServer>();
 
-            _connection = ConnectionServer.Instance;
+            _connection = ConnectionService.Instance;
             _connection.ListenForServers(server =>
             {
                 if (server != null)

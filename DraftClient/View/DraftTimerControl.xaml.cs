@@ -27,46 +27,48 @@
                 Interval = new TimeSpan(0, 0, 0, 0, 200)
             };
             _player = new MediaPlayer();
-            
-            _timer.Tick += (sender, args) =>
-            {
-                if (State == null) return;
 
-                var pausedTicks = State.PickPauseTime > DateTime.MinValue ? (DateTime.UtcNow - State.PickPauseTime) : new TimeSpan(0);
-                var timeLeft = State.PickEndTime + pausedTicks + State.PausedTime - DateTime.UtcNow;
-
-                if (timeLeft.TotalSeconds >= 30 && timeLeft.TotalSeconds < 31)
-                {
-                    PlaySound("glass_ping");
-                }
-                
-                if (timeLeft.TotalSeconds < 10 && timeLeft.Seconds % 2 == 1)
-                {
-                    CountdownTextBlock.Foreground = (Brush)FindResource("AccentColorBrush3");
-                }
-                else
-                {
-                    if (timeLeft.TotalSeconds < 11 && timeLeft.TotalSeconds > 1)
-                    {
-                        PlaySound("countdown_beep");
-                    }
-                    CountdownTextBlock.Foreground = (Brush)FindResource("AccentColorBrush");
-                }
-
-                if (timeLeft.TotalSeconds >= 1)
-                {
-                    CountdownTextBlock.Text = timeLeft.ToString(@"mm\:ss");
-                }
-                else if (timeLeft.TotalSeconds < 1 && timeLeft.TotalSeconds >= 0)
-                {
-                    if (timeLeft.TotalDays > 0)
-                        CountdownTextBlock.Foreground = (Brush)FindResource("AccentColorBrush3");
-                    CountdownTextBlock.Text = "00:00";
-                    PlaySound("buzzer");
-                }
-            };
+            _timer.Tick += TimerTick;
         }
-        
+
+        private void TimerTick(object sender, EventArgs e)
+        {
+            if (State == null) return;
+
+            var pausedTicks = State.PickPauseTime > DateTime.MinValue ? (DateTime.UtcNow - State.PickPauseTime) : new TimeSpan(0);
+            var timeLeft = State.PickEndTime + pausedTicks + State.PausedTime - DateTime.UtcNow;
+
+            if (timeLeft.TotalSeconds >= 30 && timeLeft.TotalSeconds < 31)
+            {
+                PlaySound("glass_ping");
+            }
+
+            if (timeLeft.TotalSeconds < 10 && timeLeft.Seconds % 2 == 1)
+            {
+                CountdownTextBlock.Foreground = (Brush)FindResource("AccentColorBrush3");
+            }
+            else
+            {
+                if (timeLeft.TotalSeconds < 11 && timeLeft.TotalSeconds > 1)
+                {
+                    PlaySound("countdown_beep");
+                }
+                CountdownTextBlock.Foreground = (Brush)FindResource("AccentColorBrush");
+            }
+
+            if (timeLeft.TotalSeconds >= 1)
+            {
+                CountdownTextBlock.Text = timeLeft.ToString(@"mm\:ss");
+            }
+            else if (timeLeft.TotalSeconds < 1 && timeLeft.TotalSeconds >= 0)
+            {
+                if (timeLeft.TotalDays > 0)
+                    CountdownTextBlock.Foreground = (Brush)FindResource("AccentColorBrush3");
+                CountdownTextBlock.Text = "00:00";
+                PlaySound("buzzer");
+            }
+        }
+
         private void PlaySound(string soundName)
         {
             if (_lastSoundPlayed.AddSeconds(1) > DateTime.UtcNow)
@@ -160,5 +162,11 @@
         }
 
         #endregion
+
+        private void RemoveEventHandlers(object sender, RoutedEventArgs e)
+        {
+            _timer.Tick -= TimerTick;
+
+        }
     }
 }

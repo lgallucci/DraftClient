@@ -9,22 +9,23 @@
     using DraftClient.View;
     using DraftEntities;
     using Omu.ValueInjecter;
+    using Providers;
 
     public class DraftController
     {
-        private readonly ConnectionServer _connectionServer;
+        private readonly ConnectionService _connectionService;
         private readonly MainWindow _mainWindow;
 
         public DraftController(MainWindow mainWindow)
         {
-            _connectionServer = ConnectionServer.Instance;
+            _connectionService = ConnectionService.Instance;
             _mainWindow = mainWindow;
-            _connectionServer.PickMade += PickMade;
-            _connectionServer.TeamUpdated += TeamUpdated;
-            _connectionServer.SendDraftSettings += SendDraftSettings;
-            _connectionServer.UserDisconnect += UserDisconnect;
-            _connectionServer.DraftStop += DraftStop;
-            _connectionServer.DraftStateChanged += DraftStateChanged;
+            _connectionService.PickMade += PickMade;
+            _connectionService.TeamUpdated += TeamUpdated;
+            _connectionService.SendDraftSettings += SendDraftSettings;
+            _connectionService.UserDisconnect += UserDisconnect;
+            _connectionService.DraftStop += DraftStop;
+            _connectionService.DraftStateChanged += DraftStateChanged;
             _mainWindow.Closed += RemoveHandlers;
         }
 
@@ -32,12 +33,12 @@
 
         private void RemoveHandlers(object sender, EventArgs e)
         {
-            _connectionServer.PickMade -= PickMade;
-            _connectionServer.TeamUpdated -= TeamUpdated;
-            _connectionServer.SendDraftSettings -= SendDraftSettings;
-            _connectionServer.UserDisconnect -= UserDisconnect;
-            _connectionServer.DraftStop -= DraftStop;
-            _connectionServer.DraftStateChanged -= DraftStateChanged;
+            _connectionService.PickMade -= PickMade;
+            _connectionService.TeamUpdated -= TeamUpdated;
+            _connectionService.SendDraftSettings -= SendDraftSettings;
+            _connectionService.UserDisconnect -= UserDisconnect;
+            _connectionService.DraftStop -= DraftStop;
+            _connectionService.DraftStateChanged -= DraftStateChanged;
             _mainWindow.Closed -= RemoveHandlers;
         }
 
@@ -76,7 +77,7 @@
         private void PickMade(DraftPick pick)
         {
             ViewModel.Player player =
-                Setup.PlayerList.Players.FirstOrDefault(p => p.Rank == pick.Rank);
+                Globals.PlayerList.Players.FirstOrDefault(p => p.Rank == pick.Rank);
 
             Settings.CurrentDraft.Picks[pick.Row][pick.Column].DraftedPlayer = player;
             Settings.CurrentDraft.Picks[pick.Row][pick.Column].Name = (player != null) ? player.Name : "";
@@ -105,12 +106,12 @@
 
         public void MakeMove(DraftPick pick)
         {
-            _connectionServer.SendMessage(NetworkMessageType.PickMessage, pick);
+            _connectionService.SendMessage(NetworkMessageType.PickMessage, pick);
         }
 
         public Guid GetClientId()
         {
-            return _connectionServer.GetClientId();
+            return _connectionService.GetClientId();
         }
 
         public void UpdateTeam(int teamNumber, string name)
@@ -119,7 +120,7 @@
 
             team.Name = name;
 
-            _connectionServer.SendMessage(NetworkMessageType.UpdateTeamMessage, Mapper.Map<DraftTeam>(team));
+            _connectionService.SendMessage(NetworkMessageType.UpdateTeamMessage, Mapper.Map<DraftTeam>(team));
         }
 
         public void JoinTeam(int teamNumber)
@@ -127,12 +128,12 @@
             var team = Settings.DraftTeams[teamNumber - 1];
             team.ConnectedUser = GetClientId();
             team.IsConnected = true;
-            _connectionServer.SendMessage(NetworkMessageType.UpdateTeamMessage, Mapper.Map<DraftTeam>(team));
+            _connectionService.SendMessage(NetworkMessageType.UpdateTeamMessage, Mapper.Map<DraftTeam>(team));
         }
 
         public void UpdateDraftState(ViewModel.DraftState state)
         {
-            _connectionServer.SendMessage(NetworkMessageType.UpdateDraftState, Mapper.Map<DraftState>(state));
+            _connectionService.SendMessage(NetworkMessageType.UpdateDraftState, Mapper.Map<DraftState>(state));
         }
 
         public void DraftStateChanged(DraftState state)

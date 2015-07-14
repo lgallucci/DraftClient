@@ -10,9 +10,9 @@
     using ClientServer;
     using DraftEntities;
 
-    public sealed class ConnectionServer
+    public sealed class ConnectionService
     {
-        private static readonly ConnectionServer instance = new ConnectionServer();
+        private static readonly ConnectionService instance = new ConnectionService();
         private AutoResetEvent _connectionReset;
         private Client _connection;
         private readonly bool _isRunning;
@@ -21,11 +21,11 @@
 
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
-        static ConnectionServer()
+        static ConnectionService()
         {
         }
 
-        private ConnectionServer()
+        private ConnectionService()
         {
             _connection = new Client();
             _isRunning = true;
@@ -66,7 +66,7 @@
             });
         }
 
-        public static ConnectionServer Instance
+        public static ConnectionService Instance
         {
             get { return instance; }
         }
@@ -76,6 +76,7 @@
         public void StartServer(string leagueName, int numberOfTeams)
         {
             RemoveHandlers();
+            _connection.Close();
             _connection = new Server(leagueName, numberOfTeams);
             ((Server) _connection).StartServer();
             AddHandlers();
@@ -113,7 +114,7 @@
             _connection.SendDraftSettings -= OnSendDraftSettings;
             _connection.UserDisconnect -= OnUserDisconnect;
             _connection.DraftStop -= OnDraftStop;
-            _connection.DraftStateChanged += OnDraftStateChanged;
+            _connection.DraftStateChanged -= OnDraftStateChanged;
         }
 
         public void ConnectToDraft(string ipAddress, int ipPort)

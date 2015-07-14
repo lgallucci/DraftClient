@@ -13,20 +13,21 @@
     using DraftClient.View;
     using DraftClient.ViewModel;
     using Omu.ValueInjecter;
+    using Providers;
     using DraftSettings = DraftEntities.DraftSettings;
 
     public class SetupController
     {
-        private readonly ConnectionServer _connectionServer;
+        private readonly ConnectionService _connectionService;
         private readonly Setup _setupWindow;
         private AutoResetEvent _settingsResetEvent;
 
         public SetupController(Setup setupWindow)
         {
-            _connectionServer = ConnectionServer.Instance;
+            _connectionService = ConnectionService.Instance;
             _setupWindow = setupWindow;
-            _connectionServer.RetrieveDraftSettings += RetrieveDraftSettings;
-            _connectionServer.TeamUpdated += TeamUpdated;
+            _connectionService.RetrieveDraftSettings += RetrieveDraftSettings;
+            _connectionService.TeamUpdated += TeamUpdated;
         }
 
         private void TeamUpdated(DraftEntities.DraftTeam team)
@@ -38,14 +39,14 @@
 
         public bool IsConnected
         {
-            get { return _connectionServer.IsConnected; }
+            get { return _connectionService.IsConnected; }
         }
 
         public void SubscribeToMessages(ObservableCollection<DraftServer> servers)
         {
             Dispatcher dispatch = Application.Current.Dispatcher;
 
-            _connectionServer.ListenForServers(o =>
+            _connectionService.ListenForServers(o =>
             {
                 var server = new DraftServer();
                 server.InjectFrom(o);
@@ -88,7 +89,7 @@
         public Task<bool> GetDraftSettings()
         {
             _settingsResetEvent = new AutoResetEvent(false);
-            _connectionServer.SendMessage(NetworkMessageType.SendDraftSettingsMessage, null);
+            _connectionService.SendMessage(NetworkMessageType.SendDraftSettingsMessage, null);
 
             return Task.Run(() => _settingsResetEvent.WaitOne(5000));
         }
@@ -116,7 +117,7 @@
                         if (settings.CurrentDraft.Picks[i, j] != 0)
                         {
                             ViewModel.Player player =
-                                Setup.PlayerList.Players.First(p => p.Rank == settings.CurrentDraft.Picks[i, j]);
+                                Globals.PlayerList.Players.First(p => p.Rank == settings.CurrentDraft.Picks[i, j]);
 
                             _setupWindow.DraftSettings.CurrentDraft.Picks[i][j] = new ViewModel.DraftPick
                             {
@@ -133,32 +134,32 @@
 
         public void ConnectToDraftServer(string ipAddress, int ipPort)
         {
-            _connectionServer.ConnectToDraft(ipAddress, ipPort);
+            _connectionService.ConnectToDraft(ipAddress, ipPort);
         }
 
         public void CancelDraft()
         {
-            _connectionServer.ResetConnection();
+            _connectionService.ResetConnection();
         }
 
         public void StartServer(string leagueName, int numberOfTeams)
         {
-            _connectionServer.StartServer(leagueName, numberOfTeams);
+            _connectionService.StartServer(leagueName, numberOfTeams);
         }
 
         public void DisconnectFromDraftServer()
         {
-            _connectionServer.SendMessage(NetworkMessageType.LogoutMessage, null);
+            _connectionService.SendMessage(NetworkMessageType.LogoutMessage, null);
         }
 
         public Guid GetClientId()
         {
-            return _connectionServer.GetClientId();
+            return _connectionService.GetClientId();
         }
 
         public void ResetConnection()
         {
-            _connectionServer.ResetConnection();
+            _connectionService.ResetConnection();
         }
 
         public void LoadDraft(string draftName)
@@ -183,7 +184,7 @@
                     if (settings.CurrentDraft.Picks[i, j] != 0)
                     {
                         ViewModel.Player player =
-                            Setup.PlayerList.Players.First(p => p.Rank == settings.CurrentDraft.Picks[i, j]);
+                            Globals.PlayerList.Players.First(p => p.Rank == settings.CurrentDraft.Picks[i, j]);
 
                         _setupWindow.DraftSettings.CurrentDraft.Picks[i][j] = new ViewModel.DraftPick
                         {

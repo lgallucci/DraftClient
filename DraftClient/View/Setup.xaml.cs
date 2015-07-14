@@ -8,6 +8,7 @@
     using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Runtime.Serialization;
+    using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Controls;
     using Annotations;
@@ -16,7 +17,6 @@
     using MahApps.Metro.Controls;
     using MahApps.Metro.Controls.Dialogs;
     using Omu.ValueInjecter;
-    using Properties;
     using Providers;
     using ViewModel;
 
@@ -27,9 +27,7 @@
     {
         private readonly SetupController _setupController;
         private MainWindow _draftWindow;
-        private double _actualHeight;
-
-
+        
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
@@ -72,7 +70,6 @@
 
         public DraftSettings DraftSettings { get; set; }
         public SpinnyWindow ConnectingWindow = new SpinnyWindow();
-        public static PlayerList PlayerList { get; set; }
 
         private void StartDraft_Click(object sender, RoutedEventArgs e)
         {
@@ -99,13 +96,13 @@
             {
                 ConnectingWindow.Hide();
                 _setupController.DisconnectFromDraftServer();
-                this.ShowMessageAsync("An error occurred", ex.Message);
+                ShowErrorMessage(ex.Message);
             }
         }
 
         private void LoadPlayers()
         {
-            PlayerList = new PlayerList();
+            Globals.PlayerList = new PlayerList();
 
             List<DraftEntities.Player> players =
                 FileHandler.DraftFileHandler.ReadCsvFile<DraftEntities.Player>(@".\Resources\FantasyPlayers.csv");
@@ -136,9 +133,9 @@
                 return tempSchedule;
             }).ToList();
 
-            PlayerList.Players = new ObservableCollection<Player>(presentationPlayers);
-            PlayerList.Histories = new ObservableCollection<PlayerHistory>(presentationHistories);
-            PlayerList.Schedules = new ObservableCollection<TeamSchedule>(presentationSchedules);
+            Globals.PlayerList.Players = new ObservableCollection<Player>(presentationPlayers);
+            Globals.PlayerList.Histories = new ObservableCollection<PlayerHistory>(presentationHistories);
+            Globals.PlayerList.Schedules = new ObservableCollection<TeamSchedule>(presentationSchedules);
         }
 
         public void OpenDraft(bool isServer)
@@ -182,9 +179,21 @@
                 {
                     ConnectingWindow.Hide();
                     _setupController.DisconnectFromDraftServer();
-                    this.ShowMessageAsync("An error occurred", ex.Message);
+                    ShowErrorMessage(ex.Message);
                 }
             }
+        }
+
+        private void ShowErrorMessage(string message)
+        {
+            Task.Run(async () =>
+            {
+                await this.ShowMessageAsync("An error occurred", message).ContinueWith((e) =>
+                {
+                    if (e.Exception != null)
+                        Application.Current.Dispatcher.Invoke(() => MessageBox.Show(message, "An error has occurred", MessageBoxButton.OK));
+                });
+            });
         }
 
         private void ServerBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -321,7 +330,7 @@
 
         public void ResetPlayerList()
         {
-            foreach (var player in PlayerList.Players)
+            foreach (var player in Globals.PlayerList.Players)
             {
                 player.IsPicked = false;
             }
