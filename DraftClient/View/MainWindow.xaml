@@ -15,7 +15,7 @@
         </controls:FlyoutsControl>
     </controls:MetroWindow.Flyouts>
     <DockPanel Name="MainGrid">
-        <Grid Name="PlayersGrid" Width="350" DockPanel.Dock="Left">
+        <Grid Margin="5" Name="PlayersGrid" Width="350" DockPanel.Dock="Left">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="100" />
@@ -23,7 +23,7 @@
                 <local:PlayerView Grid.Row="0" x:Name="PlayerView"></local:PlayerView>
                 <local:DraftTimerControl x:Name="DraftTimerControl" Grid.Row="1" VerticalAlignment="Center"></local:DraftTimerControl>
             </Grid>
-        <Grid Name="PicksGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DockPanel.Dock="Right">
+        <Grid Margin="5" Name="PicksGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DockPanel.Dock="Right">
             <Grid.Resources>
                 <ResourceDictionary>
                     <Style TargetType="TextBlock">

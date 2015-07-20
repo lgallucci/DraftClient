@@ -7,7 +7,7 @@
     /// <summary>
     /// Interaction logic for PlayerFlyout.xaml
     /// </summary>
-    public partial class PlayerFlyout : Flyout //TODO: Scrollbar if stats go below window.
+    public partial class PlayerFlyout : Flyout
     {
         public PlayerFlyout()
         {

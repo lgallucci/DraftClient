@@ -6,8 +6,8 @@
     /// <summary>
     ///     Interaction logic for FantasyRound.xaml
     /// </summary>
-    public partial class FantasyRound
-    {//TODO: Update autocomplete to use theme colors
+    public partial class FantasyRound //TODO: Update autocomplete to use theme colors
+    {
         public FantasyRound()
         {
             InitializeComponent();

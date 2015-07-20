@@ -29,7 +29,7 @@
                 <CheckBox Name="cbDEF" IsChecked="True" Content="DEFs" Margin="8 0 0 0"/>
             </WrapPanel>
             <TextBox controls:TextBoxHelper.Watermark="Search Players"  Name="SearchTextBox" Width="0" Canvas.Left="325" BorderThickness="1" TextChanged="FilterTextChanged" />
-            <ToggleButton Style="{DynamicResource MetroCircleToggleButtonStyle}" Content="🔍" Cursor="Hand" Width="30" Height="30" Margin="325 0 0 0" Click="SearchButtonClick" Name="SearchButton" >
+            <ToggleButton Style="{DynamicResource MetroCircleToggleButtonStyle}" Content="🔍" Cursor="Hand" Width="30" Height="30" Margin="320 -2 0 0" Click="SearchButtonClick" Name="SearchButton" >
                 <ToggleButton.Triggers>
                     <EventTrigger RoutedEvent="ToggleButton.Checked">
                         <BeginStoryboard>
@@ -37,11 +37,11 @@
                                 <DoubleAnimation 
                                             Storyboard.TargetName="SearchTextBox"
                                             Storyboard.TargetProperty="(Canvas.Left)" 
-                                            From="325" To="0" Duration="0:0:.1" AutoReverse="False"/>
+                                            From="320" To="0" Duration="0:0:.1" AutoReverse="False"/>
                                 <DoubleAnimation 
                                             Storyboard.TargetName="SearchTextBox"
                                             Storyboard.TargetProperty="(TextBox.Width)" 
-                                            From="0" To="325" Duration="0:0:.1" AutoReverse="False"/>
+                                            From="0" To="320" Duration="0:0:.1" AutoReverse="False"/>
                             </Storyboard>
                         </BeginStoryboard>
                     </EventTrigger>

@@ -8,7 +8,7 @@
              mc:Ignorable="d" 
 			 d:DesignHeight="900"
 			 d:DesignWidth="400"
-			 Width="350"
+			 Width="355"
              Theme="Adapt"
              Header="{Binding Name}"
              Position="Left">
@@ -65,8 +65,8 @@
 
         </ResourceDictionary>
     </controls:Flyout.Resources>
-    <StackPanel Margin="0 -75 0 0" Width="350" Height="850">
-        <StackPanel.Background>
+    <DockPanel Margin="0 -75 0 0" Width="350">
+        <DockPanel.Background>
             <VisualBrush Stretch="Uniform"
                         AlignmentY="Top"
                         Opacity="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=controls:Flyout}, Path=LogoOpacity}" 
@@ -82,8 +82,8 @@
                     </Image>
                 </VisualBrush.Visual>
             </VisualBrush>
-        </StackPanel.Background>
-        <StackPanel Margin="25 75 25 0">
+        </DockPanel.Background>
+        <StackPanel DockPanel.Dock="Top" Margin="25 75 25 0">
             <Border BorderBrush="{DynamicResource HighlightBrush}" BorderThickness="2" Padding="25 5 25 5">
                 <StackPanel HorizontalAlignment="Stretch">
                     <WrapPanel>
@@ -104,7 +104,7 @@
                 </StackPanel>
             </Border>
         </StackPanel>
-        <ScrollViewer Margin="0 15 0 0" VerticalScrollBarVisibility="Auto" Width="350">
+        <ScrollViewer DockPanel.Dock="Bottom" Margin="0 15 0 0" VerticalScrollBarVisibility="Auto" Width="350">
             <StackPanel HorizontalAlignment="Stretch">
                 <TextBlock HorizontalAlignment="Center" Style="{DynamicResource HeaderStatStyle}" Text="SCHEDULE" />
                 <DockPanel HorizontalAlignment="Center">
@@ -268,5 +268,5 @@
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
-    </StackPanel>
+    </DockPanel>
 </controls:Flyout>

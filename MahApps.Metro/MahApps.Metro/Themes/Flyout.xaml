@@ -60,15 +60,7 @@
                        Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Controls:Flyout}}, Path=TitleVisibility}"
                        FontSize="{StaticResource FlyoutHeaderFontSize}"
                        Margin="15,0,0,0"
-                       VerticalAlignment="Center" >
-                <TextBlock.Effect>
-                    <DropShadowEffect Color="{DynamicResource BlackColor}"
-    			                      ShadowDepth=".1"
-                                      BlurRadius="1"
-    			                      Opacity="50"
-    			                      RenderingBias="Quality" />
-                </TextBlock.Effect>
-            </TextBlock>
+                       VerticalAlignment="Center" />
         </DockPanel>
         <DataTemplate.Triggers>
             <DataTrigger Binding="{Binding Position, RelativeSource={RelativeSource AncestorType={x:Type Controls:Flyout}}}"
@@ -229,41 +221,60 @@
                 </VisualStateGroup>
             </VisualStateManager.VisualStateGroups>
             <AdornerDecorator>
-                <Canvas FocusVisualStyle="{x:Null}"
+                <Grid FocusVisualStyle="{x:Null}"
                            Focusable="False">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="75" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="0" />
+                    </Grid.ColumnDefinitions>
                     <ContentPresenter x:Name="PART_Header"
+                                      Panel.ZIndex="1"
+                                      Grid.Row="0"
+                                      Grid.Column="0"
                                       ContentSource="Header"
                                       ContentTemplate="{TemplateBinding HeaderTemplate}"
-                                      Canvas.ZIndex="1"/>
+                                      />
                     <ContentPresenter x:Name="PART_Content"
-                                      Canvas.Top="75"
-                                      Canvas.ZIndex="0"/>
-                </Canvas>
+                                      Panel.ZIndex="0"
+                                      Grid.Row="1"
+                                      Grid.Column="0"
+                                      DockPanel.Dock="Bottom" />
+                </Grid>
             </AdornerDecorator>
         </Grid>
         <ControlTemplate.Triggers>
             <DataTrigger Binding="{Binding Position, RelativeSource={RelativeSource Self}}"
                          Value="Top">
-                <Setter TargetName="PART_Content"
-                        Property="Canvas.Left"
-                        Value="75" />
-            </DataTrigger>
-            <DataTrigger Binding="{Binding Position, RelativeSource={RelativeSource Self}}"
-                         Value="Bottom">
-                <Setter TargetName="PART_Content"
-                        Property="Canvas.Left"
-                        Value="75" />
-            </DataTrigger>
-            <DataTrigger Binding="{Binding Position, RelativeSource={RelativeSource Self}}"
-                         Value="Left">
                 <Setter TargetName="PART_Header"
-                        Property="Canvas.Right"
+                        Property="Grid.Column"
+                        Value="0" />
+                <Setter TargetName="PART_Header"
+                        Property="Grid.Row"
+                        Value="0" />
+                <Setter TargetName="PART_Content"
+                        Property="Grid.Column"
+                        Value="1" />
+                <Setter TargetName="PART_Content"
+                        Property="Grid.Row"
                         Value="0" />
             </DataTrigger>
             <DataTrigger Binding="{Binding Position, RelativeSource={RelativeSource Self}}"
-                         Value="Right">
+                         Value="Bottom">
+                <Setter TargetName="PART_Header"
+                        Property="Grid.Column"
+                        Value="0" />
+                <Setter TargetName="PART_Header"
+                        Property="Grid.Row"
+                        Value="0" />
                 <Setter TargetName="PART_Content"
-                        Property="Canvas.Left"
+                        Property="Grid.Column"
+                        Value="1" />
+                <Setter TargetName="PART_Content"
+                        Property="Grid.Row"
                         Value="0" />
             </DataTrigger>
         </ControlTemplate.Triggers>
