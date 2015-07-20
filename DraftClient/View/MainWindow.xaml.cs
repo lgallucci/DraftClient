@@ -222,7 +222,7 @@
             {
                 for (int j = 1; j < PicksGrid.ColumnDefinitions.Count; j++)
                 {
-                    var newRound = new FantasyRound //TODO: Don't show loading on setting up grid.
+                    var newRound = new FantasyRound
                     {
                         Pick = _draftController.Settings.CurrentDraft.Picks[i - 1][j - 1],
                         Round = i,
@@ -256,7 +256,6 @@
 
         private void TeamJoined(int teamNumber)
         {
-
             _draftController.JoinTeam(teamNumber);
             _myTeamIndex = teamNumber;
             for (int j = 0; j < PicksGrid.ColumnDefinitions.Count; j++)

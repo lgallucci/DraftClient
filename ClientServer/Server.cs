@@ -215,9 +215,9 @@
                     MessageContent = networkMessage.MessageId
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                //TODO: Handle exceptions on network handling
+                HandleDisconnect(sender, ClientId);
             }
         }
 
@@ -264,7 +264,7 @@
         {
             lock (_connectionLock)
             {
-                ConnectedClient connection = Connections.FirstOrDefault(c => c.Client == sender);
+                ConnectedClient connection = Connections.FirstOrDefault(c => c.Client == (SocketClient)sender);
                 Logout(connection);
             }
         }

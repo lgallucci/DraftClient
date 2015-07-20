@@ -123,6 +123,7 @@
                             {
                                 DraftedPlayer = player,
                                 CanEdit = false,
+                                IsLoading = true,
                                 Name = player.Name
                             };
                         }
@@ -190,6 +191,7 @@
                         {
                             DraftedPlayer = player,
                             CanEdit = true,
+                            IsLoading = true,
                             Name = player.Name
                         };
                     }

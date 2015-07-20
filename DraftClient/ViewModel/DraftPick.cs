@@ -4,6 +4,8 @@
     {
         private Player _draftedPlayer;
         private string _name;
+        private bool _canEdit;
+        private bool _isLoading;
 
         public string Name
         {
@@ -23,7 +25,17 @@
             }
         }
 
-        public bool CanEdit { get; set; }
+        public bool CanEdit
+        {
+            get { return _canEdit; }
+            set { SetProperty(ref _canEdit, value); }
+        }
+
+        public bool IsLoading
+        {
+            get { return _isLoading; }
+            set { SetProperty(ref _isLoading, value); }
+        }
 
         public Player DraftedPlayer
         {

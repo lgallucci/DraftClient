@@ -347,7 +347,7 @@ Public Class AutoCompleteTextBox
         FetchTimer.Stop()
         If Editor.Text.Length > 0 Then
             IsLoading = True
-            IsDropDownOpen = True
+            IsDropDownOpen = Not IsReadOnly
             ItemsSelector.ItemsSource = Nothing
             FetchTimer.IsEnabled = True
             FetchTimer.Start()

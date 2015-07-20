@@ -47,6 +47,7 @@
                 ForegroundColor="{StaticResource HighlightBrush}"
                 Foreground="{StaticResource HighlightBrush}"
                 FontSize="9"
+                IsReadOnly="{Binding IsLoading, Mode=TwoWay}"
                 Background="{StaticResource WindowBackgroundBrush}"
                 Text="{Binding Name, Mode=TwoWay}"
                 SelectedItem="{Binding Path=DraftedPlayer, Mode=TwoWay}"
@@ -73,7 +74,7 @@
                 </wpf:AutoCompleteTextBox.Icon>
             </wpf:AutoCompleteTextBox>
             <TextBlock Text="{Binding Path=Name}" Visibility="{Binding Path=CanEdit, Converter={StaticResource InverseBooleanToVisibilityConverter}}" 
-                       FontSize="9" HorizontalAlignment="Center" Foreground="Black" FontWeight="Bold" />
+                       FontSize="11" HorizontalAlignment="Center" Foreground="Black" FontWeight="Bold" />
             <DockPanel Visibility="{Binding Path=Name, Converter={StaticResource StringLengthToVisibilityConverter}}"
                        HorizontalAlignment="Stretch" VerticalAlignment="Center">
                 <StackPanel DockPanel.Dock="Left" Margin="3">
