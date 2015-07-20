@@ -16,7 +16,7 @@
 
         public double LogoOpacity
         {
-            get { return (ThemeManager.DetectAppStyle(Application.Current).Item1.Name == "BaseDark") ? .45 : .15; }
+            get { return (ThemeManager.DetectAppStyle(Application.Current).Item1.Name == "BaseDark") ? .45 : .30; }
         }
     }
 }
