@@ -1,9 +1,7 @@
 ﻿namespace DraftClient.View
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
-    using System.Media;
     using System.Reflection;
     using System.Windows;
     using System.Windows.Media;

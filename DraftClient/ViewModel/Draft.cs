@@ -1,6 +1,5 @@
 ﻿namespace DraftClient.ViewModel
 {
-    using System;
     using System.Collections.Generic;
 
     public class Draft
@@ -25,22 +24,10 @@
             }
             State = new DraftState(server, numberOfSeconds);
         }
-
-        //public int Round { get; set; }
+        
         public int MaxRound { get; set; }
-        //public int Team { get; set; }
         public int MaxTeam { get; set; }
         public DraftState State { get; set; }
         public List<List<DraftPick>> Picks { get; set; }
-
-        //public void NextPick()
-        //{
-        //    Team++;
-        //    if (Team > MaxTeam)
-        //    {
-        //        Team = 1;
-        //        Round++;
-        //    }
-        //}
     }
 }
