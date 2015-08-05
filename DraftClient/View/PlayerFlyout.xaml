@@ -218,7 +218,7 @@
                                         </GridViewColumn>
                                         <GridViewColumn DisplayMemberBinding="{Binding Receptions}" Header="Rec" Width="66.7" />
                                         <GridViewColumn DisplayMemberBinding="{Binding ReceivingYards}" Header="Yds" Width="66.6" />
-                                        <GridViewColumn DisplayMemberBinding="{Binding ReceivingTouchdowns}" Header="Tds" Width="66.6" />
+                                        <GridViewColumn DisplayMemberBinding="{Binding ReceivingTouchdowns}" Header="TDs" Width="66.6" />
                                     </GridView>
                                 </ListView.View>
                             </ListView>
@@ -256,7 +256,7 @@
                                             </GridViewColumn.CellTemplate>
                                         </GridViewColumn>
                                         <GridViewColumn DisplayMemberBinding="{Binding DefensiveSacks}" Header="Sacks" Width="40" />
-                                        <GridViewColumn DisplayMemberBinding="{Binding DefensiveTouchdowns}" Header="Tds" Width="40" />
+                                        <GridViewColumn DisplayMemberBinding="{Binding DefensiveTouchdowns}" Header="TDs" Width="40" />
                                         <GridViewColumn DisplayMemberBinding="{Binding DefensiveInterceptions}" Header="Ints" Width="40" />
                                         <GridViewColumn DisplayMemberBinding="{Binding DefensiveFumblesRecovered}" Header="Fbl Rc" Width="40" />
                                         <GridViewColumn DisplayMemberBinding="{Binding DefensivePointsAgainst}" Header="Pts Agt" Width="40" />

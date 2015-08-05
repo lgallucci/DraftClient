@@ -30,6 +30,7 @@
             _connectionService.DraftStop += DraftStop;
             _connectionService.DraftStateChanged += DraftStateChanged;
             _connectionService.Disconnect += DraftDisconnected;
+            _connectionService.RetrieveDraftSettings += RetrieveDraftSettings;
             _mainWindow.Closed += RemoveHandlers;
         }
 
@@ -44,6 +45,7 @@
             _connectionService.DraftStop -= DraftStop;
             _connectionService.DraftStateChanged -= DraftStateChanged;
             _connectionService.Disconnect -= DraftDisconnected;
+            _connectionService.RetrieveDraftSettings -= RetrieveDraftSettings;
             _mainWindow.Closed -= RemoveHandlers;
         }
 
@@ -209,6 +211,7 @@
 
                 if (_connectionService.IsConnected)
                 {
+                    controller.SetMessage("Getting Updated Draft...");
                     hasReconnected = await GetDraftSettings();
                 }
 

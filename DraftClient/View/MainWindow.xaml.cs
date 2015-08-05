@@ -87,7 +87,7 @@
 
         public async Task<ProgressDialogController> ShowReconnectingDialog()
         {
-            return await this.ShowProgressAsync("Lost Connection", "Reconnecting", true);
+            return await this.ShowProgressAsync("Lost Connection", "Reconnecting...", true);
         }
 
         public void CloseWindow(string resetMessage)
@@ -118,8 +118,6 @@
 
         private void RemovePicksGridHandlers()
         {
-            //Loop through FantasyTeam TeamChanged,TeamJoined;
-            //Loop through FantasyRound MakePick;
             foreach (var control in PicksGrid.Children.Cast<UIElement>())
             {
                 var team = control as FantasyTeam;
