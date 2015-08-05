@@ -46,10 +46,8 @@
             DisplayPlayer.Histories = Globals.PlayerList.Histories.Where(s => s.PlayerId == DisplayPlayer.PlayerId).ToList();
 
             PlayerFlyout.IsOpen = true;
-
         }
-
-
+        
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             UpdateDisplayScale(null, null);

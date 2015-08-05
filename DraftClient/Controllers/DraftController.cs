@@ -10,11 +10,14 @@
     using Omu.ValueInjecter;
     using Providers;
     using MahApps.Metro.Controls.Dialogs;
+    using System.Threading.Tasks;
+    using System.Threading;
 
     public class DraftController
     {
         private readonly ConnectionService _connectionService;
         private readonly MainWindow _mainWindow;
+        private AutoResetEvent _settingsResetEvent;
 
         public DraftController(MainWindow mainWindow)
         {
@@ -202,15 +205,66 @@
                     }
                 }
 
+                bool hasReconnected = false;
+
                 if (_connectionService.IsConnected)
                 {
-                    //TODO: get draft
+                    hasReconnected = await GetDraftSettings();
                 }
-                else
+
+                if (!hasReconnected)
                 {
+                    await controller.CloseAsync();
                     _mainWindow.CloseWindow("Failed to reconnect to server");
                 }
             });
+        }
+
+        public Task<bool> GetDraftSettings()
+        {
+            _settingsResetEvent = new AutoResetEvent(false);
+            _connectionService.SendMessage(NetworkMessageType.SendDraftSettingsMessage, null);
+
+            return Task.Run(() => _settingsResetEvent.WaitOne(5000));
+        }
+
+        private void RetrieveDraftSettings(DraftSettings draftSettings)
+        {
+            if (draftSettings == null) return;
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Settings.InjectFrom(draftSettings);
+                Settings.DraftTeams = new ObservableCollection<ViewModel.DraftTeam>();
+                foreach (DraftTeam draftTeam in draftSettings.DraftTeams)
+                {
+                    Settings.DraftTeams.Add(Mapper.Map<ViewModel.DraftTeam>(draftTeam));
+                }
+
+                Settings.CurrentDraft = new ViewModel.Draft(draftSettings.CurrentDraft.MaxRound,
+                    draftSettings.CurrentDraft.MaxTeam, draftSettings.NumberOfSeconds, false);
+
+                for (int i = 0; i < draftSettings.CurrentDraft.MaxRound; i++)
+                {
+                    for (int j = 0; j < draftSettings.CurrentDraft.MaxTeam; j++)
+                    {
+                        if (draftSettings.CurrentDraft.Picks[i, j] != 0)
+                        {
+                            ViewModel.Player player =
+                                Globals.PlayerList.Players.First(p => p.Rank == draftSettings.CurrentDraft.Picks[i, j]);
+
+                            Settings.CurrentDraft.Picks[i][j] = new ViewModel.DraftPick
+                            {
+                                DraftedPlayer = player,
+                                CanEdit = false,
+                                IsLoading = true,
+                                Name = player.Name
+                            };
+                        }
+                    }
+                }
+            });
+            _settingsResetEvent.Set();
         }
     }
 }
