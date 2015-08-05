@@ -14,7 +14,6 @@
             {
                 if (_draftedPlayer != null && value.Trim().ToLower() != _draftedPlayer.Name.Trim().ToLower())
                 {
-                    _draftedPlayer.IsPicked = false;
                     SetProperty(ref _draftedPlayer, null);
                     SetProperty(ref _name, "");
                 }

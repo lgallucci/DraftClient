@@ -132,10 +132,10 @@
         {
             SendMessage(NetworkMessageType.KeepAliveMessage, null);
         }
-
+    
         private void HandleDisconnect(object sender, Guid e)
         {
-            //OnDisconnect();
+            OnDisconnect();
 
             SentMessages.Clear();
             _timKeepAlive.Stop();
@@ -191,6 +191,8 @@
         public delegate void DraftStopHandler();
 
         public delegate void DraftStateChangedHandler(DraftState state);
+
+        public delegate void DisconnectHandler();
 
         public event RetrieveDraftSettingsHandler RetrieveDraftSettings;
 
@@ -281,6 +283,16 @@
             }
         }
 
+        public event DisconnectHandler Disconnect;
+
+        public void OnDisconnect()
+        {
+            DisconnectHandler handler = Disconnect;
+            if (handler != null)
+            {
+                handler();
+            }
+        }
         #endregion
 
         public virtual void Close()

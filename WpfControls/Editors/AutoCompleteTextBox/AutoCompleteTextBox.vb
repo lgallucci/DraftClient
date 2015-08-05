@@ -351,6 +351,9 @@ Public Class AutoCompleteTextBox
             ItemsSelector.ItemsSource = Nothing
             FetchTimer.IsEnabled = True
             FetchTimer.Start()
+        ElseIf e.Changes(0).RemovedLength > 0
+            ItemsSelector.ItemsSource = Nothing
+            IsDropDownOpen = False
         Else
             IsDropDownOpen = False
         End If

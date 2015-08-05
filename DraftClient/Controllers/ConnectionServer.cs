@@ -19,6 +19,9 @@
         public Task ServerListener;
         private UdpClient _updClient;
 
+        private string address = "";
+        private int port = 0;
+
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
         static ConnectionService()
@@ -102,6 +105,7 @@
             _connection.UserDisconnect += OnUserDisconnect;
             _connection.DraftStop += OnDraftStop;
             _connection.DraftStateChanged += OnDraftStateChanged;
+            _connection.Disconnect += OnDisconnect;
         }
 
         private void RemoveHandlers()
@@ -115,11 +119,25 @@
             _connection.UserDisconnect -= OnUserDisconnect;
             _connection.DraftStop -= OnDraftStop;
             _connection.DraftStateChanged -= OnDraftStateChanged;
+            _connection.Disconnect -= OnDisconnect;
+        }
+
+        public void ConnectToDraft()
+        {
+            if (string.IsNullOrWhiteSpace(address) || port <= 0)
+            {
+                throw new ArgumentException("IP and Port not set");
+            }
+
+            ConnectToDraft(address, port);
         }
 
         public void ConnectToDraft(string ipAddress, int ipPort)
         {
-            _connection.ConnectToDraftServer(ipAddress, ipPort);
+            address = ipAddress;
+            port = ipPort;
+
+            _connection.ConnectToDraftServer(address, port);
 
             _connectionReset = new AutoResetEvent(false);
             _connection.SendMessage(NetworkMessageType.LoginMessage, _connection.ClientId.ToString());
@@ -172,6 +190,8 @@
         public delegate void DraftStopHandler();
 
         public delegate void DraftStateChangedHandler(DraftState state);
+
+        public delegate void DisconnectHandler();
 
         public event RetrieveDraftSettingsHandler RetrieveDraftSettings;
 
@@ -248,6 +268,17 @@
             if (handler != null)
             {
                 handler(state);
+            }
+        }
+        
+        public event DisconnectHandler Disconnect;
+
+        public void OnDisconnect()
+        {
+            DisconnectHandler handler = Disconnect;
+            if (handler != null)
+            {
+                handler();
             }
         }
 

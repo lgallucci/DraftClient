@@ -12,6 +12,7 @@
     using Controllers;
     using Providers;
     using ViewModel;
+    using System.Threading.Tasks;
 
     /// <summary>
     ///     Interaction logic for MainWindow.xaml
@@ -84,6 +85,11 @@
             {
                 CloseWindow("Draft Closed");
             }
+        }
+
+        public async Task<ProgressDialogController> ShowReconnectingDialog()
+        {
+            return await this.ShowProgressAsync("Lost Connection", "Reconnecting", true);
         }
 
         public void CloseWindow(string resetMessage)

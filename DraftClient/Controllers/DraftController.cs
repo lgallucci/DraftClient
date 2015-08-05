@@ -9,6 +9,7 @@
     using DraftEntities;
     using Omu.ValueInjecter;
     using Providers;
+    using MahApps.Metro.Controls.Dialogs;
 
     public class DraftController
     {
@@ -25,6 +26,7 @@
             _connectionService.UserDisconnect += UserDisconnect;
             _connectionService.DraftStop += DraftStop;
             _connectionService.DraftStateChanged += DraftStateChanged;
+            _connectionService.Disconnect += DraftDisconnected;
             _mainWindow.Closed += RemoveHandlers;
         }
 
@@ -38,6 +40,7 @@
             _connectionService.UserDisconnect -= UserDisconnect;
             _connectionService.DraftStop -= DraftStop;
             _connectionService.DraftStateChanged -= DraftStateChanged;
+            _connectionService.Disconnect -= DraftDisconnected;
             _mainWindow.Closed -= RemoveHandlers;
         }
 
@@ -174,6 +177,40 @@
             }
 
             FileHandler.DraftFileHandler.WriteFile(settings, string.Format("DRAFT_{0}", Settings.LeagueName));
+        }
+        
+        private void DraftDisconnected()
+        {            
+            _connectionService.ResetConnection();
+            RemoveHandlers(this, null);
+
+            ProgressDialogController controller;
+
+            Application.Current.Dispatcher.Invoke(async () => 
+            {
+                controller = await _mainWindow.ShowReconnectingDialog();
+
+                var timeOut = DateTime.Now.AddMinutes(1);
+
+                while (!controller.IsCanceled && timeOut > DateTime.Now)
+                {
+                    _connectionService.ConnectToDraft();
+
+                    if (_connectionService.IsConnected)
+                    {
+                        break;
+                    }
+                }
+
+                if (_connectionService.IsConnected)
+                {
+                    //TODO: get draft
+                }
+                else
+                {
+                    _mainWindow.CloseWindow("Failed to reconnect to server");
+                }
+            });
         }
     }
 }
