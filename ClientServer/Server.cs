@@ -11,6 +11,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using DraftEntities;
+    using System.Timers;
 
     public class Server : Client
     {
@@ -24,14 +25,25 @@
         private readonly int _port;
         private TcpListener _listener;
         private bool _isRunning;
+        private readonly System.Timers.Timer _timKeepAlive;
 
         public Server(string leagueName, int numberOfTeams)
         {
             _leagueName = leagueName;
             _numberOfTeams = numberOfTeams;
             Connections = new Collection<ConnectedClient>();
+            _timKeepAlive = new System.Timers.Timer();
+            _timKeepAlive.Elapsed += SendKeepAlive;
+            _timKeepAlive.Interval = 2000;
+            _timKeepAlive.Enabled = true;
+            _timKeepAlive.Start();
 
             _port = Port;
+        }
+
+        private void SendKeepAlive(object sender, ElapsedEventArgs e)
+        {
+            BroadcastMessage(NetworkMessageType.KeepAliveMessage, null);
         }
 
         public void StartServer()

@@ -74,7 +74,7 @@
             get { return instance; }
         }
 
-        public bool IsConnected { get { return _connection.IsConnected; } }
+        public bool IsConnected { get { return _connection != null && _connection.IsConnected; } }
 
         public void StartServer(string leagueName, int numberOfTeams)
         {
@@ -122,30 +122,34 @@
             _connection.Disconnect -= OnDisconnect;
         }
 
-        public void ConnectToDraft()
+        public async Task<bool> ConnectToDraft()
         {
             if (string.IsNullOrWhiteSpace(address) || port <= 0)
             {
                 throw new ArgumentException("IP and Port not set");
             }
 
-            ConnectToDraft(address, port);
+            return await ConnectToDraft(address, port);
         }
 
-        public void ConnectToDraft(string ipAddress, int ipPort)
+        public async Task<bool> ConnectToDraft(string ipAddress, int ipPort)
         {
             address = ipAddress;
             port = ipPort;
 
-            _connection.ConnectToDraftServer(address, port);
-
-            _connectionReset = new AutoResetEvent(false);
-            _connection.SendMessage(NetworkMessageType.LoginMessage, _connection.ClientId.ToString());
-
-            if (!_connectionReset.WaitOne(5000))
+            if (await _connection.ConnectToDraftServer(address, port))
             {
-                throw new TimeoutException("Couldn't connect to draft server");
+                _connectionReset = new AutoResetEvent(false);
+                _connection.SendMessage(NetworkMessageType.LoginMessage, _connection.ClientId.ToString());
+
+                if (!_connectionReset.WaitOne(5000))
+                {
+                    throw new TimeoutException("Couldn't connect to draft server");
+                }
+                return true;
             }
+
+            return false;
         }
 
         private void ServerHandshake()

@@ -294,5 +294,18 @@
         {
             DraftTimerControl.UpdateState(state.PickEndTime, state.PickPauseTime, state.Drafting);
         }
+
+        internal async Task<bool> ReloadDraft()
+        {
+            try
+            {
+                await ((Setup)Owner).GetDraftSettings();
+            }
+            catch (TimeoutException)
+            {
+                return false;
+            }
+            return true;
+        }
     }
 }

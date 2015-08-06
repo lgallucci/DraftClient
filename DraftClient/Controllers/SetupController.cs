@@ -133,9 +133,9 @@
             _settingsResetEvent.Set();
         }
 
-        public void ConnectToDraftServer(string ipAddress, int ipPort)
+        public async Task<bool> ConnectToDraftServer(string ipAddress, int ipPort)
         {
-            _connectionService.ConnectToDraft(ipAddress, ipPort);
+            return await _connectionService.ConnectToDraft(ipAddress, ipPort);
         }
 
         public void CancelDraft()

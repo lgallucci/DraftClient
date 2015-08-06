@@ -30,7 +30,6 @@
             _connectionService.DraftStop += DraftStop;
             _connectionService.DraftStateChanged += DraftStateChanged;
             _connectionService.Disconnect += DraftDisconnected;
-            _connectionService.RetrieveDraftSettings += RetrieveDraftSettings;
             _mainWindow.Closed += RemoveHandlers;
         }
 
@@ -45,7 +44,6 @@
             _connectionService.DraftStop -= DraftStop;
             _connectionService.DraftStateChanged -= DraftStateChanged;
             _connectionService.Disconnect -= DraftDisconnected;
-            _connectionService.RetrieveDraftSettings -= RetrieveDraftSettings;
             _mainWindow.Closed -= RemoveHandlers;
         }
 
@@ -189,22 +187,24 @@
             _connectionService.ResetConnection();
             RemoveHandlers(this, null);
 
-            ProgressDialogController controller;
-
             Application.Current.Dispatcher.Invoke(async () => 
             {
-                controller = await _mainWindow.ShowReconnectingDialog();
+                var controller = await _mainWindow.ShowReconnectingDialog();
 
                 var timeOut = DateTime.Now.AddMinutes(1);
 
                 while (!controller.IsCanceled && timeOut > DateTime.Now)
                 {
-                    _connectionService.ConnectToDraft();
+                    await Task.Delay(500);
 
-                    if (_connectionService.IsConnected)
+                    try
                     {
-                        break;
+                        if (await _connectionService.ConnectToDraft())
+                        {
+                            break;
+                        }
                     }
+                    catch (TimeoutException) { }
                 }
 
                 bool hasReconnected = false;
@@ -212,62 +212,16 @@
                 if (_connectionService.IsConnected)
                 {
                     controller.SetMessage("Getting Updated Draft...");
-                    hasReconnected = await GetDraftSettings();
+                    hasReconnected = await _mainWindow.ReloadDraft();
                 }
+
+                await controller.CloseAsync();
 
                 if (!hasReconnected)
                 {
-                    await controller.CloseAsync();
                     _mainWindow.CloseWindow("Failed to reconnect to server");
                 }
             });
-        }
-
-        public Task<bool> GetDraftSettings()
-        {
-            _settingsResetEvent = new AutoResetEvent(false);
-            _connectionService.SendMessage(NetworkMessageType.SendDraftSettingsMessage, null);
-
-            return Task.Run(() => _settingsResetEvent.WaitOne(5000));
-        }
-
-        private void RetrieveDraftSettings(DraftSettings draftSettings)
-        {
-            if (draftSettings == null) return;
-
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                Settings.InjectFrom(draftSettings);
-                Settings.DraftTeams = new ObservableCollection<ViewModel.DraftTeam>();
-                foreach (DraftTeam draftTeam in draftSettings.DraftTeams)
-                {
-                    Settings.DraftTeams.Add(Mapper.Map<ViewModel.DraftTeam>(draftTeam));
-                }
-
-                Settings.CurrentDraft = new ViewModel.Draft(draftSettings.CurrentDraft.MaxRound,
-                    draftSettings.CurrentDraft.MaxTeam, draftSettings.NumberOfSeconds, false);
-
-                for (int i = 0; i < draftSettings.CurrentDraft.MaxRound; i++)
-                {
-                    for (int j = 0; j < draftSettings.CurrentDraft.MaxTeam; j++)
-                    {
-                        if (draftSettings.CurrentDraft.Picks[i, j] != 0)
-                        {
-                            ViewModel.Player player =
-                                Globals.PlayerList.Players.First(p => p.Rank == draftSettings.CurrentDraft.Picks[i, j]);
-
-                            Settings.CurrentDraft.Picks[i][j] = new ViewModel.DraftPick
-                            {
-                                DraftedPlayer = player,
-                                CanEdit = false,
-                                IsLoading = true,
-                                Name = player.Name
-                            };
-                        }
-                    }
-                }
-            });
-            _settingsResetEvent.Set();
         }
     }
 }

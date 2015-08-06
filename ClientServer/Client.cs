@@ -7,6 +7,7 @@
     using System.Net.Sockets;
     using System.Timers;
     using DraftEntities;
+    using System.Threading.Tasks;
 
     public class Client
     {
@@ -51,28 +52,37 @@
 
         public bool IsConnected
         {
-            get { return _client.Client.Connected; }
+            get { return _client != null && _client.Client != null && _client.Client.Connected; }
         }
 
         #region Network Methods
 
-        public void ConnectToDraftServer(string ipAddress, int port)
+        public async Task<bool> ConnectToDraftServer(string ipAddress, int port)
         {
             var tcpClient = new TcpClient();
-            tcpClient.Connect(new IPEndPoint(IPAddress.Parse(ipAddress), port));
-            _client = new ConnectedClient
+            try {
+                await Task.Run(() => tcpClient.ConnectAsync(IPAddress.Parse(ipAddress), port).Wait(2000));
+            } catch (Exception) { }
+
+            if (tcpClient.Connected)
             {
-                Client = new SocketClient(tcpClient)
+                _client = new ConnectedClient
                 {
-                    Id = ClientId
-                }
-            };
-            _timAcknowledgeReturn.Start();
+                    Client = new SocketClient(tcpClient)
+                    {
+                        Id = ClientId
+                    }
+                };
+                _timAcknowledgeReturn.Start();
 
-            _client.Client.ClientMessage += HandleMessage;
-            _client.Client.ClientDisconnect += HandleDisconnect;
+                _client.Client.ClientMessage += HandleMessage;
+                _client.Client.ClientDisconnect += HandleDisconnect;
 
-            _client.Client.StartClient();
+                _client.Client.StartClient();
+
+                return true;
+            }
+            return false;
         }
 
         #endregion
@@ -96,7 +106,7 @@
                     case NetworkMessageType.HandShakeMessage:
 
                         _timKeepAlive.Elapsed += SendKeepAlive;
-                        _timKeepAlive.Interval = 5000;
+                        _timKeepAlive.Interval = 2000;
                         _timKeepAlive.Enabled = true;
                         _timKeepAlive.Start();
 
@@ -122,7 +132,7 @@
                 //Console.WriteLine("Sent Ack Type: {0}, Id: {1}", networkMessage.MessageType.ToString(), networkMessage.MessageId);
                 SendMessage(NetworkMessageType.Ackgnowledge, networkMessage.MessageId);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //TODO: Handle exceptions on network handling
             }

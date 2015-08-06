@@ -165,7 +165,7 @@
                         byte[] output = memoryStream.ToArray();
                         output = AppendEofMarker(output);
 
-                        if (networkStream.CanWrite)
+                        if (networkStream.CanWrite && Connected)
                         {
                             networkStream.Write(output, 0, output.Length);
                         }
@@ -176,7 +176,7 @@
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     OnClientDisconnect(this, Id);
                     Close();

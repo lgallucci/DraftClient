@@ -167,13 +167,11 @@
                 try
                 {
                     ConnectingWindow.ShowWithText(string.Format("Connecting to {0}...", lbi.FantasyDraft));
-                    _setupController.ConnectToDraftServer(lbi.IpAddress, lbi.IpPort);
-
-                    if (!await _setupController.GetDraftSettings())
+                    if (await _setupController.ConnectToDraftServer(lbi.IpAddress, lbi.IpPort))
                     {
-                        throw new TimeoutException("Didn't recieve draft in time.");
+                        await GetDraftSettings();
+                        OpenDraft(false);
                     }
-                    OpenDraft(false);
                 }
                 catch (Exception ex)
                 {
@@ -181,6 +179,14 @@
                     _setupController.DisconnectFromDraftServer();
                     ShowErrorMessage(ex.Message);
                 }
+            }
+        }
+
+        public async Task GetDraftSettings()
+        {
+            if (!await _setupController.GetDraftSettings())
+            {
+                throw new TimeoutException("Didn't recieve draft in time.");
             }
         }
 
