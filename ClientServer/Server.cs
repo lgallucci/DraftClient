@@ -16,7 +16,7 @@
     public class Server : Client
     {
         public static int Port = 11000;
-        public static string MulticastAddress = "239.0.0.222";
+        public static string MulticastAddress = "224.0.0.222";
         public readonly Collection<ConnectedClient> Connections;
 
         private readonly object _connectionLock = new object();
