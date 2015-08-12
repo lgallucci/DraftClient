@@ -12,8 +12,8 @@
         public string Name { get; set; }
         public int Year { get; set; }
         public string Team { get; set; }
-        public string Position { get;set; }
-        public int Age { get; set; } 
+        public string Position { get; set; }
+        public int Age { get; set; }
         public int GamesPlayed { get; set; }
         public int PassingYards { get; set; }
         public int PassingTouchdowns { get; set; }
@@ -45,6 +45,29 @@
         public int Age { get; set; }
     }
 
+    public class PlayerTemp
+    {
+        public int playerId { get; set; }
+        public string player { get; set; }
+        public string position { get; set; }
+        public string team { get; set; }
+        public string vor { get; set; }
+        public decimal points { get; set; }
+        public string actualPoints { get; set; }
+        public string overallECR { get; set; }
+        public int overallRank { get; set; }
+        public string positionRank { get; set; }
+        public string dropoff { get; set; }
+        public string adp { get; set; }
+        public string adpdiff { get; set; }
+        public string auctionValue { get; set; }
+        public string upper { get; set; }
+        public string lower { get; set; }
+        public string risk { get; set; }
+        public string sleeper { get; set; }
+
+    }
+
     public class DataFileCreator
     {
         public static void Main()
@@ -53,7 +76,40 @@
 
             //UpdateByeWeeks(players);
             //UpdateHistories(players);
-            UpdateAges(players);
+            //UpdateAges(players);
+            UpdateRanks(players);
+        }
+
+        private static void UpdateRanks(List<Player> players)
+        {
+            var playerRanks = DraftFileHandler.ReadCsvFile<PlayerTemp>("player_ranks.csv");
+
+            foreach (var player in players)
+            {
+                var newRank = playerRanks.FirstOrDefault(r => r.playerId == player.PlayerId);
+                if (newRank != null)
+                {
+                    player.Rank = newRank.overallRank;
+                    player.ProjectedPoints = newRank.points;
+                }
+                else
+                {
+                    newRank = playerRanks.FirstOrDefault(p => AreEqualClean(p.player, player.Name));
+                    if (newRank != null)
+                    {
+                        player.Rank = newRank.overallRank;
+                        player.ProjectedPoints = newRank.points;
+                    }
+                    else
+                    {
+                        player.Rank = -1;
+                        player.ProjectedPoints = -1;
+                    }
+                }
+
+            }
+
+            DraftFileHandler.WriteCsvFile(players, "FantasyPlayers.csv");
         }
 
         private static void UpdateAges(List<Player> players)

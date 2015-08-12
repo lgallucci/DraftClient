@@ -15,7 +15,7 @@
         private static readonly ConnectionService instance = new ConnectionService();
         private AutoResetEvent _connectionReset;
         private Client _connection;
-        private readonly bool _isRunning;
+        private bool _isRunning;
         public Task ServerListener;
         private UdpClient _updClient;
 
@@ -52,8 +52,14 @@
                 _updClient.Client.Bind(localEp);
 
                 IPAddress multicastaddress = IPAddress.Parse(Server.MulticastAddress);
-                _updClient.JoinMulticastGroup(multicastaddress);
-
+                try
+                {
+                    _updClient.JoinMulticastGroup(multicastaddress);
+                }
+                catch (SocketException)
+                {
+                    _isRunning = false;
+                }
                 while (_isRunning)
                 {
                     byte[] serverBroadcastData = _updClient.Receive(ref localEp);

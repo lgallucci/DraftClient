@@ -189,37 +189,37 @@
 
             Application.Current.Dispatcher.Invoke(async () => 
             {
-                var controller = await _mainWindow.ShowReconnectingDialog();
+                //var controller = await _mainWindow.ShowReconnectingDialog();
 
-                var timeOut = DateTime.Now.AddMinutes(1);
+                //var timeOut = DateTime.Now.AddMinutes(1);
 
-                while (!controller.IsCanceled && timeOut > DateTime.Now)
-                {
-                    await Task.Delay(500);
+                //while (!controller.IsCanceled && timeOut > DateTime.Now)
+                //{
+                //    await Task.Delay(500);
 
-                    try
-                    {
-                        if (await _connectionService.ConnectToDraft())
-                        {
-                            break;
-                        }
-                    }
-                    catch (TimeoutException) { }
-                }
+                //    try
+                //    {
+                //        if (await _connectionService.ConnectToDraft())
+                //        {
+                //            break;
+                //        }
+                //    }
+                //    catch (TimeoutException) { }
+                //}
 
                 bool hasReconnected = false;
 
-                if (_connectionService.IsConnected)
-                {
-                    controller.SetMessage("Getting Updated Draft...");
-                    hasReconnected = await _mainWindow.ReloadDraft();
-                }
+                //if (_connectionService.IsConnected)
+                //{
+                //    controller.SetMessage("Getting Updated Draft...");
+                //    hasReconnected = await _mainWindow.ReloadDraft();
+                //}
 
-                await controller.CloseAsync();
+                //await controller.CloseAsync();
 
                 if (!hasReconnected)
                 {
-                    _mainWindow.CloseWindow("Failed to reconnect to server");
+                    _mainWindow.CloseWindow("Lost connection.  Please reconnect.");
                 }
             });
         }

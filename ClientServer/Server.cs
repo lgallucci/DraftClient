@@ -52,74 +52,88 @@
             _isRunning = true;
             var formatter = new BinaryFormatter();
             string ipAddress = GetFirstIpAddress();
-
-            Task.Run(() =>
+            IPAddress ip;
+            if (IPAddress.TryParse(ipAddress, out ip))
             {
-                _listener = new TcpListener(new IPEndPoint(IPAddress.Parse(ipAddress), _port));
-                _listener.Start();
-                WaitForClientConnect();
-            });
-
-            Task.Run(() =>
-            {
-                IPAddress multicastaddress = IPAddress.Parse(MulticastAddress);
-                udpclient.JoinMulticastGroup(multicastaddress);
-                var remoteep = new IPEndPoint(multicastaddress, _port);
-
-                while (_isRunning)
+                Task.Run(() =>
                 {
-                    int connectionCount;
-                    lock (_connectionLock)
+                    _listener = new TcpListener(new IPEndPoint(ip, _port));
+                    _listener.Start();
+                    WaitForClientConnect();
+                });
+
+
+                Task.Run(() =>
+                {
+                    IPAddress multicastaddress = IPAddress.Parse(MulticastAddress);
+                    try
                     {
-                        connectionCount = Connections.Count() + 1;
+                        udpclient.JoinMulticastGroup(multicastaddress);
                     }
-
-                    var draftServer = new DraftServer
+                    catch (SocketException)
                     {
-                        FantasyDraft = _leagueName,
-                        ConnectedPlayers = connectionCount,
-                        MaxPlayers = _numberOfTeams,
-                        IpAddress = ipAddress,
-                        IpPort = _port
-                    };
+                        _isRunning = false;
+                    }
+                    var remoteep = new IPEndPoint(multicastaddress, _port);
 
-                    byte[] requestData;
-                    using (var memoryStream = new MemoryStream())
+                    while (_isRunning)
                     {
-                        formatter.Serialize(memoryStream, new NetworkMessage
+                        int connectionCount;
+                        lock (_connectionLock)
                         {
-                            MessageType = NetworkMessageType.ServerBroadcast,
-                            MessageContent = draftServer
-                        });
-                        requestData = memoryStream.ToArray();
-                    }
+                            connectionCount = Connections.Count() + 1;
+                        }
 
-                    udpclient.EnableBroadcast = true;
-                    udpclient.Send(requestData, requestData.Length, remoteep);
-                    Thread.Sleep(5000);
-                }
-            });
+                        var draftServer = new DraftServer
+                        {
+                            FantasyDraft = _leagueName,
+                            ConnectedPlayers = connectionCount,
+                            MaxPlayers = _numberOfTeams,
+                            IpAddress = ipAddress,
+                            IpPort = _port
+                        };
+
+                        byte[] requestData;
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            formatter.Serialize(memoryStream, new NetworkMessage
+                            {
+                                MessageType = NetworkMessageType.ServerBroadcast,
+                                MessageContent = draftServer
+                            });
+                            requestData = memoryStream.ToArray();
+                        }
+
+                        udpclient.EnableBroadcast = true;
+                        udpclient.Send(requestData, requestData.Length, remoteep);
+                        Thread.Sleep(5000);
+                    }
+                });
+            }
         }
 
         public override void Close()
         {
             _isRunning = false;
-            _listener.Stop();
-            _listener = null;
-            lock (_connectionLock)
+            if (_listener != null)
             {
-                foreach (ConnectedClient connection in Connections)
+                _listener.Stop();
+                _listener = null;
+                lock (_connectionLock)
                 {
-                    connection.Client.SendMessage(new NetworkMessage
+                    foreach (ConnectedClient connection in Connections)
                     {
-                        MessageType = NetworkMessageType.DraftStopMessage
-                    });
-                    connection.Client.ClientMessage -= HandleMessage;
-                    connection.Client.ClientDisconnect -= HandleDisconnect;
-                    connection.Client.Close();
+                        connection.Client.SendMessage(new NetworkMessage
+                        {
+                            MessageType = NetworkMessageType.DraftStopMessage
+                        });
+                        connection.Client.ClientMessage -= HandleMessage;
+                        connection.Client.ClientDisconnect -= HandleDisconnect;
+                        connection.Client.Close();
+                    }
                 }
+                base.Close();
             }
-            base.Close();
         }
 
         public override void SendMessage(NetworkMessageType type, object payload)
