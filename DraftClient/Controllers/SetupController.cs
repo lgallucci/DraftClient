@@ -119,13 +119,7 @@
                             ViewModel.Player player =
                                 Globals.PlayerList.Players.First(p => p.Rank == settings.CurrentDraft.Picks[i, j]);
 
-                            _setupWindow.DraftSettings.CurrentDraft.Picks[i][j] = new ViewModel.DraftPick
-                            {
-                                DraftedPlayer = player,
-                                CanEdit = false,
-                                IsLoading = true,
-                                Name = player.Name
-                            };
+                            _setupWindow.DraftSettings.CurrentDraft.Picks[i][j] = new ViewModel.DraftPick(player, false, true);
                         }
                     }
                 }
@@ -191,8 +185,7 @@
                         {
                             DraftedPlayer = player,
                             CanEdit = true,
-                            IsLoading = true,
-                            Name = player.Name
+                            IsLoading = true
                         };
                     }
                 }

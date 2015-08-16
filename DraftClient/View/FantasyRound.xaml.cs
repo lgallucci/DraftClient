@@ -20,6 +20,11 @@
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             DataContext = Pick;
+            if (Pick.DraftedPlayer != null)
+            {
+                PlayerAutoComplete.ItemsSelector.Items.Add(Pick.DraftedPlayer);
+                PlayerAutoComplete.ItemsSelector.SelectedItem = Pick.DraftedPlayer;
+            }
             Pick.MakePick += adp => OnMakePick(adp, Round, Team);
         }
 

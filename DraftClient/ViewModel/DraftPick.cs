@@ -3,25 +3,19 @@
     public class DraftPick : BindableBase
     {
         private Player _draftedPlayer;
-        private string _name;
         private bool _canEdit;
         private bool _isLoading;
 
-        public string Name
+        public DraftPick()
         {
-            get { return _name; }
-            set
-            {
-                if (_draftedPlayer != null && value.Trim().ToLower() != _draftedPlayer.Name.Trim().ToLower())
-                {
-                    SetProperty(ref _draftedPlayer, null);
-                    SetProperty(ref _name, "");
-                }
-                else
-                {
-                    SetProperty(ref _name, value);
-                }
-            }
+        }
+
+        public DraftPick(Player player, bool canEdit, bool isLoading)
+        {
+            _draftedPlayer = player;
+            _canEdit = canEdit;
+            _isLoading = isLoading;
+            
         }
 
         public bool CanEdit

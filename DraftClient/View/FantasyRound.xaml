@@ -15,6 +15,7 @@
             <c:PositionToColorConverter x:Key="PositionToColorConverter" />
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <c:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
+            <c:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
 
             <prov:PlayerListProvider x:Key="plp" />
             <DataTemplate x:Key="plTemplate">
@@ -40,6 +41,7 @@
             BorderBrush="{StaticResource HighlightBrush}" BorderThickness="1" HorizontalAlignment="Stretch">
         <StackPanel HorizontalAlignment="Stretch">
             <wpf:AutoCompleteTextBox
+                x:Name="PlayerAutoComplete"
                 Visibility="{Binding Path=CanEdit, Converter={StaticResource BooleanToVisibilityConverter}}"
                 VerticalAlignment="Top"
                 Height="20"
@@ -73,9 +75,9 @@
                     </Border>
                 </wpf:AutoCompleteTextBox.Icon>
             </wpf:AutoCompleteTextBox>
-            <TextBlock Text="{Binding Path=Name}" Visibility="{Binding Path=CanEdit, Converter={StaticResource InverseBooleanToVisibilityConverter}}" 
+            <TextBlock Text="{Binding Path=DraftedPlayer.Name}" Visibility="{Binding Path=CanEdit, Converter={StaticResource InverseBooleanToVisibilityConverter}}" 
                        FontSize="11" HorizontalAlignment="Center" Foreground="Black" FontWeight="Bold" />
-            <DockPanel Visibility="{Binding Path=Name, Converter={StaticResource StringLengthToVisibilityConverter}}"
+            <DockPanel Visibility="{Binding Path=DraftedPlayer, Converter={StaticResource NullToVisibilityConverter}}"
                        HorizontalAlignment="Stretch" VerticalAlignment="Center">
                 <StackPanel DockPanel.Dock="Left" Margin="3">
                     <TextBlock Text="Rank" FontSize="9" Foreground="Black" />

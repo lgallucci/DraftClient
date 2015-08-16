@@ -85,7 +85,6 @@
                 Globals.PlayerList.Players.FirstOrDefault(p => p.Rank == pick.Rank);
 
             Settings.CurrentDraft.Picks[pick.Row][pick.Column].DraftedPlayer = player;
-            Settings.CurrentDraft.Picks[pick.Row][pick.Column].Name = (player != null) ? player.Name : "";
         }
 
         private void TeamUpdated(DraftTeam team)

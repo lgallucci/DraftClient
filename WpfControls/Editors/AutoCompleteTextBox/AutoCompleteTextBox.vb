@@ -333,6 +333,7 @@ Public Class AutoCompleteTextBox
     Private Sub OnEditorLostFocus(ByVal sender As Object, ByVal e As RoutedEventArgs)
         If Not IsKeyboardFocusWithin Then
             IsDropDownOpen = False
+            OnSelectionAdapterCommit()
         End If
     End Sub
 
